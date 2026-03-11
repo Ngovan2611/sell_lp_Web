@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SellLP - Register</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left -->
+        <div class="login-section">
+            <div class="login-box">
+                <h1 class="logo"><a href="/home">SellLP</a></h1>
+                <h2>Đăng kí</h2>
+                <p>Vui lòng nhập đủ thông tin để đăng kí</p>
+                <form action="/register" method="post" id="form-login">
+                    <div class="input-group">
+                        <i class='bx bx-user'></i>
+                        <input type="text" name="username" placeholder="Tên đăng nhập" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-regular fa-address-card"></i>
+                        <input type="text" name="fullName" placeholder="Họ và Tên" required>
+                    </div>
+                    <div class="input-group">
+                        <i class='bx bx-lock'></i>
+                        <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
+                        <i class='bx bx-show toggle' onclick="togglePassword('password')"></i>
+                    </div>
+                    <p style="color: #b91c1c;">**Mật khẩu chứa ít nhất 8 kí tự</p>
+
+                    <div class="input-group">
+                        <i class='bx bx-lock'></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                            placeholder="Nhập lại mật khẩu" required>
+                        <i class='bx bx-show toggle' onclick="togglePassword('confirmPassword')"></i>
+                    </div>
+                    <button type="submit" class="btn-login">Đăng kí</button>
+                    <p class="check-exist">Bạn đã có tài khoản <a href="/login">Đăng nhập</a></p>
+                    <div th:if="${error}" id="error-message" class="error-box show">
+                        <p th:text="${error}"></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="image-section">
+            <img src="/images/background.png" alt="Login Background">
+        </div>
+    </div>
+    <script>
+        function togglePassword() {
+            const input = document.getElementById("password");
+            input.type = input.type === "password" ? "text" : "password";
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const errorBox = document.getElementById("error-message");
+            if (errorBox) {
+                requestAnimationFrame(() => errorBox.classList.add("show"));
+                setTimeout(() => {
+                    errorBox.classList.remove("show");
+                }, 3000);
+            }
+        });
+        document.getElementById("form-login").addEventListener("submit", function (e) {
+            const pass = document.getElementById("password").value;
+            const confirm = document.getElementById("confirmPassword").value;
+
+            if (pass !== confirm) {
+                e.preventDefault();
+                alert("Mật khẩu nhập lại không khớp!");
+            }
+        });
+
+    </script>
+
+
+</body>
+
+</html>

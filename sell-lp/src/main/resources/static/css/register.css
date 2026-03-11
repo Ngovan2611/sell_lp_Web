@@ -1,0 +1,188 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #f3f4f6;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    width: 950px;
+    height: 600px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.login-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 50px;
+    position: relative;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 340px;
+    position: relative;
+}
+
+.logo a {
+    font-weight: 600;
+    font-size: 20px;
+    color: #1a1a1a;
+    text-decoration: none;
+}
+
+h2 {
+    margin-top: 20px;
+    font-size: 28px;
+    color: #0d0d0d;
+    font-weight: 600;
+}
+
+p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.input-group {
+    position: relative;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.input-group input {
+    width: 100%;
+    height: 46px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    padding-left: 42px;
+    padding-right: 42px;
+    background-color: #fafafa;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    border-color: #2563eb;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.input-group i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #9ca3af;
+    line-height: 1;
+}
+
+.input-group i:first-child {
+    left: 14px;
+}
+
+.input-group .toggle {
+    right: 14px;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: color 0.2s ease;
+    pointer-events: auto;
+}
+
+.input-group .toggle:hover {
+    color: #2563eb;
+}
+
+.btn-login {
+    width: 100%;
+    height: 46px;
+    margin-top: 22px;
+    background-color: #1766ce;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.btn-login:hover {
+    background-color: #163a21;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Error box overlay (đè lên, không đẩy layout) --- */
+.error-box {
+    position: absolute;
+    top: calc(100% - 10px);
+    /* nằm dưới nút login */
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.4s ease;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.error-box.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.error-box p {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.image-section {
+    flex: 1;
+}
+
+.image-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 850px) {
+    .container {
+        flex-direction: column;
+        width: 90%;
+        height: auto;
+    }
+
+    .image-section {
+        display: none;
+    }
+}
+.check-exist {
+    margin-left: 140px;
+}
+
