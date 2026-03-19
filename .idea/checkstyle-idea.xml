@@ -4,12 +4,16 @@
     <checkstyleVersion>13.0.0</checkstyleVersion>
     <scanScope>JavaOnly</scanScope>
     <copyLibs>true</copyLibs>
+    <scanBeforeCheckin>true</scanBeforeCheckin>
     <option name="thirdPartyClasspath" />
-    <option name="activeLocationIds" />
+    <option name="activeLocationIds">
+      <option value="abbcf36c-33dc-48b1-8644-8bea36d4636a" />
+    </option>
     <option name="locations">
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="abbcf36c-33dc-48b1-8644-8bea36d4636a" type="LOCAL_FILE" scope="All" description="millsheet">D:\workplace\MillSheet\codingstyle\google_checks.xml</ConfigurationLocation>
       </list>
     </option>
   </component>

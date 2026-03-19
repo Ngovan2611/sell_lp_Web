@@ -7,6 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -41,10 +45,12 @@ public class JwtFilter extends OncePerRequestFilter {
                     String username = null;
                     try {
                         username = authenticationService.extractUsernameFromToken(token);
-                    } catch (ParseException e) {
-                        throw new RuntimeException(e);
-                    } catch (JOSEException e) {
-                        throw new RuntimeException(e);
+                    } catch (ParseException | JOSEException e) {
+                        logger.warn("Invalid JWT token: " + e.getMessage());
+                        continue;
+                    } catch (Exception e) {
+                        logger.error("Unexpected error processing JWT token: " + e.getMessage());
+                        continue;
                     }
 
                     if (username != null) {

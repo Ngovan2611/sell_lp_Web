@@ -3,15 +3,19 @@ package com.example.sell_lp.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -19,20 +23,25 @@ import lombok.experimental.FieldDefaults;
 public class ProductVariant {
 
     @Id
-    int variantId;
-
-    double price;
-    int stockQty;
+    private Long variantId;
 
     @ManyToOne
-    Product product;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @ManyToOne
-    Ram ram;
+    @JoinColumn(name = "color_id")
+    private Color color;
 
     @ManyToOne
-    Rom rom;
+    @JoinColumn(name = "ram_id")
+    private Ram ram;
 
     @ManyToOne
-    Color color;
+    @JoinColumn(name = "rom_id")
+    private Rom rom;
+
+    private Integer stockQty;
+
+    private double price;
 }

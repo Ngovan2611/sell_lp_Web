@@ -22,29 +22,44 @@
                 <form action="/register" method="post" id="form-login">
                     <div class="input-group">
                         <i class='bx bx-user'></i>
-                        <input type="text" name="username" placeholder="Tên đăng nhập" required>
+                        <input type="text" name="username" placeholder=" " required>
+                        <label>Tên đăng nhập</label>
                     </div>
+
                     <div class="input-group">
                         <i class="fa-regular fa-address-card"></i>
-                        <input type="text" name="fullName" placeholder="Họ và Tên" required>
+                        <input type="text" name="fullName" placeholder=" " required>
+                        <label>Họ và tên</label>
                     </div>
-                    <div class="input-group">
-                        <i class='bx bx-lock'></i>
-                        <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
-                        <i class='bx bx-show toggle' onclick="togglePassword('password')"></i>
-                    </div>
-                    <p style="color: #b91c1c;">**Mật khẩu chứa ít nhất 8 kí tự</p>
 
                     <div class="input-group">
                         <i class='bx bx-lock'></i>
-                        <input type="password" id="confirmPassword" name="confirmPassword"
-                            placeholder="Nhập lại mật khẩu" required>
+                        <input type="password" id="password" name="password" placeholder=" " required>
+                        <label>Mật khẩu</label>
+                        <i class='bx bx-show toggle' onclick="togglePassword('password')"></i>
+                    </div>
+
+                    <p class="password-hint">**Mật khẩu chứa ít nhất 8 kí tự</p>
+
+                    <div class="input-group">
+                        <i class='bx bx-lock'></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " required>
+                        <label>Nhập lại mật khẩu</label>
                         <i class='bx bx-show toggle' onclick="togglePassword('confirmPassword')"></i>
                     </div>
                     <button type="submit" class="btn-login">Đăng kí</button>
                     <p class="check-exist">Bạn đã có tài khoản <a href="/login">Đăng nhập</a></p>
                     <div th:if="${error}" id="error-message" class="error-box show">
                         <p th:text="${error}"></p>
+                    </div>
+                    <div class="social-wrap">
+                        <a href="/oauth2/authorization/google" class="btn-so">
+                            <span class="google-icon"></span>
+                        </a>
+
+                        <a href="/oauth2/authorization/facebook" class="btn-so">
+                            <span class="facebook-icon"></span>
+                        </a>
                     </div>
                 </form>
             </div>
@@ -55,8 +70,8 @@
         </div>
     </div>
     <script>
-        function togglePassword() {
-            const input = document.getElementById("password");
+        function togglePassword(id) {
+            const input = document.getElementById(id);
             input.type = input.type === "password" ? "text" : "password";
         }
 
@@ -72,6 +87,12 @@
         document.getElementById("form-login").addEventListener("submit", function (e) {
             const pass = document.getElementById("password").value;
             const confirm = document.getElementById("confirmPassword").value;
+
+            if (pass.length < 8) {
+                e.preventDefault();
+                alert("Mật khẩu phải có ít nhất 8 ký tự!");
+                return;
+            }
 
             if (pass !== confirm) {
                 e.preventDefault();

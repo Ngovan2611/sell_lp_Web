@@ -1,13 +1,18 @@
 package com.example.sell_lp.entity;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
@@ -15,7 +20,8 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class Product {
@@ -23,9 +29,19 @@ public class Product {
     int productId;
     String name;
     String description;
-    double price;
-    int stock;
+
+    @Column(name = "is_active")
     boolean isActive;
+
     @OneToMany(mappedBy = "product")
     List<ProductVariant> variants;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")   // FK trong bảng product
+    Category category;
+
+    @OneToMany(mappedBy = "product")
+    List<ProductImage> images;
+
+
 }

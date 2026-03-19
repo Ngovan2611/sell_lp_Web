@@ -1,0 +1,55 @@
+.btn-so {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 20px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 7px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-so:hover {
+    background: #f7f8f8;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-so:active {
+    background: #eee;
+}
+
+/* Icon Google chuẩn */
+.google-icon {
+    width: 18px;
+    height: 18px;
+    background: url("https://developers.google.com/identity/images/g-logo.png") no-repeat center;
+    background-size: contain;
+    margin-right: 12px;
+}
+
+.google-text {
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 14px;
+    color: #3c4043;
+    font-weight: 500;
+}
+
+
+.facebook-icon {
+    width: 18px;
+    height: 18px;
+    background: url("https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png") no-repeat center;
+    background-size: contain;
+    margin-right: 12px;
+}
+
+.facebook-text {
+    color: #000000;
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+}

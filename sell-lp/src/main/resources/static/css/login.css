@@ -122,7 +122,7 @@ p {
 }
 
 .btn-login:hover {
-    background-color: #163a21;
+    background-color: #0e3b71;
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
@@ -217,4 +217,32 @@ p {
         transform: translateX(0);
         opacity:1;
     }
+}
+
+
+.input-group label {
+    position: absolute;
+    left: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    padding: 0 6px;
+    font-size: 14px;
+    color: #9ca3af;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 12px;
+    color: #06a3f6;
+}
+
+.input-group input {
+    padding: 14px 42px;
+}
+.input-group input:focus + label {
+    font-weight: 500;
 }

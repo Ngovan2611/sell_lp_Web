@@ -1,9 +1,6 @@
 package com.example.sell_lp.dto.response;
 
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,10 +19,11 @@ import java.util.Date;
 public class UserResponse {
     String userId;
     String username;
-    String password;
     String fullName;
     String email;
     String phone;
     boolean isActive;
     Date createdAt;
+    String role;
+    String provider;
 }

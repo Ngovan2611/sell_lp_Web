@@ -1,5 +1,6 @@
 package com.example.sell_lp.config;
 
+import com.example.sell_lp.component.SocialLoginSuccessHandler;
 import com.example.sell_lp.component.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +14,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
+
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Autowired
+    SocialLoginSuccessHandler socialLoginSuccessHandler;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,22 +29,28 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register","/home", "/css/**", "/images/**" ,"/js/**").permitAll()
+                        .requestMatchers("/login","/introduction", "/register","/home", "/css/**", "/images/**" ,"/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
+
+
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login")
-                        .deleteCookies("jwt")   // xóa cookie jwt
+                        .deleteCookies("jwt")
                 )
 
 
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+             .oauth2Login(oauth -> oauth
+                     .loginPage("/login")
+                     .successHandler(socialLoginSuccessHandler) // 👈 QUAN TRỌNG
+             )
+             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10);
     }
 }

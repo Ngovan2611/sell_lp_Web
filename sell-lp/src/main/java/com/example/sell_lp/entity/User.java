@@ -1,5 +1,6 @@
 package com.example.sell_lp.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +31,7 @@ public class User {
     String userId;
     @Column(name = "user_name")
     String username;
-    @NotBlank
+    @Nullable
     String password;
     String fullName;
     @Email
@@ -39,4 +39,8 @@ public class User {
     String phone;
     boolean isActive;
     Date createdAt;
+
+    String role;
+
+    String provider;
 }

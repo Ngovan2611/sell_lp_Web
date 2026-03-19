@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category {
     @Id
-    int CategoryId;
+    int categoryId;
     String categoryName;
     String icon;
 }

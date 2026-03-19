@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sản phẩm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/products.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+
+</head>
+
+
+
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div id="overlay"></div>
+<div class="breadcrumb">
+    <a th:href="@{/home}">Trang chủ</a>  >
+    <span>Sản phẩm</span>
+</div>
+<div th:replace="fragments/sidebar :: aside"></div>
+
+<h2 style="text-align:center">Danh sách sản phẩm</h2>
+
+<div class="products">
+    <div class="product" th:each="p : ${products}">
+        <img th:src="@{{img}(img=${p.imageUrl})}">
+        <h3 th:text="${p.name}"></h3>
+        <p th:text="${p.description}"></p>
+
+        <a th:href="@{/product/{id}(id=${p.productId})}">
+            <button class="view-btn">Xem chi tiết</button>
+        </a>
+    </div>
+</div>
+
+<div class="pagination" th:if="${totalPages > 1}">
+
+    <!-- Prev -->
+    <a th:if="${currentPage > 0}"
+       th:href="@{/products(categoryId=${categoryId}, page=${currentPage-1})}">
+        <i class="fa-solid fa-chevron-left"></i>
+    </a>
+
+    <!-- First -->
+    <a th:href="@{/products(categoryId=${categoryId}, page=0)}"
+       th:classappend="${currentPage == 0} ? 'active' : ''">1</a>
+
+    <!-- ... -->
+    <span th:if="${currentPage > 2}">...</span>
+
+    <!-- Middle -->
+    <span th:each="i : ${#numbers.sequence(
+        currentPage > 0 ? currentPage-1 : 0,
+        currentPage+1 < totalPages ? currentPage+1 : totalPages-1
+            )}"
+          th:if="${i > 0 and i < totalPages-1}">
+        <a th:href="@{/products(categoryId=${categoryId}, page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''"></a>
+    </span>
+
+    <!-- ... -->
+    <span th:if="${currentPage < totalPages - 3}">...</span>
+
+    <!-- Last -->
+    <a th:href="@{/products(categoryId=${categoryId}, page=${totalPages-1})}"
+       th:text="${totalPages}"
+       th:classappend="${currentPage == totalPages-1} ? 'active' : ''"></a>
+
+    <!-- Next -->
+    <a th:if="${currentPage < totalPages - 1}"
+       th:href="@{/products(categoryId=${categoryId}, page=${currentPage+1})}">
+        <i class="fa-solid fa-chevron-right"></i>
+    </a>
+
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+<script th:src="@{/js/common.js}"></script>
+
+</body>
+</html>

@@ -186,3 +186,85 @@ p {
     margin-left: 140px;
 }
 
+.btn-so {
+    margin: 5px;
+    display: inline-flex; /* QUAN TRỌNG */
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 7px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-so:hover {
+    background: #f7f8f8;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-so:active {
+    background: #eee;
+}
+
+/* ICON chung */
+.btn-so span {
+    width: 18px;
+    height: 18px;
+    display: block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Google */
+.google-icon {
+    background-image: url("https://developers.google.com/identity/images/g-logo.png");
+}
+
+/* Facebook */
+.facebook-icon {
+    background-image: url("https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png");
+}
+
+.social-wrap {
+    display: flex;
+    justify-content: center; /* căn giữa ngang */
+    align-items: center;
+    gap: 10px; /* khoảng cách giữa các nút */
+}
+
+/* LABEL FLOATING */
+.input-group label {
+    position: absolute;
+    left: 42px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    padding: 0 6px;
+    font-size: 14px;
+    color: #9ca3af;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 12px;
+    color: #2563eb;
+}
+
+.input-group input {
+    padding: 14px 42px;
+}
+
+.password-hint {
+    color: #b91c1c;
+    font-size: 13px;
+    margin-top: 6px;
+    margin-left: 4px;
+}

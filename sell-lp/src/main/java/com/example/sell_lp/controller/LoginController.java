@@ -36,25 +36,30 @@ public class LoginController {
                             Model model
                             ) throws KeyLengthException {
 
-        User user = userService.login(request);
+        try {
+            User user = userService.login(request);
 
 
-        if (user != null) {
-            var token = authenticationService.authenticate(request);
+            if (user != null) {
+                var token = authenticationService.authenticate(request);
 
-            Cookie cookie = new Cookie("jwt", token.getToken());
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(24 * 60 * 60);
+                Cookie cookie = new Cookie("jwt", token.getToken());
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
+                cookie.setMaxAge(24 * 60 * 60);
 
-            response.addCookie(cookie);
-            redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
-            return "redirect:/home";
+                response.addCookie(cookie);
+                redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
+                return "redirect:/home";
+            }
+
+
+            model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
+            return "login";
+        }catch (Exception e) {
+            model.addAttribute("error", "Tài khoản không hợp lệ hoặc đã bị khóa!");
+            return "login";
         }
-
-
-        model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
-        return "login";
     }
 
     @GetMapping("/logout")
