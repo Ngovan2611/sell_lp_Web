@@ -23,25 +23,25 @@ import lombok.experimental.FieldDefaults;
 public class ProductVariant {
 
     @Id
-    private Long variantId;
+    Long variantId;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Product product;
+    Product product;
 
     @ManyToOne
     @JoinColumn(name = "color_id")
-    private Color color;
+    Color color;
 
     @ManyToOne
     @JoinColumn(name = "ram_id")
-    private Ram ram;
+    Ram ram;
 
     @ManyToOne
     @JoinColumn(name = "rom_id")
-    private Rom rom;
+    Rom rom;
 
-    private Integer stockQty;
+    Integer stockQty;
 
-    private double price;
+    double price;
 }

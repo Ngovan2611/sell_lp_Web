@@ -4,6 +4,9 @@ package com.example.sell_lp.controller;
 import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CategoryService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,10 +16,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class IntroductionController {
-    @Autowired
-    private AuthenticationService authenticationService;
-    @Autowired
+    AuthenticationService authenticationService;
     CategoryService categoryService;
 
 

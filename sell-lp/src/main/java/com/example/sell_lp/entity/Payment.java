@@ -5,9 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
@@ -15,18 +17,20 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer paymentId;
+    Integer paymentId;
 
-    private String method;
-    private Double amount;
-    private Date paidAt;
-    private String status;
+    String method;
+    Double amount;
+    Date paidAt;
+    String status;
 
     @OneToOne
-    private Order order;
+    Order order;
 
 }

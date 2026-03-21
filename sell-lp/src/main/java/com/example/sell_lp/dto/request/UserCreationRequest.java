@@ -23,5 +23,4 @@ public class UserCreationRequest {
     String password;
     String fullName;
     String username;
-
 }

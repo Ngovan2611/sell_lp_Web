@@ -2,12 +2,12 @@ package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.dto.response.ProductResponse;
-import com.example.sell_lp.entity.Category;
-import com.example.sell_lp.entity.ProductImage;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.ProductService;
-import com.example.sell_lp.service.UserService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,17 +16,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 import java.util.List;
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
 public class HomeController {
-    @Autowired
-    private CategoryService categoryService;
+    CategoryService categoryService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
-    @Autowired
-    private ProductService productService;
+    ProductService productService;
 
 
 

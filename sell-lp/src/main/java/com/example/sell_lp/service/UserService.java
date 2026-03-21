@@ -52,7 +52,7 @@ public class UserService {
         return null;
     }
 
-    public User createUser(UserCreationRequest userCreationRequest) {
+    public void createUser(UserCreationRequest userCreationRequest) {
 
         User existingUser = userRepository.findByUsername(userCreationRequest.getUsername());
 
@@ -71,7 +71,7 @@ public class UserService {
         user.setCreatedAt(now);
         user.setRole(Role.USER.name());
         user.setProvider(Provider.LOCAL.name());
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
 

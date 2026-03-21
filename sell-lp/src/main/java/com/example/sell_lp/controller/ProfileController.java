@@ -8,6 +8,9 @@ import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.UserService;
 import com.nimbusds.jose.JOSEException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,16 +24,16 @@ import java.text.ParseException;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProfileController {
 
 
-    @Autowired
-    private CategoryService categoryService;
+    CategoryService categoryService;
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AuthenticationService authenticationService;
+    UserService userService;
+
+    AuthenticationService authenticationService;
 
     @GetMapping("/profile")
     public String showProfile(Model model,

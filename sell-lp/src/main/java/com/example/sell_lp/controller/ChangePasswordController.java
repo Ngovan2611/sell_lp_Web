@@ -8,6 +8,9 @@ import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.UserService;
 import com.nimbusds.jose.JOSEException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,17 +22,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.text.ParseException;
 import java.util.List;
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
 public class ChangePasswordController {
-    @Autowired
-    private UserService userService;
+    UserService userService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
-    @Autowired
-    private CategoryService categoryService;
+    CategoryService categoryService;
 
 
     @GetMapping("/change-password")

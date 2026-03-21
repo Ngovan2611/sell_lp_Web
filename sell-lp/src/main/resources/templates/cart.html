@@ -1,140 +1,224 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <!DOCTYPE html>
+    <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Giỏ hàng</title>
-    <link rel="stylesheet" th:href="@{/css/cart.css}">
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <head>
+        <meta charset="UTF-8">
+        <title>Giỏ hàng</title>
+        <link rel="stylesheet" th:href="@{/css/cart.css}">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
+        <link rel="stylesheet" th:href="@{/css/sidebar.css}">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    </head>
+<style>
+    .error-box {
+        position: fixed;
+        top: 80px;
+        right: 20px;
 
-<header th:replace="fragments/header :: header"></header>
+        display: flex;              /* ✅ thêm dòng này */
+        align-items: center;
+        gap: 8px;
 
-<div id="overlay"></div>
-<div th:replace="fragments/sidebar :: aside"></div>
-<body>
-<div class="cart-container">
-    <h2>Giỏ hàng của bạn</h2>
-    <div class="cart-box" id="cartBox">
+        background-color: #d19403;
+        color: #f6f6f6;
+        border: 1px solid #f3c809;
 
-        <!-- Nếu có sản phẩm -->
-        <div th:if="${#lists.size(cartItems) > 0}">
-            <div class="cart-item"
-                 th:each="item : ${cartItems}"
-                 th:attr="data-cart-item-id=${item.cartItemId}">
+        padding: 14px 16px;
+        border-radius: 8px;
+        font-size: 14px;
 
-                <input type="checkbox" class="select-item"
-                       th:value="${item.variant.product.productId}"
-                       th:attr="data-price=${item.quantity * item.variant.price}"
-                       onchange="updateTotal()" />
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 
-                <img th:src="@{${item.variant.product.images[0].url}}" />
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.4s ease;
 
-                <div class="item-info">
-                    <h3 th:text="${item.variant.product.name}"></h3>
-                    <p th:text="${item.variant.color.colorName + ' / ' + item.variant.ram.ramSize + ' / ' + item.variant.rom.romSize}"></p>
+        z-index: 9999;
+    }
+    .error-box.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .error-box {
+        transform: translateX(100%);
+    }
+
+
+    .error-box i {
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+
+        background: white;
+        color: #edac06;
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0; /* ✅ không bị co */
+    }
+</style>
+    <header th:replace="fragments/header :: header"></header>
+
+    <div id="overlay"></div>
+    <div th:replace="fragments/sidebar :: aside"></div>
+    <body>
+    <div class="cart-container">
+        <h2>Giỏ hàng của bạn</h2>
+        <div class="cart-box" id="cartBox">
+
+            <!-- Nếu có sản phẩm -->
+            <div th:if="${#lists.size(cartItems) > 0}">
+                <div class="cart-item"
+                     th:each="item : ${cartItems}"
+                     th:attr="data-cart-item-id=${item.cartItemId}">
+
+                    <input type="checkbox" class="select-item"
+                           th:value="${item.variant.product.productId}"
+                           th:attr="data-price=${item.quantity * item.variant.price}"
+                           onchange="updateTotal()" />
+
+                    <img th:src="@{${item.variant.product.images[0].url}}" />
+
+                    <div class="item-info">
+                        <h3 th:text="${item.variant.product.name}"></h3>
+                        <p th:text="${item.variant.color.colorName + ' / ' + item.variant.ram.ramSize + ' / ' + item.variant.rom.romSize}"></p>
+                    </div>
+
+                    <div class="item-quantity">
+                        <button onclick="changeQty(this, -1)">-</button>
+                        <input type="number" th:value="${item.quantity}" min="1">
+                        <button onclick="changeQty(this, 1)">+</button>
+                    </div>
+
+                    <div class="item-price"
+                         th:attr="data-unit-price=${item.variant.price}"
+                         th:text="${#numbers.formatDecimal(item.quantity * item.variant.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                    </div>
+
+                    <button class="remove-btn" onclick="removeItem(this)">Xóa</button>
                 </div>
-
-                <div class="item-quantity">
-                    <button onclick="changeQty(this, -1)">-</button>
-                    <input type="number" th:value="${item.quantity}" min="1">
-                    <button onclick="changeQty(this, 1)">+</button>
-                </div>
-
-                <div class="item-price"
-                     th:attr="data-unit-price=${item.variant.price}"
-                     th:text="${#numbers.formatDecimal(item.quantity * item.variant.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">
-                </div>
-
-                <button class="remove-btn" onclick="removeItem(this)">Xóa</button>
             </div>
-        </div>
 
-        <!-- Nếu giỏ hàng trống -->
-        <div class="empty-cart" th:if="${#lists.isEmpty(cartItems)}">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <p>Giỏ hàng của bạn đang trống</p>
-        </div>
-
-    </div>
-
-    <div class="cart-summary">
-        <div class="summary-info">
-            <p>Tổng sản phẩm: <span id="totalQuantity">0</span></p>
-            <p>Tổng tiền: <span id="totalPrice">0đ</span></p>
-        </div>
-        <button class="checkout-btn">Thanh toán</button>
-    </div>
-</div>
-<script th:src="@{/js/common.js}"></script>
-<script>
-    async function changeQty(btn, delta) {
-        const input = btn.parentElement.querySelector('input');
-        let value = Math.max(1, parseInt(input.value) + delta);
-        input.value = value;
-
-        const item = btn.closest('.cart-item');
-        const cartItemId = item.dataset.cartItemId;
-        const unitPrice = parseFloat(item.querySelector('.item-price').dataset.unitPrice);
-        item.querySelector('.item-price').innerText = (value * unitPrice).toLocaleString('vi-VN') + 'đ';
-
-        const checkbox = item.querySelector('.select-item');
-        checkbox.dataset.price = value * unitPrice;
-
-        await fetch(`/cart/update/${cartItemId}?quantity=${value}`, { method: 'POST' });
-
-        if (checkbox.checked) updateTotal();
-    }
-
-    async function removeItem(btn) {
-        const item = btn.closest('.cart-item');
-        const cartItemId = item.dataset.cartItemId;
-        const checkbox = item.querySelector('.select-item');
-        const wasChecked = checkbox.checked;
-
-        await fetch(`/cart/delete/${cartItemId}`, { method: 'DELETE' });
-
-        item.remove();
-
-        if (wasChecked) updateTotal();
-
-        checkEmptyCart();
-    }
-    function checkEmptyCart() {
-        const cartItems = document.querySelectorAll('.cart-item');
-        const cartBox = document.getElementById('cartBox');
-
-        if (cartItems.length === 0) {
-            cartBox.innerHTML = `
-            <div class="empty-cart fade-in">
+            <!-- Nếu giỏ hàng trống -->
+            <div class="empty-cart" th:if="${#lists.isEmpty(cartItems)}">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <p>Giỏ hàng của bạn đang trống</p>
             </div>
-        `;
 
-            // reset tổng tiền
-            document.getElementById('totalPrice').innerText = '0đ';
-            document.getElementById('totalQuantity').innerText = '0';
-        }
-    }
+        </div>
 
-    function updateTotal() {
-        let totalPrice = 0, totalQuantity = 0;
-        document.querySelectorAll('.cart-item').forEach(item => {
-            const checkbox = item.querySelector('.select-item');
-            const qty = parseInt(item.querySelector('.item-quantity input').value) || 0;
-            const price = parseFloat(item.querySelector('.item-price').dataset.unitPrice) || 0;
-            if (checkbox.checked) {
-                totalPrice += qty * price;
-                totalQuantity += qty;
+        <div class="cart-summary">
+            <div class="summary-info">
+                <p>Tổng sản phẩm: <span id="totalQuantity">0</span></p>
+                <p>Tổng tiền: <span id="totalPrice">0đ</span></p>
+            </div>
+            <button class="checkout-btn">Thanh toán</button>
+        </div>
+    </div>
+    <div id="error-box" class="error-box">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span id="error-text"></span>
+    </div>
+    <script th:src="@{/js/common.js}"></script>
+    <script>
+        async function changeQty(btn, delta) {
+            const input = btn.parentElement.querySelector('input');
+            let value = Math.max(1, parseInt(input.value) + delta);
+
+            const item = btn.closest('.cart-item');
+            const cartItemId = item.dataset.cartItemId;
+            const unitPrice = parseFloat(item.querySelector('.item-price').dataset.unitPrice);
+
+            try {
+                const res = await fetch(`/cart/update/${cartItemId}?quantity=${value}`, {
+                    method: 'POST'
+                });
+
+                const msg = await res.text();
+
+                if (!res.ok) {
+                    showError(msg);
+                    return;
+                }
+
+                // update UI nếu OK
+                input.value = value;
+                item.querySelector('.item-price').innerText =
+                    (value * unitPrice).toLocaleString('vi-VN') + 'đ';
+
+                const checkbox = item.querySelector('.select-item');
+                checkbox.dataset.price = value * unitPrice;
+
+                if (checkbox.checked) updateTotal();
+
+            } catch (e) {
+                alert("Lỗi server");
             }
-        });
-        document.getElementById('totalPrice').innerText = totalPrice.toLocaleString('vi-VN') + 'đ';
-        document.getElementById('totalQuantity').innerText = totalQuantity;
-    }
-</script>
-</body>
-</html>
+        }
+
+        async function removeItem(btn) {
+            const item = btn.closest('.cart-item');
+            const cartItemId = item.dataset.cartItemId;
+            const checkbox = item.querySelector('.select-item');
+            const wasChecked = checkbox.checked;
+
+            await fetch(`/cart/delete/${cartItemId}`, { method: 'DELETE' });
+
+            item.remove();
+
+            if (wasChecked) updateTotal();
+
+            checkEmptyCart();
+        }
+        function checkEmptyCart() {
+            const cartItems = document.querySelectorAll('.cart-item');
+            const cartBox = document.getElementById('cartBox');
+
+            if (cartItems.length === 0) {
+                cartBox.innerHTML = `
+                <div class="empty-cart fade-in">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <p>Giỏ hàng của bạn đang trống</p>
+                </div>
+            `;
+
+                // reset tổng tiền
+                document.getElementById('totalPrice').innerText = '0đ';
+                document.getElementById('totalQuantity').innerText = '0';
+            }
+        }
+
+        function updateTotal() {
+            let totalPrice = 0, totalQuantity = 0;
+            document.querySelectorAll('.cart-item').forEach(item => {
+                const checkbox = item.querySelector('.select-item');
+                const qty = parseInt(item.querySelector('.item-quantity input').value) || 0;
+                const price = parseFloat(item.querySelector('.item-price').dataset.unitPrice) || 0;
+                if (checkbox.checked) {
+                    totalPrice += qty * price;
+                    totalQuantity += qty;
+                }
+            });
+            document.getElementById('totalPrice').innerText = totalPrice.toLocaleString('vi-VN') + 'đ';
+            document.getElementById('totalQuantity').innerText = totalQuantity;
+        }
+        function showError(msg) {
+            const box = document.getElementById("error-box");
+            const text = document.getElementById("error-text");
+
+            text.innerText = msg;
+            box.classList.add("show");
+
+            setTimeout(() => {
+                box.classList.remove("show");
+            }, 3000);
+        }
+
+    </script>
+    </body>
+    </html>

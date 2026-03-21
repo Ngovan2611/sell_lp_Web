@@ -7,6 +7,9 @@ import com.example.sell_lp.service.CartItemService;
 import com.example.sell_lp.service.CartService;
 import com.example.sell_lp.service.CategoryService;
 import com.nimbusds.jose.JOSEException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,21 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
 public class CartController {
-
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private CartItemService cartItemService;
-
-    @Autowired
-    private CartService cartService;
-
-    @Autowired
-    private CategoryService categoryService;
+    AuthenticationService authenticationService;
+    CartItemService cartItemService;
+    CartService cartService;
+    CategoryService categoryService;
 
     @GetMapping("/cart")
     public String getCart(
@@ -118,4 +114,24 @@ public class CartController {
 //            return totalPrice;
 //        }
 //    }
+    @PostMapping("/cart/update/{cartItemId}")
+    @ResponseBody
+    public ResponseEntity<?> updateCartItem(
+            @PathVariable Long cartItemId,
+            @RequestParam Integer quantity,
+            @CookieValue(value = "jwt", required = false) String token)
+            throws ParseException, JOSEException {
+
+        String username = authenticationService.extractUsernameFromToken(token);
+        if (username == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        try {
+            cartItemService.updateQuantity(cartItemId, quantity);
+            return ResponseEntity.ok("Cập nhật thành công");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

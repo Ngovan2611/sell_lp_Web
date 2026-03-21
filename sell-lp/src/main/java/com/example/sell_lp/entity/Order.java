@@ -6,9 +6,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 import java.util.List;
@@ -17,19 +19,21 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderId;
+    Integer orderId;
 
-    private Date orderDate;
-    private String status;
-    private Double totalAmount;
+    Date orderDate;
+    String status;
+    Double totalAmount;
 
     @ManyToOne
-    private User user;
+    User user;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderItem> orderItems;
+    List<OrderItem> orderItems;
 }

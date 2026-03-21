@@ -4,6 +4,9 @@ import com.example.sell_lp.dto.request.UserCreationRequest;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RegisterController {
-    @Autowired
-    private UserService userService;
+
+    UserService userService;
+
     @GetMapping("/register")
     public String register() {
         return "register";
@@ -29,7 +35,7 @@ public class RegisterController {
             return "register";
         }
         try {
-            User user = userService.createUser(userCreationRequest);
+            userService.createUser(userCreationRequest);
             redirectAttributes.addFlashAttribute("success", "Đăng kí thành công");
             return "redirect:/login";
         }catch (RuntimeException e) {

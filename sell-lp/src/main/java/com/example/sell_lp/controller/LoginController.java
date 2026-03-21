@@ -8,6 +8,9 @@ import com.example.sell_lp.service.UserService;
 import com.nimbusds.jose.KeyLengthException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +19,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
 public class LoginController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AuthenticationService authenticationService;
+    UserService userService;
+    AuthenticationService authenticationService;
 
     @GetMapping("/login")
     public String login() {

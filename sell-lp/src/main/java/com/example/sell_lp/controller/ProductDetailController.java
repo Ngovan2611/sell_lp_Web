@@ -12,6 +12,9 @@ import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.ProductService;
 import com.example.sell_lp.service.ProductVariantService;
 import com.nimbusds.jose.JOSEException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -27,23 +30,20 @@ import java.text.ParseException;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductDetailController {
-    @Autowired
-    private ProductVariantService productVariantService;
+    ProductVariantService productVariantService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private CategoryService categoryService;
+    ProductService productService;
 
-    @Autowired
-    private CartService cartService;
+    CategoryService categoryService;
 
-    @Autowired
-    private CartItemService cartItemService;
+    CartService cartService;
+
+    CartItemService cartItemService;
 
     @GetMapping("/product/{productId}")
     public String getProductDetail(Model model,

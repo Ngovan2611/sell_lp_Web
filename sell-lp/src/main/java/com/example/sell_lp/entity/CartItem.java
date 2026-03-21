@@ -6,29 +6,32 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer cartItemId;
+    Integer cartItemId;
 
-    private Integer quantity;
-    private Double unitPrice;
+    Integer quantity;
+    Double unitPrice;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
-    private Cart cart;
+    Cart cart;
 
     @ManyToOne
     @JoinColumn(name = "variant_id")
-    private ProductVariant variant;
+    ProductVariant variant;
 
 }

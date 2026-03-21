@@ -6,6 +6,9 @@ import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.ProductService;
 import com.nimbusds.jose.JOSEException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,16 +21,15 @@ import java.text.ParseException;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    ProductService productService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
-    @Autowired
-    private CategoryService categoryService;
+    CategoryService categoryService;
 
     @GetMapping("/products")
     public String showProducts(

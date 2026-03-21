@@ -1,17 +1,21 @@
 package com.example.sell_lp.dto.response;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class CartResponse {
 
-    private List<CartItemResponse> cartItems;
-    private Double totalPrice;
+    List<CartItemResponse> cartItems;
+    Double totalPrice;
 
 }

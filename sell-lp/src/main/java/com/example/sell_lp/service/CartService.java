@@ -1,23 +1,25 @@
 package com.example.sell_lp.service;
 
 
-import com.example.sell_lp.dto.request.CartCreationRequest;
 import com.example.sell_lp.entity.Cart;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.Status;
-import com.example.sell_lp.mapper.CartMapper;
 import com.example.sell_lp.repository.CartRepository;
 import com.example.sell_lp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CartService {
-    @Autowired
-    private CartRepository cartRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    CartRepository cartRepository;
+
+
+    UserRepository userRepository;
 
 
     public Cart getOrCreateCart(String username) {

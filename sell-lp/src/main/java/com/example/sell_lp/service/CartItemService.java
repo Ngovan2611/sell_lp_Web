@@ -7,21 +7,23 @@ import com.example.sell_lp.entity.CartItem;
 import com.example.sell_lp.mapper.CartItemMapper;
 import com.example.sell_lp.repository.CartItemRepository;
 import com.example.sell_lp.repository.CartRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CartItemService {
-    @Autowired
     CartItemRepository cartItemRepository;
-    @Autowired
+
     CartItemMapper cartItemMapper;
 
-    @Autowired
-    CartRepository cartRepository; // cần để lấy cart
-    @Autowired
+    CartRepository cartRepository;
+
     ProductVariantService productVariantService;
 
     public void createCartItem(CartItemCreationRequest request) {
