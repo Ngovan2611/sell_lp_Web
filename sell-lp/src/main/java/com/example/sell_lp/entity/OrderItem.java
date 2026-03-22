@@ -16,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
 public class OrderItem {
 
     @Id
@@ -24,12 +23,16 @@ public class OrderItem {
     Integer orderItemId;
 
     Integer quantity;
+
     Double unitPrice;
+
+    String productName;
+    String variantName;
+    String imageUrl;
 
     @ManyToOne
     Order order;
 
     @ManyToOne
     ProductVariant variant;
-
 }

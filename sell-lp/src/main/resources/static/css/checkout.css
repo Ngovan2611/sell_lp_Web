@@ -1,0 +1,318 @@
+.container {
+    width: 75%;
+    margin: 30px auto;
+}
+
+.box {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== TITLE ===== */
+h2 {
+    margin-bottom: 25px;
+}
+
+h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-left: 4px solid #ee4d2d;
+    padding-left: 10px;
+}
+
+/* ===== ADDRESS ===== */
+.address-empty {
+    color: #ff4d4f;
+    font-weight: 500;
+}
+
+.box a {
+    color: #ee4d2d;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.box a:hover {
+    text-decoration: underline;
+}
+
+/* ===== ITEM ===== */
+.item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 15px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.item img {
+    width: 80px;
+    border-radius: 8px;
+}
+
+/* ===== PRODUCT INFO ===== */
+.item h4 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.item p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #888;
+}
+
+/* ===== PRICE ===== */
+.item span {
+    font-weight: bold;
+    color: #ee4d2d;
+    font-size: 15px;
+}
+
+/* ===== SHIPPING ===== */
+.box p {
+    margin: 6px 0;
+}
+
+/* ===== PAYMENT ===== */
+.payment-method label {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.payment-method label:hover {
+    border-color: #ee4d2d;
+    background: #fff7f5;
+}
+
+.payment-method input {
+    margin-right: 10px;
+}
+
+/* ===== SUMMARY ===== */
+.summary {
+    background: #fff;
+    border: 2px solid #ee4d2d;
+    box-shadow: 0 5px 15px rgba(238, 77, 45, 0.15);
+    position: sticky;
+    bottom: 10px;
+}
+
+.summary p {
+    margin: 10px 0;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.summary h3 {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    color: #ee4d2d;
+    border: none;
+    margin-top: 10px;
+}
+
+/* ===== BUTTON ===== */
+.btn {
+    width: 100%;
+    background: linear-gradient(135deg, #ff6a00, #ee4d2d);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(238, 77, 45, 0.3);
+}
+
+.addressPopup {
+    display: none;
+    position: fixed;
+    top: 20%;
+    left: 35%;
+    width: 400px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+}
+
+.addressPopup input {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.addressPopup button {
+    width: 100%;
+    padding: 10px;
+    background: #ee4d2d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .item {
+        grid-template-columns: 1fr;
+    }
+
+    .summary {
+        position: static;
+    }
+
+}
+
+/* ===== ADD ADDRESS BUTTON ===== */
+.btn-add-address {
+    background: linear-gradient(135deg, #36cfc9, #13c2c2);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.btn-add-address:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(19, 194, 194, 0.3);
+}
+
+/* ===== CHANGE ADDRESS LINK ===== */
+.link-change-address {
+    display: inline-block;
+    margin-top: 8px;
+    color: #ee4d2d;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+}
+
+.link-change-address::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: #ee4d2d;
+    transition: 0.2s;
+}
+
+.link-change-address:hover::after {
+    width: 100%;
+}
+
+.address-box p {
+    margin: 4px 0;
+}
+
+.address-box b {
+    font-size: 15px;
+}
+
+/* ===== CLOSE BUTTON ===== */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #999;
+    transition: 0.2s;
+}
+
+.close-btn:hover {
+    color: #ee4d2d;
+}
+
+/* ===== OVERLAY ===== */
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 15%;
+    left: 35%;
+    width: 420px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.address-item {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.address-item:last-child {
+    border-bottom: none;
+}
+
+.address-item button {
+    background: #ee4d2d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+#successMessage{
+    display:none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #36cfc9;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 2000;
+}

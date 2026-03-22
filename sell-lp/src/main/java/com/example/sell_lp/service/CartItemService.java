@@ -40,7 +40,6 @@ public class CartItemService {
     public void deleteCartItem(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
     }
-    // để lấy entity variant
 
     public void addOrUpdateCartItem(Integer cartId, Long variantId, Integer quantity) {
         CartItem existingItem = cartItemRepository
@@ -82,5 +81,19 @@ public class CartItemService {
 
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
+    }
+    public List<CartItemResponse> getCartItemsByIds(List<String> cartItemIds) {
+        // Chuyển List<String> sang List<Long>
+        List<Long> ids = cartItemIds.stream()
+                .map(Long::parseLong)
+                .toList();
+
+        // Query DB theo id
+        List<CartItem> items = cartItemRepository.findAllById(ids);
+
+        // Map sang DTO
+        return items.stream()
+                .map(cartItemMapper::toCartItemResponse)
+                .toList();
     }
 }

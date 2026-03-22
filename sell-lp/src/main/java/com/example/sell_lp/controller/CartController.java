@@ -10,7 +10,6 @@ import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,48 +71,6 @@ public class CartController {
     }
 
 
-//    @GetMapping("/cart/totals")
-//    @ResponseBody
-//    public ResponseEntity<?> getCartTotals(
-//            @CookieValue(value = "jwt", required = false) String token)
-//            throws ParseException, JOSEException {
-//
-//        String username = authenticationService.extractUsernameFromToken(token);
-//        if(username == null) {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
-//
-//        var cart = cartService.getOrCreateCart(username);
-//        List<CartItemResponse> cartItems = cartItemService.getCartItemsByCartId(cart.getCartId());
-//
-//        int totalQuantity = cartItems.stream()
-//                .mapToInt(i -> i.getQuantity())
-//                .sum();
-//
-//        double totalPrice = cartItems.stream()
-//                .mapToDouble(i -> i.getQuantity() * i.getUnitPrice())
-//                .sum();
-//
-//        return ResponseEntity.ok(new CartTotalsResponse(totalQuantity, totalPrice));
-//    }
-//
-//    public static class CartTotalsResponse {
-//        private int totalQuantity;
-//        private double totalPrice;
-//
-//        public CartTotalsResponse(int totalQuantity, double totalPrice) {
-//            this.totalQuantity = totalQuantity;
-//            this.totalPrice = totalPrice;
-//        }
-//
-//        public int getTotalQuantity() {
-//            return totalQuantity;
-//        }
-//
-//        public double getTotalPrice() {
-//            return totalPrice;
-//        }
-//    }
     @PostMapping("/cart/update/{cartItemId}")
     @ResponseBody
     public ResponseEntity<?> updateCartItem(
