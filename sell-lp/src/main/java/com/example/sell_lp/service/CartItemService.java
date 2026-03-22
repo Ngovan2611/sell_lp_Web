@@ -66,6 +66,7 @@ public class CartItemService {
             newItem.setCart(cartRepository.findById(cartId).orElseThrow());
             newItem.setVariant(productVariantService.getVariantEntityById(variantId));
             newItem.setQuantity(quantity);
+            newItem.setUnitPrice(productVariantService.getVariantEntityById(variantId).getPrice());
             cartItemRepository.save(newItem);
         }
     }
@@ -83,15 +84,12 @@ public class CartItemService {
         cartItemRepository.save(cartItem);
     }
     public List<CartItemResponse> getCartItemsByIds(List<String> cartItemIds) {
-        // Chuyển List<String> sang List<Long>
         List<Long> ids = cartItemIds.stream()
                 .map(Long::parseLong)
                 .toList();
 
-        // Query DB theo id
         List<CartItem> items = cartItemRepository.findAllById(ids);
 
-        // Map sang DTO
         return items.stream()
                 .map(cartItemMapper::toCartItemResponse)
                 .toList();

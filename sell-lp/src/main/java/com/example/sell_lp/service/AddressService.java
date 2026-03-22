@@ -28,13 +28,11 @@ public class AddressService {
     @Autowired
     private GeoCodingService geoCodingService;
 
-    public void saveAddress(AddressCreationRequest request) {
-        // Ghép fullAddress
+    public AddressResponse saveAddress(AddressCreationRequest request) {
         String fullAddress = String.join(", ", request.getStreet(),
                 request.getWard(), request.getDistrict(), request.getCity());
         request.setFullAddress(fullAddress);
 
-        // Lấy tọa độ từ OpenStreetMap
         Map<String, Object> geo = geoCodingService.getCoordinatesFromAddress(fullAddress);
         Double lat = null;
         Double lng = null;
@@ -53,6 +51,7 @@ public class AddressService {
         address.setLng(lng);
 
         addressRepository.save(address);
+        return addressMapper.toAddressResponse(address);
     }
     public List<AddressResponse> getAllAddressesByUsername(String username) {
         User user = userRepository.findByUsername(username);

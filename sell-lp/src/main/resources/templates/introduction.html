@@ -132,10 +132,10 @@
 
 <body>
 
-    <header th:replace="fragments/header :: header"></header>
+<div th:replace="~{fragments/header :: header}"></div>
 
     <div id="overlay"></div>
-    <div th:replace="fragments/sidebar :: aside"></div>
+<div th:replace="~{fragments/sidebar :: aside}"></div>
 
 
     <!-- BREADCRUMB -->
@@ -221,8 +221,8 @@
 
     </div>
 
-    <footer th:replace="fragments/footer :: footer"></footer>
-    <script th:src="@{/js/common.js}"></script>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/common.js}"></script>
 
 </body>
 

@@ -17,13 +17,13 @@
 
 <body>
 
-<header th:replace="fragments/header :: header"></header>
+<div th:replace="~{fragments/header :: header}"></div>
 <div class="breadcrumb">
     <a th:href="@{/home}">Trang chủ</a>  >
     <span>Thông tin cá nhân</span>
 </div>
 <div id="overlay"></div>
-<div th:replace="fragments/sidebar :: aside"></div>
+<div th:replace="~{fragments/sidebar :: aside}"></div>
 
 <div class="profile-container">
 
@@ -76,7 +76,7 @@
 
 </div>
 
-<footer th:replace="fragments/footer :: footer"></footer>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/common.js}"></script>
 
 

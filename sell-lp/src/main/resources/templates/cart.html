@@ -10,10 +10,10 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<header th:replace="fragments/header :: header"></header>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div id="overlay"></div>
-<div th:replace="fragments/sidebar :: aside"></div>
+<div th:replace="~{fragments/sidebar :: aside}"></div>
 <div class="breadcrumb">
     <a th:href="@{/home}">Trang chủ</a>  >
     <span>Giỏ hàng của bạn</span>

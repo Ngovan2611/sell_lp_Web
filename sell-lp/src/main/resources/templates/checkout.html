@@ -13,24 +13,26 @@
 
     <h2>Thanh toán</h2>
 
+
+
     <div class="box address-box">
         <h3>Địa chỉ nhận hàng</h3>
 
-        <div th:if="${address != null}">
+        <!-- luôn tồn tại -->
+        <div>
             <p>
-                <b id="selectedName" th:text="${address.recipientName}"></b> |
-                <span id="selectedPhone" th:text="${address.phone}"></span>
+                <b id="selectedName" th:text="${address?.recipientName} ?: ''"></b> |
+                <span id="selectedPhone" th:text="${address?.phone} ?: ''"></span>
             </p>
 
-            <p id="selectedAddress" th:text="${address.fullAddress}"></p>
-
+            <p id="selectedAddress" th:text="${address?.fullAddress} ?: 'Bạn chưa có địa chỉ'"></p>
             <a href="javascript:void(0)" onclick="openSelectAddressPopup()" class="link-change-address">
                 Thay đổi địa chỉ
             </a>
         </div>
 
-        <div class="address-empty">
-            <p th:if="${address == null}" >Bạn chưa có địa chỉ</p>
+        <div>
+
 
             <button class="btn-add-address" onclick="openAddressPopup()">
                 + Thêm địa chỉ
@@ -111,7 +113,7 @@
 
     <h3>Thêm địa chỉ</h3>
 
-    <form method="post" action="/address/create">
+    <form id="addAddressForm">
         <input type="text" name="recipientName" placeholder="Tên người nhận" required><br>
         <input type="text" name="phone" placeholder="SĐT" required><br>
         <input type="text" name="city" placeholder="Tỉnh/Thành phố" required><br>
@@ -121,40 +123,41 @@
 
         <button type="submit">Lưu</button>
     </form>
+
+    <div id="address-message" style="color:green; margin-top:10px;"></div>
 </div>
 <div id="selectAddressPopup" class="popup">
     <span class="close-btn" onclick="closeSelectAddressPopup()">×</span>
 
     <h3>Chọn địa chỉ</h3>
 
-    <div th:each="addr : ${addresses}" class="address-item">
-        <p>
-            <b th:text="${addr.recipientName}"></b> |
-            <span th:text="${addr.phone}"></span>
-        </p>
-        <p th:text="${addr.fullAddress}"></p>
+    <!-- container scrollable -->
+    <div class="address-list-container">
+        <div th:each="addr : ${addresses}" class="address-item">
+            <p>
+                <b th:text="${addr.recipientName}"></b> |
+                <span th:text="${addr.phone}"></span>
+            </p>
+            <p th:text="${addr.fullAddress}"></p>
 
-        <div style="margin-top:8px;">
-            <button type="button"
-                    th:attr="data-name=${addr.recipientName},
-                 data-phone=${addr.phone},
-                 data-address=${addr.fullAddress},
-                 data-id=${addr.addressId}"
-                    onclick="selectAddressFromBtn(this)">
-                Chọn
-            </button>
+            <div style="margin-top:8px;">
+                <button type="button"
+                        th:attr="data-name=${addr.recipientName},
+                                 data-phone=${addr.phone},
+                                 data-address=${addr.fullAddress},
+                                 data-id=${addr.addressId}"
+                        onclick="selectAddressFromBtn(this)">Chọn</button>
 
-            <button type="button"
-                    th:attr="data-id=${addr.addressId},
-                 data-name=${addr.recipientName},
-                 data-phone=${addr.phone},
-                 data-city=${addr.city},
-                 data-district=${addr.district},
-                 data-ward=${addr.ward},
-                 data-street=${addr.street}"
-                    onclick="openEditAddressPopupFromBtn(this)">
-                Sửa
-            </button>
+                <button type="button"
+                        th:attr="data-id=${addr.addressId},
+                                 data-name=${addr.recipientName},
+                                 data-phone=${addr.phone},
+                                 data-city=${addr.city},
+                                 data-district=${addr.district},
+                                 data-ward=${addr.ward},
+                                 data-street=${addr.street}"
+                        onclick="openEditAddressPopupFromBtn(this)">Sửa</button>
+            </div>
         </div>
     </div>
 </div>
@@ -175,11 +178,22 @@
         <button type="submit">Lưu thay đổi</button>
     </form>
 </div>
-<div id="successMessage">
+<div id="successMessage" style="display:none; color:green; margin-top:10px;">
     Địa chỉ đã được cập nhật thành công!
+</div>
+<div id="successPopup" class="success-popup">
+    <div class="success-content">
+        <svg class="checkmark-svg" viewBox="0 0 52 52">
+            <!-- vòng tròn -->
+            <circle class="circle" cx="26" cy="26" r="25" fill="none"/>
+            <!-- dấu tick -->
+            <path class="check" fill="none" d="M14 27 L22 35 L38 18"/>
+        </svg>
+
+        <p>Đặt hàng thành công</p>
+    </div>
 </div>
 <script th:src="@{/js/checkout.js}"></script>
 
 </body>
-
 </html>

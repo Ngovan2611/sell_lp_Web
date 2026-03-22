@@ -4,30 +4,21 @@ package com.example.sell_lp.controller;
 import com.example.sell_lp.dto.request.AddressCreationRequest;
 import com.example.sell_lp.dto.request.AddressUpdateRequest;
 import com.example.sell_lp.dto.response.AddressResponse;
-import com.example.sell_lp.dto.response.CartItemResponse;
-import com.example.sell_lp.dto.response.UserResponse;
+
 import com.example.sell_lp.service.AddressService;
 import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.CartItemService;
-import com.example.sell_lp.service.DistanceService;
-import com.example.sell_lp.service.UserService;
+
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 
 @Controller
@@ -39,20 +30,24 @@ public class AddressController {
     private AuthenticationService authenticationService;
 
 
-    @PostMapping("address/create")
-    public String createAddress(@ModelAttribute AddressCreationRequest addressCreationRequest,
-                                Model model, @CookieValue(value = "jwt", required = false) String token)
+    @PostMapping("/address/create")
+    @ResponseBody
+    public ResponseEntity<?> createAddress(@ModelAttribute AddressCreationRequest request,
+                                           @CookieValue(value = "jwt", required = false) String token)
             throws ParseException, JOSEException {
 
         String username = authenticationService.extractUsernameFromToken(token);
-        if(username == null) {
-            return "redirect:/login";
+        if (username == null) {
+            return ResponseEntity.status(401).body("Bạn chưa đăng nhập");
         }
-        model.addAttribute("username", username);
-        addressService.saveAddress(addressCreationRequest);
 
-        return "redirect:/checkout";
-
+        try {
+            // Lưu địa chỉ và trả về DTO để JS dùng
+            AddressResponse address = addressService.saveAddress(request);
+            return ResponseEntity.ok(address); // trả JSON
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
+        }
     }
 
 

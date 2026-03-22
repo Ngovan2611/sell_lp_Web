@@ -13,13 +13,13 @@
 
 
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 <div id="overlay"></div>
 <div class="breadcrumb">
     <a th:href="@{/home}">Trang chủ</a>  >
     <span>Sản phẩm</span>
 </div>
-<div th:replace="fragments/sidebar :: aside"></div>
+<div th:replace="~{fragments/sidebar :: aside}"></div>
 
 <h2 style="text-align:center">Danh sách sản phẩm</h2>
 
@@ -76,7 +76,7 @@
     </a>
 
 </div>
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/common.js}"></script>
 
 </body>
