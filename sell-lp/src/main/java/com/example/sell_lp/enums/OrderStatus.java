@@ -1,6 +1,6 @@
 package com.example.sell_lp.enums;
 
-public enum Statuses {
+public enum OrderStatus {
     PENDING,
     SUCCESS,
     FAILURE,

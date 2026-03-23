@@ -23,7 +23,6 @@
         <h2>Giỏ hàng của bạn</h2>
         <div class="cart-box" id="cartBox">
 
-            <!-- Nếu có sản phẩm -->
             <div th:if="${#lists.size(cartItems) > 0}">
                 <div class="cart-item"
                      th:each="item : ${cartItems}"

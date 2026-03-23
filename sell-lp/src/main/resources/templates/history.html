@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử đơn hàng</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            flex: 1;
+        }
+
+        .container {
+            width: 80%;
+            margin: 40px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+
+            min-height: 400px; /* 👈 QUAN TRỌNG */
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 12px 5px;
+            color: #666;
+            transition: all 0.25s ease;
+        }
+
+        .tab {
+            transition: all 0.25s ease;
+        }
+
+        .tab:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+        }ve {
+            color: #ee4d2d;
+            font-weight: 600;
+            transform: scale(1.1);
+        }
+
+        .moving-line {
+            position: absolute;
+            bottom: 0;
+            height: 2px;
+            background: #ee4d2d;
+            transition: all 0.3s ease;
+        }
+
+        /* ORDER CARD */
+        .order-card {
+            background: #fff;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        /* STATUS */
+        .order-status {
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            margin: 12px 16px;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #fb8c00;
+        }
+
+        .status-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-failure {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* ITEM */
+        .order-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            align-items: center;
+        }
+
+        .order-item img {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-info b {
+            font-size: 15px;
+            color: #222;
+        }
+
+        .item-info p {
+            margin: 3px 0;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: #ee4d2d;
+        }
+
+        /* TOTAL */
+        .total {
+            padding: 14px 16px;
+            text-align: right;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ee4d2d;
+            border-top: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        /* BUTTON */
+        .btn {
+            background: #ee4d2d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 16px 15px;
+            float: right;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #d8431f;
+        }
+
+        /* EMPTY */
+        .empty {
+            text-align: center;
+            padding: 60px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+<div id="overlay"></div>
+<div th:replace="~{fragments/sidebar :: aside}"></div>
+
+<div class="container">
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" onclick="filterOrders('ALL')">Tất cả</button>
+        <button class="tab" onclick="filterOrders('PENDING')">Chờ xử lý</button>
+        <button class="tab" onclick="filterOrders('SUCCESS')">Thành công</button>
+        <button class="tab" onclick="filterOrders('FAILURE')">Hủy</button>
+    </div>
+
+    <div class="empty" th:if="${orders.isEmpty()}">
+        <i class="fa-solid fa-box-open" style="font-size:40px; color:#ccc;"></i>
+        <p style="margin-top:10px;">Bạn chưa có đơn hàng nào</p>
+    </div>
+
+    <div th:each="order : ${orders}"
+         class="order-card"
+         th:attr="data-status=${order.status}">
+
+        <div class="order-status" th:switch="${order.status}"
+             th:classappend=" ${order.status == 'PENDING'}
+              ? 'status-pending' : (${order.status == 'SUCCESS'} ? 'status-success' : 'status-failure')">
+            <span th:case="'PENDING'">Chờ xử lý</span>
+            <span th:case="'SUCCESS'">Thành công</span>
+            <span th:case="'FAILURE'">Thất bại</span>
+        </div>
+
+        <div th:each="item : ${order.items}" class="order-item">
+            <img th:src="${item.imageUrl}">
+
+            <div class="item-info">
+                <b th:text="${item.productName}"></b>
+                <p th:text="${item.variantName}"></p>
+                <p>Số lượng: <span th:text="${item.quantity}"></span></p>
+            </div>
+
+            <div class="item-price"
+                 th:text="${#numbers.formatDecimal(item.unitPrice,0,'COMMA',0,'POINT')} + 'đ'">
+            </div>
+        </div>
+
+        <div class="total">
+            Tổng tiền:
+            <span th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'đ'"></span>
+        </div>
+
+        <button class="btn">Xem chi tiết</button>
+
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function filterOrders(status) {
+        const orders = document.querySelectorAll('.order-card');
+        const tabs = document.querySelectorAll('.tab');
+        const container = document.querySelector('.tabs');
+
+        tabs.forEach(t => t.classList.remove('active'));
+        const activeTab = event.target;
+        activeTab.classList.add('active');
+
+        // underline
+        let line = container.querySelector('.moving-line');
+        if (!line) {
+            line = document.createElement('div');
+            line.classList.add('moving-line');
+            container.appendChild(line);
+        }
+
+        const rect = activeTab.getBoundingClientRect();
+        const parentRect = container.getBoundingClientRect();
+
+        line.style.width = rect.width + 'px';
+        line.style.left = (rect.left - parentRect.left) + 'px';
+
+        // filter + animation
+        orders.forEach(order => {
+            const s = order.getAttribute('data-status');
+
+            if (status === 'ALL' || s === status) {
+                order.style.display = 'block';
+                order.style.opacity = 0;
+                order.style.transform = 'translateY(10px)';
+
+                setTimeout(() => {
+                    order.style.transition = '0.3s';
+                    order.style.opacity = 1;
+                    order.style.transform = 'translateY(0)';
+                }, 50);
+
+            } else {
+                order.style.opacity = 0;
+                order.style.transform = 'translateY(10px)';
+                setTimeout(() => order.style.display = 'none', 200);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

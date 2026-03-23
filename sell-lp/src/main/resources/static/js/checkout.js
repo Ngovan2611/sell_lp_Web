@@ -209,7 +209,7 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
 
             // redirect sau 2s
             setTimeout(() => {
-                window.location.href = "/cart";
+                window.location.href = "/history-order";
             }, 2000);
         })
         .catch(() => {
@@ -223,16 +223,15 @@ function showSuccessPopup() {
 
     const content = popup.querySelector(".success-content");
     content.style.animation = "none";
-    content.offsetHeight; // trigger reflow
+    content.offsetHeight;
     content.style.animation = "";
 
-    // 👇 rung thật nếu thiết bị hỗ trợ
     if (navigator.vibrate) {
         navigator.vibrate([50, 30, 50]);
     }
 
     setTimeout(() => {
         popup.style.display = "none";
-        window.location.href = "/cart";
+        window.location.href = "/history-order";
     }, 2200);
 }

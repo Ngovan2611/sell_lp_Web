@@ -16,7 +16,7 @@ public interface CartItemMapper {
 
     @Mapping(source = "cartId", target = "cart.cartId")
     @Mapping(source = "variantId", target = "variant.variantId")
-    public abstract CartItem toCartItem(CartItemCreationRequest request);
+    CartItem toCartItem(CartItemCreationRequest request);
 
     @Named("mapCart")
     default Cart mapCart(Integer cartId) {
@@ -34,5 +34,5 @@ public interface CartItemMapper {
         return variant;
     }
 
-    public abstract CartItemResponse toCartItemResponse(CartItem cartItem);
+    CartItemResponse toCartItemResponse(CartItem cartItem);
 }

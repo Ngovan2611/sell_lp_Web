@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,8 +32,10 @@ public class OrderItem {
     String imageUrl;
 
     @ManyToOne
+    @JoinColumn(name = "order_id")
     Order order;
 
     @ManyToOne
+    @JoinColumn(name = "variant_id")
     ProductVariant variant;
 }
