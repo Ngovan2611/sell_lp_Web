@@ -5,6 +5,10 @@ body {
     padding: 0;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 .cart-container {
     width: 100%;
     max-width: 1200px;

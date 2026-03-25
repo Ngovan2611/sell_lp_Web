@@ -1,9 +1,7 @@
 package com.example.sell_lp.controller;
 
-import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.dto.response.ProductResponse;
 import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.ProductService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -17,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,8 +24,6 @@ public class ProductController {
     ProductService productService;
 
     AuthenticationService authenticationService;
-
-    CategoryService categoryService;
 
     @GetMapping("/products")
     public String showProducts(
@@ -43,7 +38,6 @@ public class ProductController {
         }
 
         String username = authenticationService.extractUsernameFromToken(token);
-        List<CategoryResponse> categories = categoryService.findAll();
         if (username == null) {
             return "redirect:/login";
         }
@@ -59,7 +53,6 @@ public class ProductController {
                     productService.getAllProductsByCategory(categoryId, pageable);
         }
         model.addAttribute("username", username);
-        model.addAttribute("categories", categories);
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);

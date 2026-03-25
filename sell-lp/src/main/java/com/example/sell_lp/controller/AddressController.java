@@ -4,10 +4,8 @@ package com.example.sell_lp.controller;
 import com.example.sell_lp.dto.request.AddressCreationRequest;
 import com.example.sell_lp.dto.request.AddressUpdateRequest;
 import com.example.sell_lp.dto.response.AddressResponse;
-
 import com.example.sell_lp.service.AddressService;
 import com.example.sell_lp.service.AuthenticationService;
-
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.text.ParseException;
 
 
@@ -42,7 +39,6 @@ public class AddressController {
         }
 
         try {
-            // Lưu địa chỉ và trả về DTO để JS dùng
             AddressResponse address = addressService.saveAddress(request);
             return ResponseEntity.ok(address); // trả JSON
         } catch (RuntimeException e) {

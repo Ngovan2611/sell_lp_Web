@@ -29,15 +29,22 @@
                      th:attr="data-cart-item-id=${item.cartItemId}">
 
                     <input type="checkbox" class="select-item"
-                           th:value="${item.variant.product.productId}"
+                           th:value="${item.cartItemId}"
                            th:attr="data-price=${item.quantity * item.variant.price}"
                            onchange="updateTotal()" />
 
-                    <img th:src="@{${item.variant.product.images[0].url}}" />
+                    <img th:src="${#lists.isEmpty(item.variant.product.images)
+             ? '/images/default-product.jpg'
+             : item.variant.product.images[0].url}"
+                         alt="Product Image" />
 
                     <div class="item-info">
-                        <h3 th:text="${item.variant.product.name}"></h3>
-                        <p th:text="${item.variant.color.colorName + ' / ' + item.variant.ram.ramSize + ' / ' + item.variant.rom.romSize}"></p>
+                        <strong th:text="${item.variant.product.name}">Tên sản phẩm</strong>
+                        <br/>
+                        <small class="text-muted" th:text="${item.variant.color?.colorName
+                            + (item.variant.ram != null ? ' / ' + item.variant.ram.ramSize + 'GB RAM' : '')
+                            + (item.variant.rom != null ? ' / ' + item.variant.rom.romSize + 'GB ROM' : '')}">
+                        </small>
                     </div>
 
                     <div class="item-quantity">
@@ -55,7 +62,6 @@
                 </div>
             </div>
 
-            <!-- Nếu giỏ hàng trống -->
             <div class="empty-cart" th:if="${#lists.isEmpty(cartItems)}">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <p>Giỏ hàng của bạn đang trống</p>

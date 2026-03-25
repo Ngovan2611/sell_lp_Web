@@ -6,6 +6,7 @@ import com.example.sell_lp.entity.OrderItem;
 import com.example.sell_lp.entity.ProductVariant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {
@@ -22,4 +23,6 @@ public interface OrderItemMapper {
         v.setVariantId(variantId);
         return v;
     }
+
+
 }

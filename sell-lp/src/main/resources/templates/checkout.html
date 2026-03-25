@@ -45,11 +45,18 @@
         <h3>Sản phẩm</h3>
 
         <div th:each="item : ${items}" class="item">
-            <img th:src="@{${item.variant.product.images[0].url}}">
-
+            <img th:src="${#lists.isEmpty(item.variant.product.images)
+             ? '/images/default-product.jpg'
+             : item.variant.product.images[0].url}"
+                 style="width: 80px; height: auto;"
+                 alt="Ảnh sản phẩm">
             <div>
                 <h4 th:text="${item.variant.product.name}"></h4>
                 <p>Số lượng: <span th:text="${item.quantity}"></span></p>
+                <small class="text-muted" th:text="${item.variant.color?.colorName
+                            + (item.variant.ram != null ? ' / ' + item.variant.ram.ramSize + 'GB RAM' : '')
+                            + (item.variant.rom != null ? ' / ' + item.variant.rom.romSize + 'GB ROM' : '')}">
+                </small>
             </div>
 
             <div>

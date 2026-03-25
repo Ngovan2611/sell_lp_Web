@@ -32,8 +32,4 @@ public class PaymentController {
 
         return "redirect:/cart";
     }
-    @GetMapping("/history")
-    public String history() {
-        return "history";
-    }
 }

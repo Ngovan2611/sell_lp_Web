@@ -24,7 +24,6 @@ function selectOption(btn, type) {
 function updateVariant() {
     const variants = document.querySelectorAll(".variant-item");
 
-    // Tìm variant khớp hoàn toàn
     let found = null;
 
     variants.forEach(v => {
@@ -49,7 +48,6 @@ function updateVariant() {
         stockEl.innerText = "Còn lại: " + found.dataset.stock;
         document.getElementById("variantId").value = found.dataset.id;
     } else {
-        // Chưa chọn hết option, hiển thị khoảng giá
         let prices = Array.from(variants).map(v => Number(v.dataset.price));
         let minPrice = Math.min(...prices);
         let maxPrice = Math.max(...prices);
@@ -151,6 +149,67 @@ function renderProducts() {
     }
 }
 
-// lần đầu render 5 sản phẩm
 renderProducts();
 document.getElementById("loadMoreBtn").addEventListener("click", renderProducts);
+
+function addToCart() {
+    const variantId = document.getElementById("variantId").value;
+
+    if (!variantId) {
+        showError("Vui lòng chọn phiên bản!");
+        return;
+    }
+
+    fetch('/cart/add?variantId=' + variantId, {
+        method: 'POST'
+    })
+        .then(res => {
+            if (res.status === 401) {
+                window.location.href = "/login";
+                return;
+            }
+            return res.text();
+        })
+        .then(data => {
+            if (data === "SUCCESS") {
+                showSuccess("Đã thêm vào giỏ hàng");
+            } else {
+                showError(data);
+            }
+        })
+        .catch(() => showError("Lỗi hệ thống"));
+}
+
+function showSuccess(message) {
+    const box = document.getElementById("success-box");
+    const text = document.getElementById("success-text");
+
+    text.innerText = message;
+    box.style.display = "block";
+    box.classList.add("show");
+
+    setTimeout(() => {
+        box.classList.remove("show");
+        setTimeout(() => box.style.display = "none", 300);
+    }, 3000);
+}
+
+function showError(message) {
+    const box = document.getElementById("error-message");
+    if (box) {
+        box.querySelector("span").innerText = message;
+        box.classList.add("show");
+        setTimeout(() => box.classList.remove("show"), 3000);
+    } else {
+        alert(message);
+    }
+}
+function buyNow() {
+    const vId = document.getElementById("variantId").value;
+    if (!vId) {
+        showError("Vui lòng chọn phiên bản!");
+        return;
+    }
+    // Chuyển hướng thẳng đến /buy-now
+    window.location.href = `/buy-now?variantId=${vId}&qty=1`;
+}

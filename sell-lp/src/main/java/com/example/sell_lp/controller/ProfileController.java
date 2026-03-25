@@ -28,9 +28,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProfileController {
 
-
-    CategoryService categoryService;
-
     UserService userService;
 
     AuthenticationService authenticationService;
@@ -43,8 +40,6 @@ public class ProfileController {
             return "redirect:/login";
         }
         String username =  authenticationService.extractUsernameFromToken(token);
-        List<CategoryResponse> categories = categoryService.findAll();
-        model.addAttribute("categories", categories);
         UserResponse user = userService.getUserByUsername(username);
         model.addAttribute("username", username);
         model.addAttribute("user", user);

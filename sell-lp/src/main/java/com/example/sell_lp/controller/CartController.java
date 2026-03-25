@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -39,16 +41,14 @@ public class CartController {
 
         var cart = cartService.getOrCreateCart(username);
         List<CartItemResponse> cartItems = cartItemService.getCartItemsByCartId(cart.getCartId());
-        List<CategoryResponse> categories = categoryService.findAll();
+        List<CartItemResponse> reversedCartItem = new ArrayList<>(cartItems);
+        Collections.reverse(reversedCartItem);
         double total = cartItems.stream()
                 .mapToDouble(i -> i.getUnitPrice() * i.getQuantity())
                 .sum();
-
         model.addAttribute("totalPrice", total);
-        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("cartItems", reversedCartItem);
         model.addAttribute("username", username);
-        model.addAttribute("categories", categories);
-
         return "cart";
     }
 

@@ -1,22 +1,20 @@
 package com.example.sell_lp.controller;
 
 
-import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.dto.response.ProductResponse;
 import com.example.sell_lp.dto.response.ProductVariantResponse;
 import com.example.sell_lp.entity.Cart;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CartItemService;
 import com.example.sell_lp.service.CartService;
-import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.ProductService;
 import com.example.sell_lp.service.ProductVariantService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,8 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.web.bind.annotation.ResponseBody;
 import java.text.ParseException;
 import java.util.List;
 
@@ -39,7 +36,6 @@ public class ProductDetailController {
 
     ProductService productService;
 
-    CategoryService categoryService;
 
     CartService cartService;
 
@@ -77,12 +73,10 @@ public class ProductDetailController {
                 .distinct()
                 .toList();
 
-        List<CategoryResponse> categories = categoryService.findAll();
         List<ProductResponse> relatedProducts = productService.
                 getRelatedProducts(product.getCategory(), productId, PageRequest.of(0, 10));
 
         model.addAttribute("relatedProducts", relatedProducts);
-        model.addAttribute("categories", categories);
         model.addAttribute("variants", productVariant);
         model.addAttribute("product", product);
         model.addAttribute("colors", colors);
@@ -95,29 +89,24 @@ public class ProductDetailController {
 
 
     @PostMapping("/cart/add")
-    public String addToCart(@RequestParam Long variantId,
-                            Model model,
-                            RedirectAttributes redirectAttributes,
-                            @CookieValue(value = "jwt", required = false) String token)
+    @ResponseBody
+    public ResponseEntity<?> addToCartAjax(@RequestParam Long variantId,
+                                           @CookieValue(value = "jwt", required = false) String token)
             throws ParseException, JOSEException {
 
-
         String username = authenticationService.extractUsernameFromToken(token);
-        if(username == null) {
-            return "redirect:/login";
+        if (username == null) {
+            return ResponseEntity.status(401).body("NOT_LOGIN");
         }
-        Cart cart = cartService.getOrCreateCart(username);
-        ProductVariantResponse variantResponse = productVariantService.getVariantById(variantId);
+
         try {
+            Cart cart = cartService.getOrCreateCart(username);
             cartItemService.addOrUpdateCartItem(cart.getCartId(), variantId, 1);
-            redirectAttributes.addFlashAttribute("success", "Thêm thành công");
 
-            model.addAttribute("username", username);
-        }catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return ResponseEntity.ok("SUCCESS");
 
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return "redirect:/product/" + variantResponse.getProductId();
     }
-
 }

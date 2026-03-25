@@ -91,6 +91,15 @@
         align-items: center;
         justify-content: center;
     }
+    /* Ẩn các button variant nếu không có chữ bên trong */
+    .variant-group button:empty {
+        display: none;
+    }
+
+    /* Nếu tất cả button bên trong đều ẩn, ẩn luôn cả nhóm (Dùng cho trình duyệt hiện đại) */
+    .variant-group:has(button:empty:only-of-type) {
+        display: none;
+    }
 </style>
 
 <div th:replace="~{fragments/header :: header}"></div>
@@ -131,54 +140,48 @@
             </button>
         </div>
 
-        <div class="variant-group" th:if="${rams != null and !rams.isEmpty()}">
-            <b>RAM:</b><br>
-            <button th:each="r : ${rams}" th:text="${r}" th:attr="data-ram=${r}"
-                    onclick="selectOption(this, 'ram')">
-            </button>
-        </div>
-
-        <!-- ROM -->
-        <div class="variant-group" th:if="${roms != null and !roms.isEmpty()}">
+        <div class="variant-group" th:if="${not #lists.isEmpty(roms) and roms[0] != null and roms[0] != ''}">
             <b>Bộ nhớ:</b><br>
-            <button th:each="r : ${roms}" th:text="${r}" th:attr="data-rom=${r}"
+            <button th:each="r : ${roms}" th:if="${r != null and r != ''}"
+                    th:text="${r}" th:attr="data-rom=${r}"
                     onclick="selectOption(this, 'rom')">
             </button>
         </div>
 
-        <!-- Stock info -->
+        <div class="variant-group" th:if="${not #lists.isEmpty(rams) and rams[0] != null and rams[0] != ''}">
+            <b>RAM:</b><br>
+            <button th:each="r : ${rams}" th:if="${r != null and r != ''}"
+                    th:text="${r}" th:attr="data-ram=${r}"
+                    onclick="selectOption(this, 'ram')">
+            </button>
+        </div>
+
         <div id="stock"></div>
 
-        <!-- Action buttons -->
         <div class="actions">
             <button class="add-cart-btn" onclick="addToCart()">
                 <i class="fa-solid fa-cart-arrow-down"></i>
                 Thêm vào giỏ hàng
             </button>
-            <button class="buy-btn">Mua ngay</button>
-        </div>
+            <button class="buy-btn" onclick="buyNow()">Mua ngay</button>        </div>
 
-        <!-- hidden input lưu variantId -->
         <input type="hidden" id="variantId">
     </div>
 
 </div>
 
-<!-- Variant data hidden -->
-<div th:each="v : ${variants}" class="variant-item" th:attr="
-        data-id=${v.variantId},
-        data-color=${v.colorName},
-        data-ram=${v.ramSize},
-        data-rom=${v.romSize},
-        data-price=${v.price},
-        data-stock=${v.stockQty}">
+<div th:each="v : ${variants}" class="variant-item"
+     th:attr="data-id=${v.variantId},
+              data-color=${v.colorName},
+              data-ram=${v.ramSize ?: ''},
+              data-rom=${v.romSize ?: ''},
+              data-price=${v.price},
+              data-stock=${v.stockQty}">
 </div>
 
 <div class="related-products-wrapper">
-    <!-- Container để JS append sản phẩm -->
     <div class="products" id="relatedProducts"></div>
 
-    <!-- Dữ liệu ẩn -->
     <div id="relatedProductsData" style="display:none;">
         <div th:each="p : ${relatedProducts}"
              th:attr="data-id=${p.productId}, data-name=${p.name}, data-desc=${p.description}, data-img=${p.imageUrl}">
@@ -192,44 +195,16 @@
     <input type="hidden" name="variantId" id="variantIdForm">
     <input type="hidden" name="quantity" value="1">
 </form>
-<div th:if="${error}" id="error-message" class="error-box show">
-    <p>
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <span th:text="${error}"></span>
+<div id="success-box" class="error-box" style="display:none;">
+    <p style="background:#2e7d32;border:none;">
+        <i class="fa-solid fa-check"></i>
+        <span id="success-text"></span>
     </p>
 </div>
-<script>
-
-    function addToCart() {
-        const variantId = document.getElementById("variantId").value;
-
-        if (!variantId) {
-            alert("Vui lòng chọn phiên bản!");
-            return;
-        }
-
-        document.getElementById("variantIdForm").value = variantId;
-
-        document.getElementById("addToCartForm").submit();
-    }
-
-
-</script>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/common.js}"></script>
 <script th:src="@{/js/product-detail.js}"></script>
-<script>
-    window.addEventListener("DOMContentLoaded", () => {
-        const errorBox = document.getElementById("error-message");
-        if (errorBox) {
-            requestAnimationFrame(() => errorBox.classList.add("show"));
-            setTimeout(() => {
-                errorBox.classList.remove("show");
-            }, 3000);
-        }
-    });
-</script>
 </body>
 
 </html>

@@ -2,10 +2,8 @@ package com.example.sell_lp.controller;
 
 
 import com.example.sell_lp.dto.request.UserChangePasswordRequest;
-import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.dto.response.UserResponse;
 import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.UserService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -17,10 +15,10 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
-
 import java.text.ParseException;
-import java.util.List;
+
+
+
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
@@ -29,20 +27,15 @@ public class ChangePasswordController {
 
     AuthenticationService authenticationService;
 
-    CategoryService categoryService;
-
-
     @GetMapping("/change-password")
     public String showChangePasswordForm(Model model,
                                          @CookieValue(value = "jwt", required = false) String token)
             throws ParseException, JOSEException {
 
         String username = authenticationService.extractUsernameFromToken(token);
-        List<CategoryResponse> categories = categoryService.findAll();
         UserResponse user = userService.getUserByUsername(username);
         model.addAttribute("username", username);
         model.addAttribute("provider", user.getProvider());
-        model.addAttribute("categories", categories);
         return "password-change";
     }
 

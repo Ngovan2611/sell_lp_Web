@@ -27,6 +27,9 @@
     object-fit: contain;
     margin-bottom: 12px;
     transition: 0.4s;
+    z-index: 1;
+    position: relative;
+
 }
 
 .product:hover img {
@@ -52,13 +55,15 @@
 .product::before {
     content: "HOT";
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 10px;
+    left: 10px;
     background: #e50914;
     color: white;
     font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 6px;
+    padding: 5px 10px;
+    border-radius: 20px; /* 👈 bo tròn đẹp hơn */
+    font-weight: bold;
+    z-index: 2;
 }
 
 .product::after {

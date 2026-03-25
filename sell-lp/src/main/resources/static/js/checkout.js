@@ -193,27 +193,39 @@ document.getElementById("addAddressForm").addEventListener("submit", function(e)
 document.getElementById("orderForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
+    const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!selectedPayment) {
+        showError("Vui lòng chọn phương thức thanh toán!");
+        return;
+    }
+    document.getElementById("paymentMethodInput").value = selectedPayment.value;
+
+    const addressId = document.getElementById("selectedAddressId").value;
+    if (!addressId || addressId === "" || addressId === "null") {
+        alert("Bạn chưa chọn địa chỉ giao hàng. Vui lòng thêm hoặc chọn một địa chỉ!");
+        openAddressPopup();
+        return;
+    }
+
     const form = e.target;
     const data = new FormData(form);
+
+    console.log("Đang tạo đơn hàng với địa chỉ ID:", addressId);
 
     fetch("/order/create", {
         method: "POST",
         body: data
     })
         .then(res => {
-            if(!res.ok) throw new Error("Lỗi");
+            if(!res.ok) return res.text().then(text => { throw new Error(text) });
             return res.text();
         })
         .then(() => {
             showSuccessPopup();
-
-            // redirect sau 2s
-            setTimeout(() => {
-                window.location.href = "/history-order";
-            }, 2000);
         })
-        .catch(() => {
-            alert("Đặt hàng thất bại!");
+        .catch(err => {
+            console.error("Lỗi tạo order:", err);
+            alert("Đặt hàng thất bại: " + err.message);
         });
 });
 function showSuccessPopup() {

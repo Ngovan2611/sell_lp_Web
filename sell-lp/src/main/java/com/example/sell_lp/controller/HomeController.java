@@ -1,14 +1,11 @@
 package com.example.sell_lp.controller;
 
-import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.dto.response.ProductResponse;
 import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.CategoryService;
 import com.example.sell_lp.service.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -20,7 +17,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
 public class HomeController {
-    CategoryService categoryService;
 
     AuthenticationService authenticationService;
 
@@ -33,9 +29,6 @@ public class HomeController {
                        @CookieValue(value = "jwt", required = false) String token) {
 
         try {
-            List<CategoryResponse> categories = categoryService.findAll();
-            model.addAttribute("categories", categories);
-
             List<ProductResponse> laps =
                     productService.getAllProductsByCategoryDemo(1)
                             .stream()

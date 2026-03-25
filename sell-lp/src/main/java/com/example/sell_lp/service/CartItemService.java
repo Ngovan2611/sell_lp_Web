@@ -3,16 +3,22 @@ package com.example.sell_lp.service;
 
 import com.example.sell_lp.dto.request.CartItemCreationRequest;
 import com.example.sell_lp.dto.response.CartItemResponse;
+import com.example.sell_lp.dto.response.ProductVariantResponse;
 import com.example.sell_lp.entity.CartItem;
+import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.CartItemMapper;
+import com.example.sell_lp.mapper.ProductVariantResponseMapper;
 import com.example.sell_lp.repository.CartItemRepository;
 import com.example.sell_lp.repository.CartRepository;
+import com.example.sell_lp.repository.ProductVariantRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +31,10 @@ public class CartItemService {
     CartRepository cartRepository;
 
     ProductVariantService productVariantService;
+
+    ProductVariantRepository productVariantRepository;
+
+    ProductVariantResponseMapper productVariantResponseMapper;
 
     public void createCartItem(CartItemCreationRequest request) {
         CartItem cartItem = cartItemMapper.toCartItem(request);
@@ -42,12 +52,16 @@ public class CartItemService {
     }
 
     public void addOrUpdateCartItem(Integer cartId, Long variantId, Integer quantity) {
-        CartItem existingItem = cartItemRepository
+
+        Optional<CartItem> optional = cartItemRepository
                 .findByCart_CartIdAndVariant_VariantId(cartId, variantId);
 
-        int stock = productVariantService.getVariantEntityById(variantId).getStockQty();
+        ProductVariant variant = productVariantService.getVariantEntityById(variantId);
+        int stock = variant.getStockQty();
 
-        if (existingItem != null) {
+        if (optional.isPresent()) {
+
+            CartItem existingItem = optional.get();
             int newQty = existingItem.getQuantity() + quantity;
 
             if (newQty > stock) {
@@ -58,18 +72,21 @@ public class CartItemService {
             cartItemRepository.save(existingItem);
 
         } else {
+
             if (quantity > stock) {
                 throw new RuntimeException("Vượt quá tồn kho");
             }
 
             CartItem newItem = new CartItem();
             newItem.setCart(cartRepository.findById(cartId).orElseThrow());
-            newItem.setVariant(productVariantService.getVariantEntityById(variantId));
+            newItem.setVariant(variant);
             newItem.setQuantity(quantity);
             newItem.setUnitPrice(productVariantService.getVariantEntityById(variantId).getPrice());
             cartItemRepository.save(newItem);
         }
     }
+
+
     public void updateQuantity(Long cartItemId, Integer quantity) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
@@ -93,5 +110,18 @@ public class CartItemService {
         return items.stream()
                 .map(cartItemMapper::toCartItemResponse)
                 .toList();
+    }
+    public CartItemResponse createImmediateCheckoutItem(Long variantId, int quantity) {
+        // 1. Tìm Variant từ Database
+        ProductVariant variant = productVariantRepository.findById(variantId)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+        CartItemResponse response = new CartItemResponse();
+
+        response.setVariant(variant);
+        response.setQuantity(quantity);
+        response.setUnitPrice(variant.getPrice());
+
+        return response;
     }
 }
