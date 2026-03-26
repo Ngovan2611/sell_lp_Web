@@ -103,5 +103,4 @@ function goToCheckout() {
         return;
     }
 
-    // chuyển sang trang order, truyền list id
     window.location.href = "/checkout?ids=" + selectedItems.join(",");    }

@@ -22,7 +22,6 @@
 <div class="container">
 
     <div class="order-box">
-
         <div class="order-header">
             <div>
                 <h2>Đơn hàng #<span th:text="${order.orderId}"></span></h2>
@@ -32,78 +31,97 @@
                 </p>
             </div>
 
-            <div class="order-status"
+            <div class="order-status" th:switch="${order.status}"
                  th:classappend="${order.status == 'PENDING'} ? 'status-pending' :
-                         (${order.status == 'SUCCESS'} ? 'status-success' : 'status-failure')">
-
-        <span th:text="${order.status == 'PENDING' ? 'Chờ xử lý' :
-          (order.status == 'SUCCESS' ? 'Thành công' : 'Thất bại')}"></span>
+                                (${order.status == 'SUCCESS' || order.status == 'PAID'} ? 'status-success' : 'status-failure')">
+                <span th:case="'PENDING'">Chờ xử lý</span>
+                <span th:case="'PAID'">Đang xử lý (Đã thanh toán)</span>
+                <span th:case="'SUCCESS'">Hoàn thành</span>
+                <span th:case="'CANCELLED'">Đã hủy</span>
+                <span th:case="'FAILURE'">Thất bại</span>
             </div>
         </div>
 
-        <!-- ADDRESS -->
-        <div class="address-box">
-            <div class="address-title">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>Địa chỉ nhận hàng</span>
+        <div class="info-grid">
+            <div class="address-box">
+                <div class="box-title">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Địa chỉ nhận hàng</span>
+                </div>
+                <div class="address-content">
+                    <p class="name">
+                        <b th:text="${order.recipientName}"></b>
+                        <span th:text="${order.phone}"></span>
+                    </p>
+                    <p class="full-address" th:text="${order.fullAddress}"></p>
+                </div>
             </div>
 
-            <div class="address-content">
-                <p class="name">
-                    <b th:text="${order.recipientName}"></b>
-                    <span th:text="${order.phone}"></span>
-                </p>
-                <p class="full-address" th:text="${order.fullAddress}"></p>
+            <div class="payment-box">
+                <div class="box-title">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Trạng thái thanh toán</span>
+                </div>
+                <div class="payment-content">
+                    <div th:with="paidPayment=${order.payments != null ? #lists.toList(order.payments).?[status == 'SUCCESS'] : null}">
+                        <div th:if="${paidPayment != null and !paidPayment.isEmpty()}">
+                            <p class="payment-status success">
+                                <i class="fa-solid fa-circle-check"></i> Đã thanh toán thành công
+                            </p>
+                            <p class="payment-detail" th:text="'Qua: ' + ${paidPayment[0].method}"></p>
+                            <p class="payment-detail" th:text="'Mã GD: ' + ${paidPayment[0].transactionId}"></p>
+                            <p class="payment-detail" th:if="${paidPayment != null && !paidPayment.isEmpty()}">
+                                <span th:text="'Thanh toán lúc: ' + ${#temporals.format(paidPayment[0].paidAt, 'hh:mm:ss | dd/MM/yyyy ')}"></span>
+                            </p>                      </div>
+                        <div th:unless="${paidPayment != null and !paidPayment.isEmpty()}">
+                            <p class="payment-status pending">
+                                <i class="fa-solid fa-clock"></i> Chưa thanh toán / Chờ thanh toán
+                            </p>
+                            <p class="payment-detail">Phương thức: Thanh toán khi nhận hàng (COD) hoặc VNPay chưa hoàn tất.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- ITEMS -->
         <div class="items-box">
             <div th:each="item : ${order.items}" class="order-item">
                 <img th:src="${item.imageUrl}">
-
                 <div class="item-info">
                     <b th:text="${item.productName}"></b>
                     <p th:text="${item.variantName}"></p>
                     <p>x<span th:text="${item.quantity}"></span></p>
                 </div>
-
                 <div class="item-price">
                     <span th:text="${#numbers.formatDecimal(item.unitPrice,0,'COMMA',0,'POINT')}"></span> đ
                 </div>
             </div>
         </div>
 
-        <!-- SUMMARY -->
         <div class="summary">
             <div class="row">
                 <span>Tạm tính</span>
-                <span th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'đ'"></span>
+                <span th:text="${#numbers.formatDecimal(order.totalAmount - 30000,0,'COMMA',0,'POINT')} + 'đ'"></span>
             </div>
-
+            <div class="row">
+                <span>Phí vận chuyển</span>
+                <span>30,000đ</span>
+            </div>
             <div class="row total">
-                <span>Tổng tiền</span>
+                <span>Tổng cộng</span>
                 <span th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'đ'"></span>
             </div>
         </div>
-
     </div>
 
     <div class="actions">
-
         <a href="/history-order" class="btn-back">
-            <i class="fa-solid fa-left-long"></i>
-            Quay lại
+            <i class="fa-solid fa-left-long"></i> Quay lại
         </a>
-
-        <button class="btn-cancel"
-                th:if="${order.status == 'PENDING'}"
-                th:attr="data-id=${order.orderId}">
-            Hủy đơn
+        <button class="btn-cancel" th:if="${order.status == 'PENDING'}" th:attr="data-id=${order.orderId}">
+            Hủy đơn hàng
         </button>
-
     </div>
-
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>

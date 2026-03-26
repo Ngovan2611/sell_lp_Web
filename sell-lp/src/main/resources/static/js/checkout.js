@@ -153,7 +153,6 @@ document.getElementById("addAddressForm").addEventListener("submit", function(e)
             form.reset();
             closeAddressPopup();
 
-            // thêm địa chỉ vào popup chọn
             const container = document.querySelector(".address-list-container");
             const div = document.createElement("div");
             div.className = "address-item";
@@ -180,7 +179,6 @@ document.getElementById("addAddressForm").addEventListener("submit", function(e)
         `;
             container.appendChild(div);
 
-            // tự chọn địa chỉ mới
             selectAddressFromBtn(div.querySelector("button"));
         })
         .catch(err => {
@@ -191,42 +189,35 @@ document.getElementById("addAddressForm").addEventListener("submit", function(e)
         });
 });
 document.getElementById("orderForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
     const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+
     if (!selectedPayment) {
-        showError("Vui lòng chọn phương thức thanh toán!");
+        e.preventDefault();
+        alert("Vui lòng chọn phương thức thanh toán!");
         return;
     }
-    document.getElementById("paymentMethodInput").value = selectedPayment.value;
 
     const addressId = document.getElementById("selectedAddressId").value;
     if (!addressId || addressId === "" || addressId === "null") {
-        alert("Bạn chưa chọn địa chỉ giao hàng. Vui lòng thêm hoặc chọn một địa chỉ!");
+        e.preventDefault();
+        alert("Vui lòng chọn hoặc thêm địa chỉ giao hàng!");
         openAddressPopup();
         return;
     }
 
-    const form = e.target;
-    const data = new FormData(form);
+    document.getElementById("paymentMethodInput").value = selectedPayment.value;
 
-    console.log("Đang tạo đơn hàng với địa chỉ ID:", addressId);
+    if (selectedPayment.value === "COD") {
+        e.preventDefault();
+        console.log("Đang đặt hàng COD...");
+        showSuccessPopup();
+        setTimeout(() => {
+            e.target.submit();
+        }, 2200);
 
-    fetch("/order/create", {
-        method: "POST",
-        body: data
-    })
-        .then(res => {
-            if(!res.ok) return res.text().then(text => { throw new Error(text) });
-            return res.text();
-        })
-        .then(() => {
-            showSuccessPopup();
-        })
-        .catch(err => {
-            console.error("Lỗi tạo order:", err);
-            alert("Đặt hàng thất bại: " + err.message);
-        });
+    } else if (selectedPayment.value === "VNPAY") {
+        console.log("Đang chuyển hướng sang VNPay...");
+    }
 });
 function showSuccessPopup() {
     const popup = document.getElementById("successPopup");

@@ -56,4 +56,6 @@ public class Order {
     Date createdAt;
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
+    @OneToMany(mappedBy = "order")
+    List<Payment> payments;
 }

@@ -67,11 +67,7 @@ function updateAvailableOptions() {
 
     document.querySelectorAll(".variant-group").forEach(group => {
         group.querySelectorAll("button").forEach(btn => {
-
-            const type =
-                btn.dataset.color ? "color" :
-                    btn.dataset.ram ? "ram" : "rom";
-
+            const type = btn.dataset.color ? "color" : btn.dataset.ram ? "ram" : "rom";
             let valid = false;
 
             variants.forEach(v => {
@@ -79,7 +75,8 @@ function updateAvailableOptions() {
                     (type !== "color" ? (!selected.color || v.dataset.color === selected.color) : true) &&
                     (type !== "ram" ? (!selected.ram || v.dataset.ram === selected.ram) : true) &&
                     (type !== "rom" ? (!selected.rom || v.dataset.rom === selected.rom) : true) &&
-                    v.dataset[type] === btn.dataset[type]
+                    v.dataset[type] === btn.dataset[type] &&
+                    Number(v.dataset.stock) > 0
                 ) {
                     valid = true;
                 }
@@ -87,32 +84,36 @@ function updateAvailableOptions() {
 
             btn.disabled = !valid;
             btn.style.opacity = valid ? "1" : "0.3";
+            btn.style.cursor = valid ? "pointer" : "not-allowed";
         });
     });
 }
 window.onload = () => {
-    const firstVariant = document.querySelector(".variant-item");
+    const allVariants = document.querySelectorAll(".variant-item");
+    const firstAvailableVariant = Array.from(allVariants).find(v => Number(v.dataset.stock) > 0);
 
-    if (firstVariant) {
-        selected.color = firstVariant.dataset.color;
-        selected.ram = firstVariant.dataset.ram;
-        selected.rom = firstVariant.dataset.rom;
+    if (firstAvailableVariant) {
+        selected.color = firstAvailableVariant.dataset.color;
+        selected.ram = firstAvailableVariant.dataset.ram;
+        selected.rom = firstAvailableVariant.dataset.rom;
 
-        // active UI
         document.querySelectorAll("[data-color]").forEach(b => {
             if (b.dataset.color === selected.color) b.classList.add("active");
         });
-
         document.querySelectorAll("[data-ram]").forEach(b => {
             if (b.dataset.ram === selected.ram) b.classList.add("active");
         });
-
         document.querySelectorAll("[data-rom]").forEach(b => {
             if (b.dataset.rom === selected.rom) b.classList.add("active");
         });
 
         updateVariant();
         updateAvailableOptions();
+    } else {
+        updateVariant();
+        updateAvailableOptions();
+        const stockEl = document.getElementById("stock");
+        if(stockEl) stockEl.innerText = "Hết hàng";
     }
 };
 

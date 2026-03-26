@@ -2,17 +2,18 @@ package com.example.sell_lp.service;
 
 import com.example.sell_lp.dto.request.OrderCreationRequest;
 import com.example.sell_lp.dto.request.OrderItemCreationRequest;
-import com.example.sell_lp.dto.request.OrderUpdateStatusRequest;
 import com.example.sell_lp.dto.response.OrderItemResponse;
 import com.example.sell_lp.dto.response.OrderResponse;
 import com.example.sell_lp.entity.CartItem;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.OrderItem;
+import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.entity.Address;
 import com.example.sell_lp.enums.OrderStatus;
 import com.example.sell_lp.mapper.OrderItemMapper;
 import com.example.sell_lp.mapper.OrderMapper;
+import com.example.sell_lp.mapper.PaymentMapper;
 import com.example.sell_lp.repository.AddressRepository;
 import com.example.sell_lp.repository.CartItemRepository;
 import com.example.sell_lp.repository.OrderItemRepository;
@@ -56,7 +57,10 @@ public class OrderService {
     @Autowired
     private ProductVariantRepository productVariantRepository;
 
-    public void save(OrderCreationRequest req) {
+    @Autowired
+    private PaymentMapper paymentMapper;
+
+    public Order save(OrderCreationRequest req) {
         User user = userRepository.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()
         );
@@ -115,9 +119,10 @@ public class OrderService {
 
         orderRepository.save(order);
         orderItemRepository.saveAll(orderItemsList);
+        return order;
     }
 
-    private void processVariantStock(com.example.sell_lp.entity.ProductVariant variant, int qty) {
+    private void processVariantStock(ProductVariant variant, int qty) {
         if (variant.getStockQty() < qty) {
             throw new RuntimeException("Sản phẩm " + variant.getProduct().getName() + " không đủ hàng");
         }
@@ -142,18 +147,19 @@ public class OrderService {
     public List<OrderResponse> getOrdersByUsername(String username) {
 
         User user = userRepository.findByUsername(username);
-
         List<Order> orders = orderRepository.findByUser_UserId(user.getUserId());
 
         return orders.stream().map(order -> {
             OrderResponse res = orderMapper.toOrderResponse(order);
 
-            List<OrderItemResponse> items = order.getOrderItems()
-                    .stream()
-                    .map(orderMapper::toOrderItemResponse)
-                    .toList();
+            res.setItems(order.getOrderItems().stream()
+                    .map(orderMapper::toOrderItemResponse).toList());
 
-            res.setItems(items);
+            if (order.getPayments() != null) {
+                res.setPayments(order.getPayments().stream()
+                        .map(paymentMapper::toResponse).toList());
+            }
+
             return res;
         }).toList();
     }
@@ -168,20 +174,24 @@ public class OrderService {
                 .stream()
                 .map(orderMapper::toOrderItemResponse)
                 .toList();
+        if (order.getPayments() != null) {
+            res.setPayments(order.getPayments().stream()
+                    .map(paymentMapper::toResponse).toList());
+        }
 
         res.setItems(items);
 
         return res;
     }
-    public void updateOrderStatus(Integer orderId, OrderUpdateStatusRequest request) {
+    public void updateOrderStatus(Integer orderId, String request) {
         Order order = orderRepository.findByOrderId(orderId);
         if (order == null) {
             throw new RuntimeException("Không tìm thấy đơn hàng");
         }
-        if (!order.getStatus().equals("PENDING")) {
+        if (!order.getStatus().equals(OrderStatus.PENDING.name())) {
             throw new RuntimeException("Không thể cập nhật trạng thái");
         }
-        order.setStatus(request.getStatus());
+        order.setStatus(request);
         orderRepository.save(order);
     }
     public void cancelOrder(Integer id) {
@@ -192,11 +202,26 @@ public class OrderService {
             throw new RuntimeException("Không tìm thấy đơn hàng");
         }
 
-        if (!"PENDING".equals(order.getStatus())) {
+        if (!OrderStatus.PENDING.name().equals(order.getStatus())) {
             throw new RuntimeException("Đơn hàng không thể hủy");
         }
 
         order.setStatus(OrderStatus.FAILURE.name());
+        rollbackStock(order);
         orderRepository.save(order);
+    }
+    private void rollbackStock(Order order) {
+        List<OrderItem> items = order.getOrderItems();
+        if (items != null) {
+            for (OrderItem item : items) {
+                ProductVariant variant = productVariantRepository.findById(item.getVariant().getVariantId())
+                        .orElse(null);
+                if (variant != null) {
+                    variant.setStockQty(variant.getStockQty() + item.getQuantity());
+                    productVariantRepository.save(variant);
+                    System.out.println("Đã hoàn kho sản phẩm: " + variant.getVariantId() + " số lượng: " + item.getQuantity());
+                }
+            }
+        }
     }
 }

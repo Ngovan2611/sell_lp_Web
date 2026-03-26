@@ -2,6 +2,7 @@ package com.example.sell_lp.dto.response;
 
 
 import com.example.sell_lp.entity.OrderItem;
+import com.example.sell_lp.entity.Payment;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -42,5 +43,7 @@ public class OrderResponse {
     Date createdAt;
 
     private List<OrderItemResponse> items;
+    List<PaymentResponse> payments;
+
 
 }

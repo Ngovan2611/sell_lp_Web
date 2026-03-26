@@ -58,7 +58,7 @@ public class AuthenticationService {
                 .issuer("NVV")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()
+                        Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()
                 ))
                 .claim("role", user.getRole())
                 .build();

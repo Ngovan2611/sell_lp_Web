@@ -50,7 +50,6 @@ public class LoginController {
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 cookie.setMaxAge(24 * 60 * 60);
-
                 response.addCookie(cookie);
                 redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
                 return "redirect:/home";
