@@ -35,26 +35,18 @@ public class ProductService {
                 .toList();
 
     }
-    public Page<ProductResponse> getProductsFiltered(Integer categoryId, String sort, Pageable pageable) {
+    public Page<ProductResponse> getProductsFiltered(Integer categoryId, String keyword, String sort, Pageable pageable) {
         Page<Product> productPage;
 
-        if (categoryId == null) {
+
             if ("price_asc".equals(sort)) {
-                productPage = productRepository.findAllOrderByMinPriceAsc(pageable);
+                productPage = productRepository.searchProductsOrderByPriceAsc(keyword, categoryId, pageable);
             } else if ("price_desc".equals(sort)) {
-                productPage = productRepository.findAllOrderByMinPriceDesc(pageable);
+                productPage = productRepository.searchProductsOrderByPriceDesc(keyword, categoryId, pageable);
             } else {
-                productPage = productRepository.findAll(pageable);
+                productPage = productRepository.searchProducts(keyword, categoryId, pageable);
             }
-        } else {
-            if ("price_asc".equals(sort)) {
-                productPage = productRepository.findAllByCategoryIdOrderByMinPriceAsc(categoryId, pageable);
-            } else if ("price_desc".equals(sort)) {
-                productPage = productRepository.findAllByCategoryIdOrderByMinPriceDesc(categoryId, pageable);
-            } else {
-                productPage = productRepository.findByCategoryCategoryId(categoryId, pageable);
-            }
-        }
+
 
         return productPage.map(productMapper::productToProductResponse);
     }

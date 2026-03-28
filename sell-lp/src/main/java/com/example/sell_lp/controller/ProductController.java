@@ -7,6 +7,7 @@ import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.text.ParseException;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductController {
 
+
     ProductService productService;
     AuthenticationService authenticationService;
 
@@ -27,6 +29,7 @@ public class ProductController {
     public String showProducts(
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             Model model,
             @CookieValue(value = "jwt", required = false) String token
@@ -40,19 +43,16 @@ public class ProductController {
             return "redirect:/login";
         }
 
-        int pageSize = 10;
-        PageRequest pageable = PageRequest.of(page, pageSize);
+        PageRequest pageable = PageRequest.of(page, 10);
+        Page<ProductResponse> productPage = productService.getProductsFiltered(categoryId, keyword, sort, pageable);
 
-
-        Page<ProductResponse> productPage = productService.getProductsFiltered(categoryId, sort, pageable);
-
-        model.addAttribute("username", username);
         model.addAttribute("products", productPage.getContent());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("sort", sort);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("username", username);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
-        model.addAttribute("categoryId", categoryId);
-        model.addAttribute("sort", sort);
-
         return "products";
     }
 }

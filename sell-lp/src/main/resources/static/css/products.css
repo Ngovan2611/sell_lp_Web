@@ -245,4 +245,65 @@ h2::after {
     color: #fff;
     border-color: #ee4d2d;
 }
+/* ===== GIAO DIỆN TRỐNG (NO RESULTS) ===== */
+.no-results {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 60px 20px;
+    background: #fff;
+    border-radius: 12px;
+    margin: 20px auto;
+    max-width: 1300px;
+}
 
+.no-results-inner {
+    text-align: center;
+    max-width: 500px;
+}
+
+.no-results .icon-box {
+    font-size: 64px;
+    color: #ddd;
+    margin-bottom: 24px;
+    animation: simplePulse 2s infinite;
+}
+
+.no-results h3 {
+    color: #333;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.no-results p {
+    color: #777;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+.back-to-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #ee4d2d;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: 1px solid #ee4d2d;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.back-to-all:hover {
+    background-color: #ee4d2d;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(238, 77, 45, 0.2);
+}
+
+@keyframes simplePulse {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 0.3; }
+}

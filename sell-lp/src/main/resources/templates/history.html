@@ -44,7 +44,7 @@
         </div>
 
         <div th:each="item : ${order.items}" class="order-item">
-            <img th:src="${item.imageUrl}">
+            <img th:src="${item.imageUrl}" alt="">
 
             <div class="item-info">
                 <b th:text="${item.productName}"></b>

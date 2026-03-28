@@ -86,8 +86,25 @@
        th:href="@{/products(categoryId=${categoryId}, page=${currentPage+1}, sort=${sort})}">
         <i class="fa-solid fa-chevron-right"></i>
     </a>
-</div>
 
+</div>
+<div class="no-results" th:if="${#lists.isEmpty(products)}">
+    <div class="no-results-inner">
+        <div class="icon-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h3 th:if="${keyword != null and !keyword.isEmpty()}">
+            Rất tiếc, không tìm thấy sản phẩm nào khớp với từ khóa "[[${keyword}]]"
+        </h3>
+        <h3 th:if="${keyword == null or keyword.isEmpty()}">
+            Danh mục này hiện chưa có sản phẩm nào
+        </h3>
+        <p>Hãy thử kiểm tra lại lỗi chính tả hoặc tìm bằng từ khóa khác.</p>
+        <a th:href="@{/products}" class="back-to-all">
+            <i class="fa-solid fa-arrow-left"></i> Xem tất cả sản phẩm
+        </a>
+    </div>
+</div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/common.js}"></script>
 

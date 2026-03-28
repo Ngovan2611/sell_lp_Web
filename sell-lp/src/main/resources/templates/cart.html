@@ -28,10 +28,12 @@
                          th:each="item : ${cartItems}"
                          th:attr="data-cart-item-id=${item.cartItemId}">
 
-                        <input type="checkbox" class="select-item"
-                               th:value="${item.cartItemId}"
-                               th:attr="data-price=${item.quantity * item.variant.price}"
-                               onchange="updateTotal()" />
+                        <label>
+                            <input type="checkbox" class="select-item"
+                                   th:value="${item.cartItemId}"
+                                   th:attr="data-price=${item.quantity * item.variant.price}"
+                                   onchange="updateTotal()" />
+                        </label>
 
                         <img th:src="${#lists.isEmpty(item.variant.product.images)
                  ? '/images/default-product.jpg'
@@ -49,7 +51,9 @@
 
                         <div class="item-quantity">
                             <button onclick="changeQty(this, -1)">-</button>
-                            <input type="number" th:value="${item.quantity}" min="1">
+                            <label>
+                                <input type="number" th:value="${item.quantity}" min="1">
+                            </label>
                             <button onclick="changeQty(this, 1)">+</button>
                         </div>
 

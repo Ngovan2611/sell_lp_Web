@@ -47,4 +47,27 @@ WHERE p.category.categoryId = :categoryId
     @Query("SELECT p FROM Product p LEFT JOIN p.variants v WHERE p.category.categoryId = :categoryId GROUP BY p.productId ORDER BY MIN(v.price) DESC")
     Page<Product> findAllByCategoryIdOrderByMinPriceDesc(@Param("categoryId") Integer categoryId, Pageable pageable);
 
+
+    @Query("SELECT p FROM Product p WHERE " +
+            "(:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+            "(:categoryId IS NULL OR p.category.categoryId = :categoryId)")
+    Page<Product> searchProducts(@Param("keyword") String keyword,
+                                 @Param("categoryId") Integer categoryId,
+                                 Pageable pageable);
+
+    @Query("SELECT p FROM Product p LEFT JOIN p.variants v WHERE " +
+            "(:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+            "(:categoryId IS NULL OR p.category.categoryId = :categoryId) " +
+            "GROUP BY p.productId ORDER BY MIN(v.price) ASC")
+    Page<Product> searchProductsOrderByPriceAsc(@Param("keyword") String keyword,
+                                                @Param("categoryId") Integer categoryId,
+                                                Pageable pageable);
+
+    @Query("SELECT p FROM Product p LEFT JOIN p.variants v WHERE " +
+            "(:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+            "(:categoryId IS NULL OR p.category.categoryId = :categoryId) " +
+            "GROUP BY p.productId ORDER BY MIN(v.price) DESC")
+    Page<Product> searchProductsOrderByPriceDesc(@Param("keyword") String keyword,
+                                                 @Param("categoryId") Integer categoryId,
+                                                 Pageable pageable);
 }
