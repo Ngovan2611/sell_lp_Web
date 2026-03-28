@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <link rel="stylesheet" th:href="@{/css/checkout.css}">
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Thanh toán</h2>
+
+
+
+    <div class="box address-box">
+        <h3>Địa chỉ nhận hàng</h3>
+
+        <!-- luôn tồn tại -->
+        <div>
+            <p>
+                <b id="selectedName" th:text="${address?.recipientName} ?: ''"></b> |
+                <span id="selectedPhone" th:text="${address?.phone} ?: ''"></span>
+            </p>
+
+            <p id="selectedAddress" th:text="${address?.fullAddress} ?: 'Bạn chưa có địa chỉ'"></p>
+            <a href="javascript:void(0)" onclick="openSelectAddressPopup()" class="link-change-address">
+                Thay đổi địa chỉ
+            </a>
+        </div>
+
+        <div>
+
+
+            <button class="btn-add-address" onclick="openAddressPopup()">
+                + Thêm địa chỉ
+            </button>
+        </div>
+    </div>
+
+
+    <div class="box">
+        <h3>Sản phẩm</h3>
+
+        <div th:each="item : ${items}" class="item">
+            <img th:src="${#lists.isEmpty(item.variant.product.images)
+             ? '/images/default-product.jpg'
+             : item.variant.product.images[0].url}"
+                 style="width: 80px; height: auto;"
+                 alt="Ảnh sản phẩm">
+            <div>
+                <h4 th:text="${item.variant.product.name}"></h4>
+                <p>Số lượng: <span th:text="${item.quantity}"></span></p>
+                <small class="text-muted" th:text="${item.variant.color?.colorName
+                            + (item.variant.ram != null ? ' / ' + item.variant.ram.ramSize + 'GB RAM' : '')
+                            + (item.variant.rom != null ? ' / ' + item.variant.rom.romSize + 'GB ROM' : '')}">
+                </small>
+            </div>
+
+            <div>
+                <span th:text="${#numbers.formatDecimal(item.quantity * item.unitPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h3>Vận chuyển</h3>
+        <p>Phí ship:
+            <span>30,000</span>
+            <!--            <span th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>-->
+        </p>
+    </div>
+
+    <div class="box">
+        <h3>Phương thức thanh toán</h3>
+
+        <label>
+            <input type="radio" name="paymentMethod" value="COD" checked >
+            Thanh toán khi nhận hàng (COD)
+        </label>
+        <br>
+
+        <label>
+            <input type="radio" name="paymentMethod" value="VNPAY">
+            Thanh toán VNPay
+        </label>
+    </div>
+
+    <div class="box summary">
+        <p>Tạm tính:
+            <span th:text="${#numbers.formatDecimal(total + 30000, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+        </p>
+
+        <p>Phí ship:
+            <!--            <span th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>-->
+            <span>30,000</span>
+        </p>
+
+        <h3>
+            Tổng thanh toán:
+            <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+        </h3>
+
+        <form id="orderForm" method="post" action="/order/create">
+            <input type="hidden" name="ids" th:value="${ids}">
+
+            <input type="hidden" name="paymentMethod" id="paymentMethodInput">
+            <input type="hidden" name="addressId" id="selectedAddressId" th:value="${address?.addressId}">
+            <button type="submit" class="btn">Đặt hàng</button>
+        </form>
+    </div>
+
+</div>
+<div id="overlay"></div>
+
+<div id="addressPopup" class="addressPopup">
+    <span class="close-btn" onclick="closeAddressPopup()">×</span>
+
+    <h3>Thêm địa chỉ</h3>
+
+    <form id="addAddressForm">
+        <input type="text" name="recipientName" placeholder="Tên người nhận" required><br>
+        <input type="text" name="phone" placeholder="SĐT" required><br>
+        <input type="text" name="city" placeholder="Tỉnh/Thành phố" required><br>
+        <input type="text" name="district" placeholder="Quận/Huyện" required><br>
+        <input type="text" name="ward" placeholder="Phường/Xã" required><br>
+        <input type="text" name="street" placeholder="Tên đường/Tòa nhà/Số nhà"><br>
+
+        <button type="submit">Lưu</button>
+    </form>
+
+    <div id="address-message" style="color:green; margin-top:10px;"></div>
+</div>
+<div id="selectAddressPopup" class="popup">
+    <span class="close-btn" onclick="closeSelectAddressPopup()">×</span>
+
+    <h3>Chọn địa chỉ</h3>
+
+    <!-- container scrollable -->
+    <div class="address-list-container">
+        <div th:each="addr : ${addresses}" class="address-item">
+            <p>
+                <b th:text="${addr.recipientName}"></b> |
+                <span th:text="${addr.phone}"></span>
+            </p>
+            <p th:text="${addr.fullAddress}"></p>
+
+            <div style="margin-top:8px;">
+                <button type="button"
+                        th:attr="data-name=${addr.recipientName},
+                                 data-phone=${addr.phone},
+                                 data-address=${addr.fullAddress},
+                                 data-id=${addr.addressId}"
+                        onclick="selectAddressFromBtn(this)">Chọn</button>
+
+                <button type="button"
+                        th:attr="data-id=${addr.addressId},
+                                 data-name=${addr.recipientName},
+                                 data-phone=${addr.phone},
+                                 data-city=${addr.city},
+                                 data-district=${addr.district},
+                                 data-ward=${addr.ward},
+                                 data-street=${addr.street}"
+                        onclick="openEditAddressPopupFromBtn(this)">Sửa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editAddressPopup" class="addressPopup">
+    <span class="close-btn" onclick="closeEditAddressPopup()">×</span>
+    <h3>Sửa địa chỉ</h3>
+    <form id="editAddressForm" method="post" action="/address/edit">
+        <input type="hidden" name="addressId" id="editAddressId">
+
+        <input type="text" name="recipientName" id="editRecipientName" placeholder="Tên người nhận" required><br>
+        <input type="text" name="phone" id="editPhone" placeholder="SĐT" required><br>
+        <input type="text" name="city" id="editCity" placeholder="Tỉnh/Thành phố" required><br>
+        <input type="text" name="district" id="editDistrict" placeholder="Quận/Huyện" required><br>
+        <input type="text" name="ward" id="editWard" placeholder="Phường/Xã" required><br>
+        <input type="text" name="street" id="editStreet" placeholder="Tên đường/Tòa nhà/Số nhà" required><br>
+
+        <button type="submit">Lưu thay đổi</button>
+    </form>
+</div>
+<div id="successMessage" style="display:none; color:green; margin-top:10px;">
+    Địa chỉ đã được cập nhật thành công!
+</div>
+<div id="successPopup" class="success-popup">
+    <div class="success-content">
+        <svg class="checkmark-svg" viewBox="0 0 52 52">
+            <!-- vòng tròn -->
+            <circle class="circle" cx="26" cy="26" r="25" fill="none"/>
+            <!-- dấu tick -->
+            <path class="check" fill="none" d="M14 27 L22 35 L38 18"/>
+        </svg>
+
+        <p>Đặt hàng thành công</p>
+    </div>
+</div>
+<script th:src="@{/js/checkout.js}"></script>
+
+</body>
+</html>

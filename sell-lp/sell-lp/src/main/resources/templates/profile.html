@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin cá nhân</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="breadcrumb">
+    <a th:href="@{/home}">Trang chủ</a>  >
+    <span>Thông tin cá nhân</span>
+</div>
+<div id="overlay"></div>
+<div th:replace="~{fragments/sidebar :: aside}"></div>
+
+<div class="profile-container">
+
+    <h2 class="profile-title">Thông tin cá nhân</h2>
+
+    <form th:action="@{/profile/update}" th:object="${user}" method="post">
+
+        <input type="hidden" th:field="*{userId}">
+
+        <div class="form-group">
+            <label>Tên đăng nhập</label>
+            <input type="text" th:field="*{username}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Họ và tên</label>
+            <input type="text" th:field="*{fullName}" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email"
+                   th:field="*{email}"
+                   class="form-control"
+                   th:readonly="${user.getEmail() != null}">
+        </div>
+
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" th:field="*{phone}" class="form-control">        </div>
+
+        <div class="form-group">
+            <label>Ngày tạo tài khoản</label>
+            <input type="text"
+                   th:value="${#dates.format(user.createdAt,'dd/MM/yyyy')}"
+                   readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Trạng thái</label>
+            <input type="text"
+                   th:value="${user.active ? 'Khóa' : 'Hoạt động'}"
+                   readonly>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary">Cập nhật</button>
+        </div>
+
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/common.js}"></script>
+
+
+</body>
+</html>

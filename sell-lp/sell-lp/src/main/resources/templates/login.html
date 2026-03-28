@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SellLP - Login</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/btn-so.css}">
+
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Left -->
+        <div class="login-section">
+            <div class="login-box">
+                <h1 class="logo"><a href="/home">SellLP</a></h1>
+                <h2>Chào mừng bạn đến với web-lap!</h2>
+                <p>Vui lòng nhập đủ thông tin để đăng nhập</p>
+                <form action="/login" method="post" id="form-login">
+                    <div class="input-group">
+                        <i class='bx bx-user'></i>
+                        <input type="text" name="username" placeholder=" " required>
+                        <label>Tên đăng nhập</label>
+                    </div>
+
+                    <div class="input-group">
+                        <i class='bx bx-lock'></i>
+                        <input type="password" id="password" name="password" placeholder=" " required>
+                        <label>Mật khẩu</label>
+                        <i class='bx bx-show toggle' onclick="togglePassword()"></i>
+                    </div>
+
+                    <button type="submit" class="btn-login">Đăng nhập</button>
+                    <p class="check-exist">Bạn chưa có tài khoản <a href="/register">Đăng kí</a></p>
+
+                    <a href="/oauth2/authorization/google" class="btn-so google-btn">
+                        <span class="google-icon"></span>
+                        <span class="google-text">Đăng nhập bằng Google</span>
+                    </a>
+
+                    <a href="/oauth2/authorization/facebook" class="btn-so facebook-btn">
+                        <span class="facebook-icon"></span>
+                        <span class="facebook-text">Đăng nhập bằng Facebook</span>
+                    </a>
+                    <div th:if="${error}" id="error-message" class="error-box show">
+                        <p th:text="${error}"></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="image-section">
+            <img src="/images/background.png" alt="Login Background">
+        </div>
+
+    </div>
+    <div th:if="${success != null}" class="toast success"
+         style="position:fixed; top:25px; right:20px; background:green; color:white; padding:15px;">
+        <i class="fa-solid fa-check"></i>
+        <span th:text="${success}"></span>
+    </div>
+
+</body>
+<script th:src="@{/js/login.js}"></script>
+
+</html>

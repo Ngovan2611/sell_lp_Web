@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SellLP - Shop Laptop & PC</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div id="overlay"></div>
+    <div class="hero">
+
+        <div th:replace="~{fragments/sidebar :: aside}"></div>
+
+        <section class="banner">
+            <div class="banner-slider">
+                <img src="/images/banner1.jpg" class="banner-slide active">
+                <img src="/images/banner2.jpg" class="banner-slide">
+                <img src="/images/banner3.jpg" class="banner-slide">
+            </div>
+
+        </section>
+
+        <aside class="sidebar">
+            <h3> <span style="color: #c42f2f;"><i class="fa-solid fa-graduation-cap"></i></span> Chào mừng bạn đến với
+                SellLP</h3>
+            <ul>
+                <li><span style="color: #c42f2f;"><i class="fa-solid fa-gift"></i></span> Quà chào mừng</li>
+                <li th:if="${username == null}">
+                    <a  href="/login">
+                    <span style="color: #c42f2f;">Đăng nhập</span>
+                    </a> hoặc
+                    <a href="/register">
+                        <span style="color: #c42f2f;">Đăng kí</span>
+                    </a>
+                </li>
+                <li th:if="${username != null}">
+                    <a  href="/present">
+                        <i style="color: red" class="fa-solid fa-hand-holding-dollar"></i>
+                        <span style="color: #c42f2f;">Nhận ngay</span>
+                    </a> quà tặng hấp dẫn
+                </li>
+
+            </ul>
+        </aside>
+    </div>
+
+    <section class="container">
+
+        <h2 style="margin-bottom:20px;">Sản phẩm Laptop thịnh hành</h2>
+        <div class="products-wrapper">
+            <div class="products">
+
+                <div class="products">
+                    <div class="product" th:each="p : ${laps}">
+                        <img th:src="@{{img}(img=${p.imageUrl})}">
+                        <h3 th:text="${p.name}"></h3>
+                        <p th:text="${p.description}"></p>
+
+                        <a th:href="@{/product/{id}(id=${p.productId})}">
+                            <button class="view-btn">Xem chi tiết</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="view-more">
+            <a th:href="@{/products(categoryId=1)}">
+                <button class="view-btn">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Xem tất cả sản phẩm
+                </button>
+            </a>
+        </div>
+
+
+    </section>
+    <section class="container">
+
+        <h2 style="margin-bottom:20px;">Sản phẩm PC thịnh hành</h2>
+
+        <div class="products">
+
+            <div class="products">
+                <div class="product" th:each="p : ${desks}">
+                    <img th:src="@{{img}(img=${p.imageUrl})}">
+                    <h3 th:text="${p.name}"></h3>
+                    <p th:text="${p.description}"></p>
+
+                    <a th:href="@{/product/{id}(id=${p.productId})}">
+                        <button class="view-btn">Xem chi tiết</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-more">
+            <a th:href="@{/products(categoryId=2)}">                <button class="view-btn">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Xem tất cả sản phẩm
+                </button>
+            </a>
+        </div>
+
+    </section>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+
+</body>
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+</html>

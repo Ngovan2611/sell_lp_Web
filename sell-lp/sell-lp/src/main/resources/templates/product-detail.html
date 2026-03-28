@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/products.css}">
+
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+
+</head>
+<style>
+
+    /* Nút Xem thêm */
+    #loadMoreBtn {
+        display: block;
+        margin: 20px auto;
+        padding: 12px 25px;
+        background: #c42f2f;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s, transform 0.3s ease;
+    }
+
+    #loadMoreBtn:hover {
+        background: #a52424;
+        transform: scale(1.03);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+        .products {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+    }
+
+    @media (max-width: 600px) {
+        .products {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+    .error-box {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.4s ease;
+        z-index: 9999;
+    }
+
+    .error-box.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .error-box p {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        background-color: #d19403;
+        color: #f6f6f6;
+        border: 1px solid #f3c809;
+        padding: 14px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        margin: 0;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    .error-box i {
+        font-size: 16px;
+    }
+    .error-box i {
+        background: white;
+        color: #edac06;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    /* Ẩn các button variant nếu không có chữ bên trong */
+    .variant-group button:empty {
+        display: none;
+    }
+
+    /* Nếu tất cả button bên trong đều ẩn, ẩn luôn cả nhóm (Dùng cho trình duyệt hiện đại) */
+    .variant-group:has(button:empty:only-of-type) {
+        display: none;
+    }
+</style>
+
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="breadcrumb">
+    <a th:href="@{/home}">Trang chủ</a>  >
+    <a th:href="@{/products}">Sản phẩm</a> >
+    <span>Chi tiết sản phẩm</span>
+</div>
+<div id="overlay"></div>
+<div th:replace="~{fragments/sidebar :: aside}"></div>
+<body>
+
+<div class="product-detail-container">
+
+    <!-- ===== GALLERY ===== -->
+    <div class="gallery">
+        <div class="main-img">
+            <img id="mainImg" th:src="@{${product.imageUrl}}">
+        </div>
+
+        <div class="thumbs">
+            <img th:each="img, i : ${product.images}" th:src="@{${img.url}}"
+                 th:classappend="${i.index == 0} ? 'active'" onclick="changeImg(this)">
+        </div>
+    </div>
+
+    <!-- ===== INFO ===== -->
+    <div class="info-detail">
+        <h2 th:text="${product.name}"></h2>
+        <div class="price" id="price">Chọn phiên bản</div>
+        <p th:text="${product.description}"></p>
+
+
+        <div class="variant-group">
+            <b>Màu sắc:</b><br>
+            <button th:each="c : ${colors}" th:text="${c}" th:attr="data-color=${c}"
+                    onclick="selectOption(this, 'color')">
+            </button>
+        </div>
+
+        <div class="variant-group" th:if="${not #lists.isEmpty(roms) and roms[0] != null and roms[0] != ''}">
+            <b>Bộ nhớ:</b><br>
+            <button th:each="r : ${roms}" th:if="${r != null and r != ''}"
+                    th:text="${r}" th:attr="data-rom=${r}"
+                    onclick="selectOption(this, 'rom')">
+            </button>
+        </div>
+
+        <div class="variant-group" th:if="${not #lists.isEmpty(rams) and rams[0] != null and rams[0] != ''}">
+            <b>RAM:</b><br>
+            <button th:each="r : ${rams}" th:if="${r != null and r != ''}"
+                    th:text="${r}" th:attr="data-ram=${r}"
+                    onclick="selectOption(this, 'ram')">
+            </button>
+        </div>
+
+        <div id="stock"></div>
+
+        <div class="actions">
+            <button class="add-cart-btn" onclick="addToCart()">
+                <i class="fa-solid fa-cart-arrow-down"></i>
+                Thêm vào giỏ hàng
+            </button>
+            <button class="buy-btn" onclick="buyNow()">Mua ngay</button>        </div>
+
+        <input type="hidden" id="variantId">
+    </div>
+
+</div>
+
+<div th:each="v : ${variants}" class="variant-item"
+     th:attr="data-id=${v.variantId},
+              data-color=${v.colorName},
+              data-ram=${v.ramSize ?: ''},
+              data-rom=${v.romSize ?: ''},
+              data-price=${v.price},
+              data-stock=${v.stockQty}">
+</div>
+
+<div class="related-products-wrapper">
+    <div class="products" id="relatedProducts"></div>
+
+    <div id="relatedProductsData" style="display:none;">
+        <div th:each="p : ${relatedProducts}"
+             th:attr="data-id=${p.productId}, data-name=${p.name}, data-desc=${p.description}, data-img=${p.imageUrl}">
+        </div>
+    </div>
+
+    <button id="loadMoreBtn" th:if="${relatedProducts.size() > 5}">Xem thêm</button>
+</div>
+<form id="addToCartForm" th:action="@{/cart/add}" method="post">
+    <input type="hidden" name="cartId" th:value="${cartId}">
+    <input type="hidden" name="variantId" id="variantIdForm">
+    <input type="hidden" name="quantity" value="1">
+</form>
+<div id="success-box" class="error-box" style="display:none;">
+    <p style="background:#2e7d32;border:none;">
+        <i class="fa-solid fa-check"></i>
+        <span id="success-text"></span>
+    </p>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/product-detail.js}"></script>
+</body>
+
+</html>
