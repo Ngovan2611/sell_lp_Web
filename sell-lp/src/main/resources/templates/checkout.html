@@ -100,7 +100,7 @@
 
         <h3>
             Tổng thanh toán:
-            <span th:text="${#numbers.formatDecimal(total + 30000, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+            <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
         </h3>
 
         <form id="orderForm" method="post" action="/order/create">

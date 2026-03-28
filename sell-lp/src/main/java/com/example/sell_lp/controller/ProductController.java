@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +21,13 @@ import java.text.ParseException;
 public class ProductController {
 
     ProductService productService;
-
     AuthenticationService authenticationService;
 
     @GetMapping("/products")
     public String showProducts(
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String sort,
             Model model,
             @CookieValue(value = "jwt", required = false) String token
     ) throws ParseException, JOSEException {
@@ -36,7 +35,6 @@ public class ProductController {
         if (token == null) {
             return "redirect:/login";
         }
-
         String username = authenticationService.extractUsernameFromToken(token);
         if (username == null) {
             return "redirect:/login";
@@ -44,20 +42,16 @@ public class ProductController {
 
         int pageSize = 10;
         PageRequest pageable = PageRequest.of(page, pageSize);
-        Page<ProductResponse> productPage;
-        if(categoryId == null) {
-            productPage =
-                    productService.getAllProducts(pageable);
-        }else {
-            productPage =
-                    productService.getAllProductsByCategory(categoryId, pageable);
-        }
-        model.addAttribute("username", username);
 
+
+        Page<ProductResponse> productPage = productService.getProductsFiltered(categoryId, sort, pageable);
+
+        model.addAttribute("username", username);
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", sort);
 
         return "products";
     }

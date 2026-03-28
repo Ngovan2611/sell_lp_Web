@@ -7,75 +7,87 @@
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/products.css}">
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-
 </head>
-
-
 
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 <div id="overlay"></div>
+
 <div class="breadcrumb">
-    <a th:href="@{/home}">Trang chủ</a>  >
+    <a th:href="@{/home}">Trang chủ</a> >
     <span>Sản phẩm</span>
 </div>
+
 <div th:replace="~{fragments/sidebar :: aside}"></div>
 
 <h2 style="text-align:center">Danh sách sản phẩm</h2>
 
+<div class="filter-container">
+    <div class="filter-bar">
+        <span>Sắp xếp theo:</span>
+
+        <a th:href="${sort == 'price_asc'} ? @{/products(categoryId=${categoryId})} : @{/products(categoryId=${categoryId}, sort='price_asc')}"
+           th:classappend="${sort == 'price_asc'} ? 'active' : ''" class="filter-btn">
+            <i class="fa-solid fa-arrow-up-wide-short"></i> Giá thấp đến cao
+        </a>
+
+        <a th:href="${sort == 'price_desc'} ? @{/products(categoryId=${categoryId})} : @{/products(categoryId=${categoryId}, sort='price_desc')}"
+           th:classappend="${sort == 'price_desc'} ? 'active' : ''" class="filter-btn">
+            <i class="fa-solid fa-arrow-down-wide-short"></i> Giá cao đến thấp
+        </a>
+    </div>
+</div>
+
 <div class="products">
     <div class="product" th:each="p : ${products}">
-        <img th:src="@{{img}(img=${p.imageUrl})}">
+        <img th:src="${p.imageUrl}">
+
         <h3 th:text="${p.name}"></h3>
+
+        <div class="product-price">
+            <span class="price-min"
+                  th:text="${#numbers.formatDecimal(p.minPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+            </span>
+        </div>
+
         <p th:text="${p.description}"></p>
 
-        <a th:href="@{/product/{id}(id=${p.productId})}">
+        <a th:href="@{/product/{id}(id=${p.productId})}" class="view-link">
             <button class="view-btn">Xem chi tiết</button>
         </a>
     </div>
 </div>
 
 <div class="pagination" th:if="${totalPages > 1}">
-
-    <!-- Prev -->
     <a th:if="${currentPage > 0}"
-       th:href="@{/products(categoryId=${categoryId}, page=${currentPage-1})}">
+       th:href="@{/products(categoryId=${categoryId}, page=${currentPage-1}, sort=${sort})}">
         <i class="fa-solid fa-chevron-left"></i>
     </a>
 
-    <!-- First -->
-    <a th:href="@{/products(categoryId=${categoryId}, page=0)}"
+    <a th:href="@{/products(categoryId=${categoryId}, page=0, sort=${sort})}"
        th:classappend="${currentPage == 0} ? 'active' : ''">1</a>
 
-    <!-- ... -->
     <span th:if="${currentPage > 2}">...</span>
 
-    <!-- Middle -->
-    <span th:each="i : ${#numbers.sequence(
-        currentPage > 0 ? currentPage-1 : 0,
-        currentPage+1 < totalPages ? currentPage+1 : totalPages-1
-            )}"
+    <span th:each="i : ${#numbers.sequence(currentPage > 0 ? currentPage-1 : 0, currentPage+1 < totalPages ? currentPage+1 : totalPages-1)}"
           th:if="${i > 0 and i < totalPages-1}">
-        <a th:href="@{/products(categoryId=${categoryId}, page=${i})}"
+        <a th:href="@{/products(categoryId=${categoryId}, page=${i}, sort=${sort})}"
            th:text="${i + 1}"
            th:classappend="${i == currentPage} ? 'active' : ''"></a>
     </span>
 
-    <!-- ... -->
     <span th:if="${currentPage < totalPages - 3}">...</span>
 
-    <!-- Last -->
-    <a th:href="@{/products(categoryId=${categoryId}, page=${totalPages-1})}"
+    <a th:href="@{/products(categoryId=${categoryId}, page=${totalPages-1}, sort=${sort})}"
        th:text="${totalPages}"
        th:classappend="${currentPage == totalPages-1} ? 'active' : ''"></a>
 
-    <!-- Next -->
     <a th:if="${currentPage < totalPages - 1}"
-       th:href="@{/products(categoryId=${categoryId}, page=${currentPage+1})}">
+       th:href="@{/products(categoryId=${categoryId}, page=${currentPage+1}, sort=${sort})}">
         <i class="fa-solid fa-chevron-right"></i>
     </a>
-
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/common.js}"></script>
 

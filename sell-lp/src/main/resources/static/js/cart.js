@@ -31,20 +31,35 @@ async function changeQty(btn, delta) {
         alert("Lỗi server");
     }
 }
-
 async function removeItem(btn) {
     const item = btn.closest('.cart-item');
     const cartItemId = item.dataset.cartItemId;
-    const checkbox = item.querySelector('.select-item');
-    const wasChecked = checkbox.checked;
+    const productName = item.querySelector('.item-info strong').innerText;
 
-    await fetch(`/cart/delete/${cartItemId}`, { method: 'DELETE' });
+    const result = await Swal.fire({
+        title: 'Xác nhận xóa?',
+        text: `Bạn muốn xóa "${productName}" khỏi giỏ hàng?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa ngay',
+        cancelButtonText: 'Hủy'
+    });
 
-    item.remove();
-
-    if (wasChecked) updateTotal();
-
-    checkEmptyCart();
+    if (result.isConfirmed) {
+        try {
+            const res = await fetch(`/cart/delete/${cartItemId}`, { method: 'DELETE' });
+            if (res.ok) {
+                item.remove();
+                updateTotal();
+                checkEmptyCart();
+                Swal.fire('Đã xóa!', 'Sản phẩm đã rời khỏi giỏ hàng.', 'success');
+            }
+        } catch (e) {
+            Swal.fire('Lỗi!', 'Không thể kết nối máy chủ.', 'error');
+        }
+    }
 }
 function checkEmptyCart() {
     const cartItems = document.querySelectorAll('.cart-item');

@@ -22,10 +22,17 @@
         </div>
 
         <div class="search">
-            <input type="text" placeholder="Bạn muốn mua gì hôm nay?">
-            <button class="search-btn">
-                <i class="fa-solid fa-search"></i>
-            </button>
+            <form th:action="@{/products}" method="get" style="display: flex; width: 100%; align-items: center;">
+                <input type="hidden" name="categoryId" th:value="${categoryId}">
+                <input type="hidden" name="sort" th:value="${sort}">
+
+                <input type="text" name="keyword" th:value="${keyword}"
+                       placeholder="Bạn muốn mua gì hôm nay?">
+
+                <button type="submit" class="search-btn">
+                    <i class="fa-solid fa-search"></i>
+                </button>
+            </form>
         </div>
 
         <ul class="menu">
