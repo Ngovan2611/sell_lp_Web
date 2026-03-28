@@ -7,7 +7,9 @@ import com.example.sell_lp.dto.response.AddressResponse;
 import com.example.sell_lp.service.AddressService;
 import com.example.sell_lp.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -19,12 +21,12 @@ import java.text.ParseException;
 
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AddressController {
-    @Autowired
-    private AddressService addressService;
+    AddressService addressService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
 
     @PostMapping("/address/create")

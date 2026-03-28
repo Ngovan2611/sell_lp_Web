@@ -58,16 +58,7 @@ public class ProductService {
 
         return productPage.map(productMapper::productToProductResponse);
     }
-    public Page<ProductResponse> getAllProductsByCategory(Integer categoryId, Pageable pageable) {
-        Page<Product> productPage =
-                productRepository.findByCategoryCategoryId(categoryId, pageable);
 
-        return productPage.map(productMapper::productToProductResponse);
-    }
-    public Page<ProductResponse> getAllProducts(Pageable pageable) {
-        Page<Product> productPage = productRepository.findAll(pageable);
-        return productPage.map(productMapper::productToProductResponse);
-    }
 
     public ProductResponse getProductById(Long productId) {
         Product product = productRepository.findByProductId(productId);
@@ -78,5 +69,14 @@ public class ProductService {
         List<Product> products = productRepository.findRelatedProducts(category, id, pageable);
         return products.stream().map(productMapper::productToProductResponse).toList();
     }
+    public Page<ProductResponse> getAllProductsByCategory(Integer categoryId, Pageable pageable) {
+        Page<Product> productPage =
+                productRepository.findByCategoryCategoryId(categoryId, pageable);
 
+        return productPage.map(productMapper::productToProductResponse);
+    }
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+        Page<Product> productPage = productRepository.findAll(pageable);
+        return productPage.map(productMapper::productToProductResponse);
+    }
 }

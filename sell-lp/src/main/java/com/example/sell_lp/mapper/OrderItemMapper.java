@@ -1,12 +1,10 @@
 package com.example.sell_lp.mapper;
 
 import com.example.sell_lp.dto.request.OrderItemCreationRequest;
-import com.example.sell_lp.dto.response.OrderItemResponse;
 import com.example.sell_lp.entity.OrderItem;
 import com.example.sell_lp.entity.ProductVariant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {

@@ -2,7 +2,6 @@ package com.example.sell_lp.controller;
 
 
 import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.CategoryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,7 +17,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class IntroductionController {
     AuthenticationService authenticationService;
-    CategoryService categoryService;
 
 
     @GetMapping("/introduction")

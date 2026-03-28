@@ -3,7 +3,7 @@ package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.response.OrderResponse;
 import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.OrderService;
+import com.example.sell_lp.service.order.OrderService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

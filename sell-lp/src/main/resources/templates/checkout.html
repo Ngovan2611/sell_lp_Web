@@ -90,7 +90,7 @@
 
     <div class="box summary">
         <p>Tạm tính:
-            <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+            <span th:text="${#numbers.formatDecimal(total + 30000, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
         </p>
 
         <p>Phí ship:

@@ -5,7 +5,6 @@ import com.example.sell_lp.dto.request.AuthenticationRequest;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.UserService;
-import com.nimbusds.jose.KeyLengthException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -37,7 +36,7 @@ public class LoginController {
                             RedirectAttributes redirectAttributes,
                             HttpServletResponse response,
                             Model model
-                            ) throws KeyLengthException {
+                            ) {
 
         try {
             User user = userService.login(request);

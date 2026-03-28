@@ -7,11 +7,13 @@ import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.enums.OrderStatus;
 import com.example.sell_lp.enums.PaymentStatus;
 import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.OrderService;
+import com.example.sell_lp.service.order.OrderService;
 import com.example.sell_lp.service.PaymentService;
 import com.example.sell_lp.service.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.ui.Model;
@@ -24,17 +26,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.math.BigDecimal;
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PaymentController {
-    @Autowired
-    private AuthenticationService authenticationService;
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private VNPayService vnPayService;
-
-    @Autowired
-    private PaymentService paymentService;
+    AuthenticationService authenticationService;
+    OrderService orderService;
+    VNPayService vnPayService;
+    PaymentService paymentService;
 
     @PostMapping("/order/create")
     public String createOrder(@ModelAttribute OrderCreationRequest request,

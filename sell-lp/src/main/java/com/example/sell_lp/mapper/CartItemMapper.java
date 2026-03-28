@@ -1,22 +1,17 @@
 package com.example.sell_lp.mapper;
 
-import com.example.sell_lp.dto.request.CartItemCreationRequest;
 import com.example.sell_lp.dto.response.CartItemResponse;
 import com.example.sell_lp.entity.Cart;
 import com.example.sell_lp.entity.CartItem;
 
 import com.example.sell_lp.entity.ProductVariant;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface CartItemMapper {
 
 
-    @Mapping(source = "cartId", target = "cart.cartId")
-    @Mapping(source = "variantId", target = "variant.variantId")
-    CartItem toCartItem(CartItemCreationRequest request);
 
     @Named("mapCart")
     default Cart mapCart(Integer cartId) {

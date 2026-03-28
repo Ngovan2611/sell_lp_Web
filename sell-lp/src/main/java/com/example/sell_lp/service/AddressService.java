@@ -2,37 +2,34 @@ package com.example.sell_lp.service;
 
 import com.example.sell_lp.dto.request.AddressUpdateRequest;
 import com.example.sell_lp.dto.response.AddressResponse;
+import com.example.sell_lp.dto.response.UserResponse;
 import com.example.sell_lp.entity.Address;
 import com.example.sell_lp.dto.request.AddressCreationRequest;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.mapper.AddressMapper;
 import com.example.sell_lp.repository.AddressRepository;
-import com.example.sell_lp.repository.UserRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 public class AddressService {
-    @Autowired
-    private AddressRepository addressRepository;
-    @Autowired
-    private AddressMapper addressMapper;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private GeoCodingService geoCodingService;
+    AddressRepository addressRepository;
+    AddressMapper addressMapper;
+    UserService userService;
+    GeoCodingService geoCodingService;
 
     public AddressResponse saveAddress(AddressCreationRequest request) {
         String fullAddress = String.join(", ", request.getStreet(),
                 request.getWard(), request.getDistrict(), request.getCity());
         request.setFullAddress(fullAddress);
-
         Map<String, Object> geo = geoCodingService.getCoordinatesFromAddress(fullAddress);
         Double lat = null;
         Double lng = null;
@@ -41,9 +38,11 @@ public class AddressService {
             lng = Double.parseDouble((String) geo.get("lon"));
         }
 
-        User user = userRepository.findByUsername(SecurityContextHolder.getContext()
+        User user = userService.getUserEntityByUsername(SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName());
+
+
 
         Address address = addressMapper.toAddress(request);
         address.setUser(user);
@@ -54,7 +53,7 @@ public class AddressService {
         return addressMapper.toAddressResponse(address);
     }
     public List<AddressResponse> getAllAddressesByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userService.getUserEntityByUsername(username);
 
         List<Address> addresses = addressRepository.findAddressByUser(user);
 
@@ -64,7 +63,7 @@ public class AddressService {
 
 
     public void updateAddress(AddressUpdateRequest request, String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userService.getUserEntityByUsername(username);
 
         Address address = addressRepository.findById(request.getAddressId())
                 .orElseThrow(() -> new RuntimeException("Address not found"));

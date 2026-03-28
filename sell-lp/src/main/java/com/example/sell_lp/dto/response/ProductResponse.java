@@ -43,13 +43,5 @@ public class ProductResponse {
                 .orElse(0.0);
     }
 
-    // Getter tùy chỉnh để tính giá Max
-    public Double getMaxPrice() {
-        if (variants == null || variants.isEmpty()) return 0.0;
-        return variants.stream()
-                .map(ProductVariant::getPrice)
-                .max(Double::compare)
-                .orElse(0.0);
-    }
 }
 

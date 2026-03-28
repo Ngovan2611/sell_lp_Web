@@ -36,11 +36,6 @@ public class CartItemService {
 
     ProductVariantResponseMapper productVariantResponseMapper;
 
-    public void createCartItem(CartItemCreationRequest request) {
-        CartItem cartItem = cartItemMapper.toCartItem(request);
-        cartItemRepository.save(cartItem);
-    }
-
     public List<CartItemResponse> getCartItemsByCartId(Integer cartId) {
         return cartItemRepository.findByCart_CartId(cartId).stream()
                 .map(cartItemMapper::toCartItemResponse)
@@ -100,6 +95,7 @@ public class CartItemService {
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
     }
+
     public List<CartItemResponse> getCartItemsByIds(List<String> cartItemIds) {
         List<Long> ids = cartItemIds.stream()
                 .map(Long::parseLong)
@@ -112,7 +108,6 @@ public class CartItemService {
                 .toList();
     }
     public CartItemResponse createImmediateCheckoutItem(Long variantId, int quantity) {
-        // 1. Tìm Variant từ Database
         ProductVariant variant = productVariantRepository.findById(variantId)
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
 

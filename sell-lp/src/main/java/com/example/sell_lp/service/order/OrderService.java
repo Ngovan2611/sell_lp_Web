@@ -1,4 +1,4 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.order;
 
 import com.example.sell_lp.dto.request.OrderCreationRequest;
 import com.example.sell_lp.dto.request.OrderItemCreationRequest;
@@ -20,7 +20,10 @@ import com.example.sell_lp.repository.OrderItemRepository;
 import com.example.sell_lp.repository.OrderRepository;
 import com.example.sell_lp.repository.ProductVariantRepository;
 import com.example.sell_lp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -29,37 +32,21 @@ import java.util.List;
 import java.util.Optional;
 
 
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 public class OrderService {
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
+    OrderRepository orderRepository;
     UserRepository userRepository;
+    AddressRepository addressRepository;
+    CartItemRepository cartItemRepository;
+    OrderMapper orderMapper;
+    OrderItemMapper orderItemMapper;
+    OrderItemRepository orderItemRepository;
+    ProductVariantRepository productVariantRepository;
+    PaymentMapper paymentMapper;
 
-    @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
-    private CartItemRepository cartItemRepository;
-
-    @Autowired
-    private OrderMapper orderMapper;
-
-    @Autowired
-    private OrderItemMapper orderItemMapper;
-
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
-    @Autowired
-    private ProductVariantRepository productVariantRepository;
-
-    @Autowired
-    private PaymentMapper paymentMapper;
-
+    @Transactional
     public Order save(OrderCreationRequest req) {
         User user = userRepository.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()
@@ -136,7 +123,7 @@ public class OrderService {
                 price,
                 variant.getProduct().getName(),
                 variant.getProduct().getName(),
-                variant.getProduct().getImages().isEmpty() ? "" : variant.getProduct().getImages().get(0).getUrl(),
+                variant.getProduct().getImages().isEmpty() ? "" : variant.getProduct().getImages().getFirst().getUrl(),
                 order.getOrderId(),
                 variant.getVariantId()
         );

@@ -1,7 +1,6 @@
 package com.example.sell_lp.dto.request;
 
 
-import com.example.sell_lp.entity.User;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

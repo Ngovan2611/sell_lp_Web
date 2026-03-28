@@ -14,13 +14,10 @@ import com.example.sell_lp.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 
 
 @RequiredArgsConstructor
@@ -83,6 +80,9 @@ public class UserService {
 
         return userMapper.toUserResponse(user);
 
+    }
+    public User getUserEntityByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public void updateUser(String userId, UserUpdateRequest userUpdateRequest) {

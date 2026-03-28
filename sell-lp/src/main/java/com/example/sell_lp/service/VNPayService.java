@@ -24,10 +24,10 @@ public class VNPayService {
     @Value("${vnpay.url}")
     private String vnp_PayUrl;
 
-    @Value("${vnpay.returnUrl}")
-    private String vnp_ReturnUrl;
+//    @Value("${vnpay.returnUrl}")
+//    private String vnp_ReturnUrl;
 
-    public String createOrder(int amount, String orderInfor, String urlReturn) throws UnsupportedEncodingException {
+    public String createOrder(int amount, String orderInfor, String urlReturn) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = getRandomNumber(8);

@@ -6,7 +6,9 @@ import com.example.sell_lp.dto.response.CartItemResponse;
 import com.example.sell_lp.service.AddressService;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CartItemService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -19,13 +21,12 @@ import java.util.List;
 
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CheckoutController {
-    @Autowired
-    private AuthenticationService authenticationService;
-    @Autowired
-    private AddressService addressService;
-    @Autowired
-    private CartItemService cartItemService;
+    AuthenticationService authenticationService;
+    AddressService addressService;
+    CartItemService cartItemService;
 
     @GetMapping("/checkout")
     public String checkout(Model model,
@@ -73,7 +74,7 @@ public class CheckoutController {
 
         List<AddressResponse> addresses = addressService.getAllAddressesByUsername(username);
         model.addAttribute("addresses", addresses);
-        model.addAttribute("address", addresses.isEmpty() ? null : addresses.get(0));
+        model.addAttribute("address", addresses.isEmpty() ? null : addresses.getFirst());
 
         return "checkout";
     }

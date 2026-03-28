@@ -1,7 +1,6 @@
 package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.response.CartItemResponse;
-import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CartItemService;
 import com.example.sell_lp.service.CartService;
@@ -26,7 +25,6 @@ public class CartController {
     AuthenticationService authenticationService;
     CartItemService cartItemService;
     CartService cartService;
-    CategoryService categoryService;
 
     @GetMapping("/cart")
     public String getCart(
