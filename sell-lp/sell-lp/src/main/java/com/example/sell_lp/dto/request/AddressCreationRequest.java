@@ -16,16 +16,14 @@ public class AddressCreationRequest {
 
     private String recipientName;
     private String phone;
-
     private String street;
     private String ward;
     private String district;
     private String city;
-
     private String fullAddress;
-
     private Double lat;
     private Double lng;
-
     private Boolean isDefault;
+
+
 }
