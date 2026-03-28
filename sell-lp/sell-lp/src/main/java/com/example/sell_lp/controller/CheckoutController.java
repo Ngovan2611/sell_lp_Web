@@ -62,6 +62,8 @@ public class CheckoutController {
         return processCheckout(model, items, String.valueOf(variantId), username);
     }
 
+
+
     private String processCheckout(Model model, List<CartItemResponse> items, String ids, String username) {
         model.addAttribute("username", username);
         model.addAttribute("items", items);
