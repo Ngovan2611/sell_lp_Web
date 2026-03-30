@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +24,6 @@ public class UserResponse {
     String phone;
     boolean isActive;
     Date createdAt;
-    String role;
+    private Set<String> roles;
     String provider;
 }

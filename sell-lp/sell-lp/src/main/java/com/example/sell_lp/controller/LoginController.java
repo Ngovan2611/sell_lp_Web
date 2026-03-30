@@ -3,6 +3,7 @@ package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.request.AuthenticationRequest;
 import com.example.sell_lp.entity.User;
+import com.example.sell_lp.enums.Role;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -50,8 +51,16 @@ public class LoginController {
                 cookie.setPath("/");
                 cookie.setMaxAge(24 * 60 * 60);
                 response.addCookie(cookie);
-                redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
-                return "redirect:/home";
+                boolean isAdmin = user.getRoles().stream()
+                        .anyMatch(role -> role.getRoleName().equals(Role.ADMIN.name()));
+
+                if (isAdmin) {
+                    redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
+                    return "redirect:/admin/index";
+                } else {
+                    redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
+                    return "redirect:/home";
+                }
             }
 
 

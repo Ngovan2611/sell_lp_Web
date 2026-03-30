@@ -63,7 +63,6 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .email(email)
                     .fullName(name)
                     .provider(registrationId)
-                    .role(Role.USER.name())
                     .isActive(true)
                     .createdAt(new Date())
                     .build();

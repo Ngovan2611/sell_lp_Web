@@ -55,10 +55,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     if (username != null) {
 
-                        UsernamePasswordAuthenticationToken auth =
-                                new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                        try {
+                            com.nimbusds.jwt.SignedJWT signedJWT = com.nimbusds.jwt.SignedJWT.parse(token);
+                            String rolesClaim = signedJWT.getJWTClaimsSet().getStringClaim("role");
 
-                        SecurityContextHolder.getContext().setAuthentication(auth);
+                            java.util.List<org.springframework.security.core.GrantedAuthority> authorities = new java.util.ArrayList<>();
+                            if (rolesClaim != null && !rolesClaim.isEmpty()) {
+                                for (String role : rolesClaim.split(" ")) {
+                                    authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(role));
+                                }
+                            }
+
+                            UsernamePasswordAuthenticationToken auth =
+                                    new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+                            SecurityContextHolder.getContext().setAuthentication(auth);
+                        } catch (Exception e) {
+                            logger.error("Lỗi trích xuất Role từ Token: " + e.getMessage());
+                        }
                     }
                 }
             }
