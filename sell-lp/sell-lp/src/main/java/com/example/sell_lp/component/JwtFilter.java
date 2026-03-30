@@ -17,7 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -42,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     String token = cookie.getValue();
 
-                    String username = null;
+                    String username;
                     try {
                         username = authenticationService.extractUsernameFromToken(token);
                     } catch (ParseException | JOSEException e) {
@@ -55,10 +54,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     if (username != null) {
 
-                        UsernamePasswordAuthenticationToken auth =
-                                new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                        try {
+                            com.nimbusds.jwt.SignedJWT signedJWT = com.nimbusds.jwt.SignedJWT.parse(token);
+                            String rolesClaim = signedJWT.getJWTClaimsSet().getStringClaim("role");
 
-                        SecurityContextHolder.getContext().setAuthentication(auth);
+                            java.util.List<org.springframework.security.core.GrantedAuthority> authorities = new java.util.ArrayList<>();
+                            if (rolesClaim != null && !rolesClaim.isEmpty()) {
+                                for (String role : rolesClaim.split(" ")) {
+                                    authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(role));
+                                }
+                            }
+
+                            UsernamePasswordAuthenticationToken auth =
+                                    new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+                            SecurityContextHolder.getContext().setAuthentication(auth);
+                        } catch (Exception e) {
+                            logger.error("Lỗi trích xuất Role từ Token: " + e.getMessage());
+                        }
                     }
                 }
             }

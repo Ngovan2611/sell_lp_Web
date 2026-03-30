@@ -9,12 +9,14 @@ import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
@@ -22,13 +24,14 @@ import java.text.ParseException;
 @Controller
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/profile")
 public class ProfileController {
 
     UserService userService;
 
     AuthenticationService authenticationService;
 
-    @GetMapping("/profile")
+    @GetMapping
     public String showProfile(Model model,
                               @CookieValue(value = "jwt", required = false) String token)
             throws ParseException, JOSEException {
@@ -42,15 +45,14 @@ public class ProfileController {
 
         return "profile";
     }
-
-    @PostMapping("/profile/update")
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/update")
     public String updateProfile(
             @ModelAttribute UserUpdateRequest request,
             RedirectAttributes redirectAttributes,
-            @CookieValue("jwt") String token
-    ) throws Exception {
+            java.security.Principal principal) {
 
-        String username = authenticationService.extractUsernameFromToken(token);
+        String username = principal.getName();
 
         UserResponse user = userService.getUserByUsername(username);
 

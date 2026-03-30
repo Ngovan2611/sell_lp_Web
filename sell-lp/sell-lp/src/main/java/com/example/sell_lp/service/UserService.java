@@ -6,9 +6,9 @@ import com.example.sell_lp.dto.request.UserChangePasswordRequest;
 import com.example.sell_lp.dto.request.UserCreationRequest;
 import com.example.sell_lp.dto.request.UserUpdateRequest;
 import com.example.sell_lp.dto.response.UserResponse;
+import com.example.sell_lp.entity.Role;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.Provider;
-import com.example.sell_lp.enums.Role;
 import com.example.sell_lp.mapper.UserMapper;
 import com.example.sell_lp.repository.UserRepository;
 import lombok.AccessLevel;
@@ -16,15 +16,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 public class UserService {
-
+    RoleService roleService;
     PasswordEncoder passwordEncoder;
 
     UserRepository userRepository;
@@ -59,14 +59,13 @@ public class UserService {
         User user = userMapper.toUser(userCreationRequest);
 
         Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        sdf.format(now);
         String password = passwordEncoder.encode(userCreationRequest.getPassword());
-
+        Role defaultRole = roleService.getByRoleName(com.example.sell_lp.enums.Role.USER.name());
+        user.setRoles(Set.of(defaultRole));
         user.setPassword(password);
         user.setActive(true);
+
         user.setCreatedAt(now);
-        user.setRole(Role.USER.name());
         user.setProvider(Provider.LOCAL.name());
         userRepository.save(user);
     }

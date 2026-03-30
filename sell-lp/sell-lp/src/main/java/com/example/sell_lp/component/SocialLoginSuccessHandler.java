@@ -1,14 +1,14 @@
 package com.example.sell_lp.component;
 
 import com.example.sell_lp.entity.User;
-import com.example.sell_lp.enums.Provider;
-import com.example.sell_lp.enums.Role;
 import com.example.sell_lp.repository.UserRepository;
 import com.example.sell_lp.service.AuthenticationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -16,15 +16,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Date;
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Component
 public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
     @Override
     public void onAuthenticationSuccess(
@@ -45,6 +44,7 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
 
 
+        assert name != null;
         String baseUsername = name.toLowerCase().replaceAll("[^a-z0-9]", "");
         String username = baseUsername;
 
@@ -63,7 +63,6 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .email(email)
                     .fullName(name)
                     .provider(registrationId)
-                    .role(Role.USER.name())
                     .isActive(true)
                     .createdAt(new Date())
                     .build();

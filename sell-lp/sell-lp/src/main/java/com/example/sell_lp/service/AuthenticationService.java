@@ -17,11 +17,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -58,9 +60,9 @@ public class AuthenticationService {
                 .issuer("NVV")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()
+                        Instant.now().plus(60, ChronoUnit.MINUTES).toEpochMilli()
                 ))
-                .claim("role", user.getRole())
+                .claim("role", buildRole(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
@@ -80,10 +82,11 @@ public class AuthenticationService {
         return claims.getSubject();
     }
 
-    public String extractRoleFromToken(String token) throws ParseException, JOSEException {
-        SignedJWT signedJWT = SignedJWT.parse(token);
-        JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
-        return claims.getClaim("role").toString();
+    private String buildRole(User user) {
+        StringJoiner joiner = new StringJoiner(" ");
+        if(!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(role -> joiner.add("ROLE_" + role.getRoleName()));
+        }
+        return joiner.toString();
     }
-
 }

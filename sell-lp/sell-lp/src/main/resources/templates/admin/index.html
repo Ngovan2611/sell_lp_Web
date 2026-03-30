@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-light: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--bg-light);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary-color);
+            color: white;
+            position: fixed;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            background: #1a252f;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .nav-item a {
+            display: block;
+            padding: 15px 25px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .nav-item a:hover, .nav-item.active a {
+            background: #34495e;
+            color: white;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+            color: var(--accent-color);
+        }
+
+        .stat-info h3 { margin: 0; font-size: 1.2rem; color: #7f8c8d; }
+        .stat-info p { margin: 5px 0 0; font-size: 1.5rem; font-weight: bold; color: #2c3e50; }
+
+        .welcome-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-header">SellLP Admin</div>
+    <ul class="nav-menu">
+        <li class="nav-item active"><a href="/admin"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li class="nav-item"><a href="/admin/products"><i class="fas fa-box"></i> Sản phẩm</a></li>
+        <li class="nav-item"><a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
+        <li class="nav-item"><a href="/admin/users"><i class="fas fa-users"></i> Người dùng</a></li>
+        <li class="nav-item"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="header-stats">
+        <div class="stat-card">
+            <i class="fas fa-dollar-sign stat-icon"></i>
+            <div class="stat-info">
+                <h3>Doanh thu</h3>
+                <p>0 VND</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-users stat-icon" style="color: #2ecc71;"></i>
+            <div class="stat-info">
+                <h3>Khách hàng</h3>
+                <p>120</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-shopping-bag stat-icon" style="color: #e67e22;"></i>
+            <div class="stat-info">
+                <h3>Đơn mới</h3>
+                <p>5</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="welcome-box">
+        <h1>Chào mừng trở lại, Admin!</h1>
+        <p>Hệ thống SellLP đang hoạt động ổn định. Bạn có thể bắt đầu quản lý cửa hàng ngay bây giờ.</p>
+        <img src="https://via.placeholder.com/400x200?text=SellLP+Management" alt="Banner" style="max-width: 100%; border-radius: 8px; margin-top: 20px;">
+    </div>
+</div>
+
+</body>
+</html>
