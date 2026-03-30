@@ -17,7 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -42,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     String token = cookie.getValue();
 
-                    String username = null;
+                    String username;
                     try {
                         username = authenticationService.extractUsernameFromToken(token);
                     } catch (ParseException | JOSEException e) {
