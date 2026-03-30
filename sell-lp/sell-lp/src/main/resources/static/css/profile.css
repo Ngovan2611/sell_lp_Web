@@ -91,3 +91,149 @@
 #sidebar.active {
     transform: translateX(0);
 }
+
+.email-auth-wrapper {
+    display: flex;
+    display: -webkit-flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.email-auth-wrapper .form-control {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.btn-verify {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+}
+
+.btn-verify:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.btn-verify:active {
+    transform: translateY(0);
+}
+
+.btn-verify:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+#otpGroup {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #dee2e6;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#otpTimer {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Container của toàn bộ phần OTP */
+.otp-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f0f7ff; /* Màu xanh nhạt để phân biệt với phần khác */
+    border: 1px solid #cce5ff;
+    border-radius: 10px;
+    /* Hiệu ứng hiện hình mượt mà */
+    animation: slideDown 0.4s ease-out;
+}
+
+/* Hiệu ứng trượt xuống khi hiển thị */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.otp-container label {
+    color: #004085;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Group chứa Input và Button OTP */
+.otp-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* Ô nhập số OTP */
+#otpInput {
+    letter-spacing: 4px; /* Giãn cách các số cho dễ đọc */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border: 2px solid #ced4da;
+    transition: border-color 0.3s;
+}
+
+#otpInput:focus {
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+.btn-verify-otp {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-verify-otp:hover {
+    background-color: #218838;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.otp-timer {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #d9534f;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.otp-timer::before {
+    content: "\f2f2";
+    font-family: "Font Awesome 5 Free", serif;
+    font-weight: 900;
+}

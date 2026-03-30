@@ -26,9 +26,7 @@ import java.util.Set;
 public class UserService {
     RoleService roleService;
     PasswordEncoder passwordEncoder;
-
     UserRepository userRepository;
-
     UserMapper userMapper;
 
 
@@ -47,6 +45,13 @@ public class UserService {
         }
 
         return null;
+    }
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null){
+            return null;
+        }
+        return userMapper.toUserResponse(user);
     }
 
     public void createUser(UserCreationRequest userCreationRequest) {

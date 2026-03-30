@@ -45,10 +45,28 @@
 
         <div class="form-group">
             <label>Email</label>
-            <input type="email"
-                   th:field="*{email}"
-                   class="form-control"
-                   th:readonly="${user.getEmail() != null}">
+            <div class="email-auth-wrapper">
+                <input type="email" id="emailInput" th:field="*{email}"
+                       class="form-control">
+
+                <button type="button" id="btnSendOtp" class="btn-verify"
+                        th:if="${user.email == null || user.email == ''}"
+                        onclick="sendOtp()">
+                    Xác thực
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group otp-container" id="otpGroup" style="display: none;">
+            <label><i class="fas fa-shield-alt"></i> Xác nhận mã OTP</label>
+            <div class="otp-input-group">
+                <input type="text" id="otpInput" class="form-control"
+                       placeholder="Mã 6 số" maxlength="6">
+                <button type="button" class="btn-verify-otp" onclick="verifyOtp()">
+                    Xác nhận
+                </button>
+            </div>
+            <div id="otpTimer" class="otp-timer"></div>
         </div>
 
         <div class="form-group">
@@ -79,7 +97,79 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/common.js}"></script>
+<script>
+    function sendOtp() {
+        const email = document.getElementById("emailInput").value;
+        const btn = document.getElementById("btnSendOtp");
 
+        if (!email) {
+            alert("Vui lòng nhập email trước khi xác thực!");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Đang kiểm tra...";
+
+        const params = new URLSearchParams({ email: email });
+
+        fetch(`/api/auth/send-otp?${params.toString()}`, { method: 'POST' })
+            .then(async response => {
+                const message = await response.text();
+
+                if (response.ok) {
+                    document.getElementById("otpGroup").style.display = "block";
+                    alert(message);
+                    startTimer(60);
+                } else {
+                    alert("Lỗi: " + message);
+                    btn.disabled = false;
+                    btn.innerText = "Xác thực";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Không thể kết nối đến máy chủ.");
+                btn.disabled = false;
+                btn.innerText = "Xác thực";
+            });
+    }
+
+    function verifyOtp() {
+        const email = document.getElementById("emailInput").value;
+        const otp = document.getElementById("otpInput").value;
+
+        fetch(`/api/auth/verify-otp?email=${email}&otp=${otp}`, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    alert("Xác thực thành công!");
+                    document.getElementById("otpGroup").style.display = "none";
+                    document.getElementById("emailInput").readOnly = true;
+                    document.getElementById("btnSendOtp").remove();
+                } else {
+                    alert("Mã OTP không chính xác!");
+                }
+            });
+    }
+
+    function startTimer(duration) {
+        let timer = duration;
+        const display = document.getElementById("otpTimer");
+        const btn = document.getElementById("btnSendOtp");
+
+        const interval = setInterval(() => {
+            display.innerText = `Vui lòng đợi ${timer}s để gửi lại mã.`;
+            if (--timer < 0) {
+                clearInterval(interval);
+                display.innerText = "";
+                btn.disabled = false;
+                btn.innerText = "Xác thực";
+            }
+        }, 1000);
+    }
+    document.getElementById('otpInput').addEventListener('input', function (e) {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+    });
+</script>
 
 </body>
 </html>
