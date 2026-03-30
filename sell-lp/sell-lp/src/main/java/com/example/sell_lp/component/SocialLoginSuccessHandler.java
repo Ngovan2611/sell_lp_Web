@@ -1,8 +1,10 @@
 package com.example.sell_lp.component;
 
 import com.example.sell_lp.entity.User;
+import com.example.sell_lp.enums.Role;
 import com.example.sell_lp.repository.UserRepository;
 import com.example.sell_lp.service.AuthenticationService;
+import com.example.sell_lp.service.RoleService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Set;
+
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Component
@@ -24,6 +28,8 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     UserRepository userRepository;
 
     AuthenticationService authenticationService;
+
+    RoleService roleService;
 
     @Override
     public void onAuthenticationSuccess(
@@ -57,7 +63,7 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
-
+            com.example.sell_lp.entity.Role defaultRole = roleService.getByRoleName(com.example.sell_lp.enums.Role.USER.name());
             user = User.builder()
                     .username(username)
                     .email(email)
@@ -65,6 +71,7 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .provider(registrationId)
                     .isActive(true)
                     .createdAt(new Date())
+                    .roles(Set.of(defaultRole))
                     .build();
 
             userRepository.save(user);

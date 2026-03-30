@@ -14,5 +14,4 @@ public class RoleService {
     public Role getByRoleName(String roleName) {
         return roleRepository.findByRoleName(roleName);
     }
-
 }

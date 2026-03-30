@@ -42,7 +42,6 @@ public class ProfileController {
         UserResponse user = userService.getUserByUsername(username);
         model.addAttribute("username", username);
         model.addAttribute("user", user);
-
         return "profile";
     }
     @PreAuthorize("isAuthenticated()")
@@ -55,7 +54,6 @@ public class ProfileController {
         String username = principal.getName();
 
         UserResponse user = userService.getUserByUsername(username);
-
         userService.updateUser(user.getUserId(), request);
         redirectAttributes.addFlashAttribute("success", "cập nhật thành công!");
 
