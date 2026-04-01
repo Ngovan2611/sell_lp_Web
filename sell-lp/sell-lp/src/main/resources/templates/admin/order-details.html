@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết đơn hàng #[[${order.orderId}]] - Admin</title>
+
+    <link rel="stylesheet" th:href="@{/css/history-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/order-detail.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+
+<div class="container">
+    <div class="order-box">
+        <div class="order-header">
+            <div>
+                <h2>Đơn hàng #<span th:text="${order.orderId}"></span> <span class="admin-badge">ADMIN VIEW</span></h2>
+                <p class="order-date">
+                    Ngày đặt: <span th:text="${#dates.format(order.orderDate,'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+            </div>
+
+            <div class="order-status" th:classappend="'status-' + ${order.status}">
+                <span th:switch="${order.status}">
+                    <span th:case="'PENDING'">Chờ duyệt</span>
+                    <span th:case="'PREPARING'">Đang chuẩn bị</span>
+                    <span th:case="'SHIPPING'">Đang giao hàng</span>
+                    <span th:case="'SUCCESS'">Thành công</span>
+                    <span th:case="'FAILURE'">Đã hủy</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="address-box">
+                <div class="box-title">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Thông tin nhận hàng</span>
+                </div>
+                <div class="address-content">
+                    <p class="name">
+                        <b th:text="${order.recipientName}"></b>
+                        - <span th:text="${order.phone}"></span>
+                    </p>
+                    <p class="full-address">
+                        <i class="fa-solid fa-map-pin" style="color: #e74c3c;"></i>
+                        <span th:text="${order.fullAddress}"></span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="payment-box">
+                <div class="box-title">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <span>Thanh toán & Đối soát</span>
+                </div>
+                <div class="payment-content">
+                    <div th:if="${order.payments != null and !order.payments.isEmpty()}">
+                        <th:block th:each="pay : ${order.payments}">
+                            <p class="payment-status success" th:if="${pay.status == 'SUCCESS'}">
+                                <i class="fa-solid fa-check-circle"></i> Đã thanh toán (Online)
+                            </p>
+                            <p style="margin: 5px 0; font-size: 0.9em;">
+                                <b>Phương thức:</b> <span th:text="${pay.method}"></span><br>
+                                <b>Mã GD:</b> <span th:text="${pay.transactionId}"></span><br>
+                                <b>Thời gian:</b> <span th:text="${#temporals.format(pay.paidAt, 'HH:mm dd/MM/yyyy')}"></span>
+                            </p>
+                        </th:block>
+                    </div>
+                    <div th:unless="${order.payments != null and !order.payments.isEmpty()}">
+                        <p class="payment-status pending">
+                            <i class="fa-solid fa-clock"></i> Chờ thanh toán / COD
+                        </p>
+                        <p style="font-size: 0.85em; color: #666;">Vui lòng thu tiền khi giao hàng nếu là đơn COD.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="items-box">
+            <div th:each="item : ${order.items}" class="order-item">
+                <img th:src="${item.imageUrl}" th:alt="${item.productName}">
+                <div class="item-info">
+                    <b th:text="${item.productName}"></b>
+                    <p th:text="${item.variantName}"></p>
+                    <p>Số lượng: <b th:text="${item.quantity}"></b></p>
+                </div>
+                <div class="item-price">
+                    <span th:text="${#numbers.formatDecimal(item.unitPrice,0,'COMMA',0,'POINT')}"></span>đ
+                </div>
+            </div>
+        </div>
+
+        <div class="summary">
+            <div class="row">
+                <span>Giá trị hàng hóa</span>
+                <span th:text="${#numbers.formatDecimal(order.totalAmount - 30000,0,'COMMA',0,'POINT')} + 'đ'"></span>
+            </div>
+            <div class="row">
+                <span>Phí vận chuyển</span>
+                <span>30,000đ</span>
+            </div>
+            <div class="row total">
+                <span>Tổng doanh thu đơn hàng</span>
+                <span th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'đ'"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-bar">
+        <a th:href="@{/admin/orders}" class="btn-back" style="text-decoration: none; color: #666; font-weight: 500;">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+        </a>
+
+        <div class="group-btns">
+            <th:block th:if="${order.status == 'PENDING'}">
+                <button class="btn-cancel-admin" th:onclick="'adminCancel(' + ${order.orderId} + ')'">
+                    <i class="fa-solid fa-ban"></i> Hủy đơn
+                </button>
+                <button class="btn-preparing" th:onclick="'updateStatus(' + ${order.orderId} + ', \'PREPARING\')'">
+                    <i class="fa-solid fa-box"></i> Duyệt & Chuẩn bị hàng
+                </button>
+            </th:block>
+
+            <th:block th:if="${order.status == 'PREPARING'}">
+                <button class="btn-cancel-admin" th:onclick="'adminCancel(' + ${order.orderId} + ')'">
+                    <i class="fa-solid fa-ban"></i> Hủy đơn
+                </button>
+                <button class="btn-shipping" th:onclick="'updateStatus(' + ${order.orderId} + ', \'SHIPPING\')'">
+                    <i class="fa-solid fa-truck-fast"></i> Bắt đầu giao hàng
+                </button>
+            </th:block>
+
+            <th:block th:if="${order.status == 'SHIPPING'}">
+                <button class="btn-success" th:onclick="'updateStatus(' + ${order.orderId} + ', \'SUCCESS\')'">
+                    <i class="fa-solid fa-circle-check"></i> Xác nhận hoàn thành
+                </button>
+            </th:block>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function updateStatus(id, status) {
+        let message = "Xác nhận chuyển trạng thái đơn hàng?";
+        if(status === 'PREPARING') message = "Xác nhận duyệt và bắt đầu đóng gói đơn hàng?";
+        if(status === 'SHIPPING') message = "Xác nhận đã bàn giao hàng cho đơn vị vận chuyển?";
+        if(status === 'SUCCESS') message = "Xác nhận đơn hàng đã giao tới khách và thu tiền thành công?";
+
+        if(!confirm(message)) return;
+
+        fetch(`/admin/orders/update-status/${id}?status=${status}`, { method: 'POST' })
+            .then(res => {
+                if(res.ok) {
+                    alert("Cập nhật trạng thái thành công!");
+                    location.reload();
+                } else {
+                    alert("Lỗi: Không thể cập nhật trạng thái.");
+                }
+            });
+    }
+
+    function adminCancel(id) {
+        if(!confirm("Cảnh báo: Hủy đơn sẽ tự động cộng lại số lượng sản phẩm vào kho. Bạn chắc chắn chứ?")) return;
+
+        fetch(`/admin/orders/cancel/${id}`, { method: 'POST' })
+            .then(res => {
+                if(res.ok) {
+                    alert("Đã hủy đơn và hoàn trả kho hàng.");
+                    location.href = "/admin/orders";
+                } else {
+                    alert("Không thể hủy đơn hàng này.");
+                }
+            });
+    }
+</script>
+</body>
+</html>

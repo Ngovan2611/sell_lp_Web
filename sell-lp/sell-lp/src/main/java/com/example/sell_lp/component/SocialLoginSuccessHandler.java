@@ -1,7 +1,6 @@
 package com.example.sell_lp.component;
 
 import com.example.sell_lp.entity.User;
-import com.example.sell_lp.enums.Role;
 import com.example.sell_lp.repository.UserRepository;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.RoleService;
@@ -69,7 +68,7 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .email(email)
                     .fullName(name)
                     .provider(registrationId)
-                    .isActive(true)
+                    .active(true)
                     .createdAt(new Date())
                     .roles(Set.of(defaultRole))
                     .build();

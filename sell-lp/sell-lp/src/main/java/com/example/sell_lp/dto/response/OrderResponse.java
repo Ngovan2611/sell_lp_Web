@@ -1,16 +1,12 @@
 package com.example.sell_lp.dto.response;
 
 
-import com.example.sell_lp.entity.OrderItem;
-import com.example.sell_lp.entity.Payment;
-import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 

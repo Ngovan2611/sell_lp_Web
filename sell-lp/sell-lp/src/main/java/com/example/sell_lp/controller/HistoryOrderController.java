@@ -5,7 +5,9 @@ import com.example.sell_lp.dto.response.OrderResponse;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.order.OrderService;
 import com.nimbusds.jose.JOSEException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -18,15 +20,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
 public class HistoryOrderController {
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
-    @Autowired
-    private OrderService orderService;
+    OrderService orderService;
 
 
     @GetMapping("/history-order")

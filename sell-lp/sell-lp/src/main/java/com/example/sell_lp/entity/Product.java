@@ -3,6 +3,8 @@ package com.example.sell_lp.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -25,6 +27,7 @@ import java.util.List;
 
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Thêm dòng này
     int productId;
     String name;
     String description;
@@ -36,7 +39,7 @@ public class Product {
     List<ProductVariant> variants;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")   // FK trong bảng product
+    @JoinColumn(name = "category_id")
     Category category;
 
     @OneToMany(mappedBy = "product")

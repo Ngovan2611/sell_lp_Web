@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm sản phẩm mới | SellLP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/product-form.css}">
+
+</head>
+<body>
+
+<div class="admin-product-manager">
+    <h2><i class="fas fa-plus-circle"></i> Thêm sản phẩm mới</h2>
+
+    <form th:action="@{/admin/products/add}" th:object="${productRequest}" method="post">
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Tên sản phẩm</label>
+                <input type="text" th:field="*{name}" class="form-input" placeholder="Tên sản phẩm..." required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mô tả</label>
+                <input type="text" th:field="*{description}" class="form-input" placeholder="Mô tả sản phẩm..." required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Danh mục</label>
+                <select th:field="*{categoryId}" class="form-input">
+                    <option th:each="c : ${categories}" th:value="${c.categoryId}" th:text="${c.categoryName}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label class="form-label">URL Hình ảnh</label>
+            <input type="text" th:field="*{imageUrl}" class="form-input" placeholder="https://example.com/image.jpg">
+        </div>
+
+        <div class="variant-section">
+            <h3><i class="fas fa-th-list"></i> Cấu hình các biến thể</h3>
+            <table class="variant-table">
+                <thead id="variant-header">
+                <tr>
+                    <th>Màu sắc</th>
+                    <th class="spec-column">RAM</th>
+                    <th class="spec-column">ROM</th>
+                    <th>Giá bán (đ)</th>
+                    <th>Kho</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="variant-items">
+                </tbody>
+            </table>
+
+            <button type="button" class="btn-add-variant" onclick="addVariant()">
+                <i class="fas fa-plus"></i> Thêm biến thể mới
+            </button>
+        </div>
+
+        <div style="margin-top: 40px; text-align: right; border-top: 1px solid var(--border-color); padding-top: 25px;">
+            <button type="submit" class="btn-submit">Hoàn tất & Lưu</button>
+        </div>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    let variantIdx = 0;
+    const colors = [[${colors}]];
+    const rams = [[${rams}]];
+    const roms = [[${roms}]];
+
+    function addVariant() {
+        const categorySelect = document.getElementById('categoryId');
+        const selectedCat = categorySelect.options[categorySelect.selectedIndex].text.toLowerCase();
+
+        const isTechProduct = selectedCat.includes('laptop') || selectedCat.includes('pc');
+
+        const displayStyle = isTechProduct ? '' : 'display:none';
+
+        const tbody = document.getElementById('variant-items');
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+        <td>
+            <select name="variants[${variantIdx}].colorId" class="form-input">
+                ${colors.map(c => `<option value="${c.colorId}">${c.colorName}</option>`).join('')}
+            </select>
+        </td>
+        <td class="spec-column" style="${displayStyle}">
+            <select name="variants[${variantIdx}].ramId" class="form-input">
+                <option value="">N/A</option>
+                ${rams.map(r => `<option value="${r.ramId}">${r.ramSize}</option>`).join('')}
+            </select>
+        </td>
+        <td class="spec-column" style="${displayStyle}">
+            <select name="variants[${variantIdx}].romId" class="form-input">
+                <option value="">N/A</option>
+                ${roms.map(r => `<option value="${r.romId}">${r.romSize}</option>`).join('')}
+            </select>
+        </td>
+        <td><input type="number" name="variants[${variantIdx}].price" class="form-input" placeholder="Giá" required></td>
+        <td><input type="number" name="variants[${variantIdx}].stockQty" class="form-input" placeholder="Kho" required></td>
+        <td>
+            <button type="button" class="btn-remove" onclick="this.closest('tr').remove()">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    `;
+        tbody.appendChild(row);
+
+        const headerSpecs = document.querySelectorAll('thead .spec-column');
+        headerSpecs.forEach(col => col.style.display = displayStyle);
+
+        variantIdx++;
+    }
+
+    document.getElementById('categoryId').addEventListener('change', function() {
+        const tbody = document.getElementById('variant-items');
+        tbody.innerHTML = '';
+        variantIdx = 0;
+        addVariant();
+    });
+</script>
+</body>
+</html>

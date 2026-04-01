@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý sản phẩm | SellLP Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/admin-common.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin-product.css}">
+</head>
+<body>
+<div th:replace="~{fragments/admin-header :: div}"></div>
+
+<div class="main-content">
+    <div class="admin-product-manager">
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon icon-blue"><i class="fas fa-box"></i></div>
+                <div>
+                    <p class="stat-label">Tổng sản phẩm</p>
+                    <h3 th:text="${totalItems}">0</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-yellow"><i class="fas fa-history"></i></div>
+                <div>
+                    <p class="stat-label">Sắp hết hàng</p>
+                    <h3>12</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="toolbar">
+                <form th:action="@{/admin/products}" method="get" class="search-form">
+                    <input type="text" name="keyword" placeholder="Tìm sản phẩm..." class="form-input">
+                    <button type="submit" class="btn-filter">Lọc</button>
+                </form>
+
+                <a th:href="@{/admin/products/add}" class="btn-add">
+                    <i class="fas fa-plus-circle"></i> THÊM MỚI
+                </a>
+            </div>
+
+            <table class="custom-table">
+                <thead>
+                <tr>
+                    <th class="col-icon">#</th>
+                    <th>Thông tin sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Giá thấp nhất</th>
+                    <th>Kho</th>
+                    <th class="col-action">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="p : ${products}">
+                    <tr class="product-row" th:onclick="'toggleVariant(' + ${p.productId} + ')'">
+                        <td class="col-icon">
+                            <i class="fas fa-chevron-right" th:id="'icon-' + ${p.productId}"></i>
+                        </td>
+                        <td>
+                            <div class="product-info-cell">
+                                <img th:src="${p.imageUrl}" class="product-img">
+                                <div>
+                                    <b th:text="${p.name}"></b><br>
+                                    <small class="text-muted" th:text="'ID: #' + ${p.productId}"></small>
+                                </div>
+                            </div>
+                        </td>
+                        <td th:text="${p.category != null ? p.category.categoryName : 'N/A'}"></td>
+                        <td>
+                            <span class="price-text" th:text="${#numbers.formatDecimal(p.getMinPrice(), 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                        </td>
+                        <td>
+                            <span class="badge-stock"
+                                  th:classappend="${p.getTotalStock() > 10 ? 'in-stock' : (p.getTotalStock() > 0 ? 'low-stock' : 'out-stock')}"
+                                  th:text="${p.getTotalStock()}"></span>
+                        </td>
+                        <td class="col-action">
+                            <button class="btn-filter btn-edit-mini"
+                                    th:onclick="'event.stopPropagation(); openEditModal(' + ${p.productId} + ')'">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr th:id="'variant-' + ${p.productId}" class="variant-hidden-row" style="display: none;">
+                        <td colspan="6">
+                            <div class="variant-detail-wrapper">
+                                <p class="variant-title">DANH SÁCH PHIÊN BẢN</p>
+                                <table class="inner-variant-table">
+                                    <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Cấu hình</th>
+                                        <th>Giá bán</th>
+                                        <th>Kho</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="v : ${p.variants}">
+                                        <td th:text="'#' + ${v.variantId}"></td>
+                                        <td>
+                                            <span th:text="${v.colorName ?: 'Màu mặc định'}"></span>
+                                            <span th:text="${v.ramSize ?: ''}"></span>
+                                            <span th:text="${v.romSize ?: ''}"></span>
+                                        </td>
+                                        <td class="v-price-bold" th:text="${#numbers.formatDecimal(v.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                        <td th:text="${v.stockQty}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+
+            <div class="pagination-container" th:if="${totalPages > 1}">
+                <a class="page-link"
+                   th:classappend="${currentPage <= 1} ? 'disabled' : ''"
+                   th:href="@{/admin/products(page=${currentPage - 1}, keyword=${keyword})}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+
+                <a class="page-link"
+                   th:classappend="${1 == currentPage} ? 'active' : ''"
+                   th:href="@{/admin/products(page=1, keyword=${keyword})}">1</a>
+
+                <span class="page-link disabled" th:if="${currentPage > 3}">...</span>
+
+                <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a class="page-link"
+                       th:if="${i > 1 && i < totalPages && i >= currentPage - 1 && i <= currentPage + 1}"
+                       th:classappend="${i == currentPage} ? 'active' : ''"
+                       th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
+                       th:text="${i}"></a>
+                </th:block>
+
+                <span class="page-link disabled" th:if="${currentPage < totalPages - 2}">...</span>
+
+                <a class="page-link"
+                   th:classappend="${totalPages == currentPage} ? 'active' : ''"
+                   th:href="@{/admin/products(page=${totalPages}, keyword=${keyword})}"
+                   th:text="${totalPages}"></a>
+
+                <a class="page-link"
+                   th:classappend="${currentPage >= totalPages} ? 'disabled' : ''"
+                   th:href="@{/admin/products(page=${currentPage + 1}, keyword=${keyword})}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+
+            <div th:if="${totalItems == 0}" class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>Hiện tại chưa có sản phẩm nào trong hệ thống.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editProductModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-edit"></i> Chỉnh sửa sản phẩm</h3>
+            <button onclick="closeModal()" class="close-btn">&times;</button>
+        </div>
+
+        <form id="editProductForm">
+            <div class="modal-body">
+                <input type="hidden" id="editProductId">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tên sản phẩm</label>
+                        <input type="text" id="editName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái</label>
+                        <select id="editActive" class="form-control">
+                            <option value="true">Đang kinh doanh</option>
+                            <option value="false">Ngừng kinh doanh</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Danh mục</label>
+                    <select id="editCategoryId" class="form-control">
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.categoryId}"
+                                th:text="${cat.categoryName}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">URL hình ảnh (mỗi link một dòng)</label>
+                    <textarea id="editImages" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="variant-edit-section">
+                    <p class="form-label variant-section-label">Biến thể sản phẩm</p>
+                    <div id="variantEditContainer">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Hủy bỏ</button>
+                <button type="submit" class="btn-submit">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function toggleVariant(id) {
+        const row = document.getElementById('variant-' + id);
+        const icon = document.getElementById('icon-' + id);
+
+        // Kiểm tra trạng thái hiện tại
+        if (row.style.display === 'none' || row.style.display === '') {
+            row.style.display = 'table-row';
+            icon.style.transform = 'rotate(90deg)';
+            icon.style.transition = '0.3s';
+        } else {
+            row.style.display = 'none';
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    function openEditModal(id) {
+        fetch(`/admin/products/${id}`)
+            .then(res => res.json())
+            .then(product => {
+                document.getElementById('editProductId').value = product.productId;
+                document.getElementById('editName').value = product.name;
+                document.getElementById('editActive').value = product.active.toString();
+                if (product.category) document.getElementById('editCategoryId').value = product.category.categoryId;
+                document.getElementById('editImages').value = product.images ? product.images.join('\n') : '';
+
+                const container = document.getElementById('variantEditContainer');
+                container.innerHTML = product.variants.map(v => `
+                    <div class="variant-edit-row">
+                        <input type="hidden" class="v-id" value="${v.variantId}">
+                        <div class="v-label">
+                            ${v.colorName || 'Mặc định'} ${v.ramSize ? '/ ' + v.ramSize : ''} ${v.romSize ? '/ ' + v.romSize : ''}
+                        </div>
+                        <input type="number" class="v-price form-control" value="${v.price}">
+                        <input type="number" class="v-stock form-control" value="${v.stockQty}">
+                    </div>
+                `).join('');
+                document.getElementById('editProductModal').style.display = 'block';
+            });
+    }
+
+    function closeModal() {
+        document.getElementById('editProductModal').style.display = 'none';
+    }
+
+    document.getElementById('editProductForm').onsubmit = function(e) {
+        e.preventDefault();
+        const productId = parseInt(document.getElementById('editProductId').value);
+        const variants = Array.from(document.querySelectorAll('.variant-edit-row')).map(row => ({
+            variantId: parseInt(row.querySelector('.v-id').value),
+            price: parseFloat(row.querySelector('.v-price').value),
+            stockQty: parseInt(row.querySelector('.v-stock').value)
+        }));
+
+        const data = {
+            productId: productId,
+            name: document.getElementById('editName').value,
+            active: document.getElementById('editActive').value === 'true',
+            categoryId: parseInt(document.getElementById('editCategoryId').value) || null,
+            imageUrls: document.getElementById('editImages').value.split('\n').map(u => u.trim()).filter(u => u),
+            variants: variants
+        };
+
+        fetch(`/admin/products/${productId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => {
+            if (res.ok) {
+                alert('Thành công!');
+                location.reload();
+            } else {
+                alert('Lỗi dữ liệu!');
+            }
+        });
+    };
+</script>
+</body>
+</html>

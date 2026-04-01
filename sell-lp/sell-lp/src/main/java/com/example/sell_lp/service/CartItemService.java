@@ -1,13 +1,10 @@
 package com.example.sell_lp.service;
 
 
-import com.example.sell_lp.dto.request.CartItemCreationRequest;
 import com.example.sell_lp.dto.response.CartItemResponse;
-import com.example.sell_lp.dto.response.ProductVariantResponse;
 import com.example.sell_lp.entity.CartItem;
 import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.CartItemMapper;
-import com.example.sell_lp.mapper.ProductVariantResponseMapper;
 import com.example.sell_lp.repository.CartItemRepository;
 import com.example.sell_lp.repository.CartRepository;
 import com.example.sell_lp.repository.ProductVariantRepository;
@@ -16,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +30,6 @@ public class CartItemService {
 
     ProductVariantRepository productVariantRepository;
 
-    ProductVariantResponseMapper productVariantResponseMapper;
 
     public List<CartItemResponse> getCartItemsByCartId(Integer cartId) {
         return cartItemRepository.findByCart_CartId(cartId).stream()

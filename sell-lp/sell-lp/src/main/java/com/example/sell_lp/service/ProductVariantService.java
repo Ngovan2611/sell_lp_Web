@@ -27,10 +27,6 @@ public class ProductVariantService {
                 .map(productVariantResponseMapper::toProductVariantResponse).toList();
     }
 
-    public ProductVariantResponse getVariantById(Long variantId) {
-        ProductVariant productVariant = productVariantRepository.findById(variantId).orElse(null);
-        return productVariantResponseMapper.toProductVariantResponse(productVariant);
-    }
 
     public ProductVariant getVariantEntityById(Long variantId) {
         return productVariantRepository.findById(variantId)

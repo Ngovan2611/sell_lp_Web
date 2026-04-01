@@ -11,12 +11,14 @@ import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.Provider;
 import com.example.sell_lp.mapper.UserMapper;
 import com.example.sell_lp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 
@@ -69,7 +71,6 @@ public class UserService {
         user.setRoles(Set.of(defaultRole));
         user.setPassword(password);
         user.setActive(true);
-
         user.setCreatedAt(now);
         user.setProvider(Provider.LOCAL.name());
         userRepository.save(user);
@@ -118,6 +119,22 @@ public class UserService {
         user.setProvider("LOCAL");
 
         userRepository.save(user);
+    }
+    public List<UserResponse> getAllUsersByRoles(Role role) {
+        List<User> users = userRepository.findByRoles(Set.of(role));
+        return users.stream().map(userMapper::toUserResponse).toList();
+    }
+    @Transactional
+    public void toggleUserStatus(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        user.setActive(!user.isActive());
+        userRepository.save(user);
+    }
+
+
+    public Long countUser() {
+        return userRepository.count();
     }
 
 }

@@ -23,6 +23,8 @@
     <div class="tabs">
         <button class="tab active" onclick="filterOrders('ALL')">Tất cả</button>
         <button class="tab" onclick="filterOrders('PENDING')">Chờ xử lý</button>
+        <button class="tab" onclick="filterOrders('PREPARING')">Chuẩn bị hàng</button>
+        <button class="tab" onclick="filterOrders('SHIPPING')">Đang giao</button>
         <button class="tab" onclick="filterOrders('SUCCESS')">Thành công</button>
         <button class="tab" onclick="filterOrders('FAILURE')">Hủy</button>
     </div>
@@ -35,12 +37,14 @@
     <div th:each="order : ${orders}"
          class="order-card"
          th:attr="data-status=${order.status}, data-order-id=${order.orderId}">
-        <div class="order-status" th:switch="${order.status}"
-             th:classappend=" ${order.status == 'PENDING'}
-              ? 'status-pending' : (${order.status == 'SUCCESS'} ? 'status-success' : 'status-failure')">
-            <span th:case="'PENDING'">Chờ xử lý</span>
-            <span th:case="'SUCCESS'">Thành công</span>
-            <span th:case="'FAILURE'">Thất bại</span>
+        <div class="order-status" th:classappend="'status-' + ${order.status}">
+            <span th:switch="${order.status}">
+                <span th:case="'PENDING'">Chờ duyệt</span>
+                <span th:case="'PREPARING'">Đang chuẩn bị</span>
+                <span th:case="'SHIPPING'">Đang giao hàng</span>
+                <span th:case="'SUCCESS'">Thành công</span>
+                <span th:case="'FAILURE'">Đã hủy</span>
+            </span>
         </div>
 
         <div th:each="item : ${order.items}" class="order-item">

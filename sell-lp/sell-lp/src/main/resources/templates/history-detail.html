@@ -31,14 +31,14 @@
                 </p>
             </div>
 
-            <div class="order-status" th:switch="${order.status}"
-                 th:classappend="${order.status == 'PENDING'} ? 'status-pending' :
-                                (${order.status == 'SUCCESS' || order.status == 'PAID'} ? 'status-success' : 'status-failure')">
-                <span th:case="'PENDING'">Chờ xử lý</span>
-                <span th:case="'PAID'">Đang xử lý (Đã thanh toán)</span>
-                <span th:case="'SUCCESS'">Hoàn thành</span>
-                <span th:case="'CANCELLED'">Đã hủy</span>
-                <span th:case="'FAILURE'">Thất bại</span>
+            <div class="order-status" th:classappend="'status-' + ${order.status}">
+            <span th:switch="${order.status}">
+                <span th:case="'PENDING'">Chờ duyệt</span>
+                <span th:case="'PREPARING'">Đang chuẩn bị</span>
+                <span th:case="'SHIPPING'">Đang giao hàng</span>
+                <span th:case="'SUCCESS'">Thành công</span>
+                <span th:case="'FAILURE'">Đã hủy</span>
+            </span>
             </div>
         </div>
 
@@ -118,7 +118,10 @@
         <a href="/history-order" class="btn-back">
             <i class="fa-solid fa-left-long"></i> Quay lại
         </a>
-        <button class="btn-cancel" th:if="${order.status == 'PENDING'}" th:attr="data-id=${order.orderId}">
+
+        <button class="btn-cancel"
+                th:if="${order.status == 'PENDING' or order.status == 'PREPARING'}"
+                th:attr="data-id=${order.orderId}">
             Hủy đơn hàng
         </button>
     </div>
