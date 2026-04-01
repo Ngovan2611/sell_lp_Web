@@ -7,7 +7,6 @@ import com.example.sell_lp.repository.CategoryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,5 +28,8 @@ public class CategoryService {
         return categories.stream()
                 .map(categoryMapper::categoryToCategoryResponse)
                 .collect(Collectors.toList());
+    }
+    public Category getById(Integer id) {
+        return categoryRepository.findByCategoryId(id);
     }
 }

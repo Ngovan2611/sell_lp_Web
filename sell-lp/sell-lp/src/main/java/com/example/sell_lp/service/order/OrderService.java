@@ -24,6 +24,8 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -170,15 +172,25 @@ public class OrderService {
 
         return res;
     }
-    public void updateOrderStatus(Integer orderId, String request) {
+    public void updateOrderStatus(Integer orderId, String nextStatus) {
         Order order = orderRepository.findByOrderId(orderId);
+
         if (order == null) {
             throw new RuntimeException("Không tìm thấy đơn hàng");
         }
-        if (!order.getStatus().equals(OrderStatus.PENDING.name())) {
-            throw new RuntimeException("Không thể cập nhật trạng thái");
+
+        String currentStatus = order.getStatus();
+
+        if (currentStatus.equals(OrderStatus.SUCCESS.name()) ||
+                currentStatus.equals(OrderStatus.FAILURE.name())) {
+            throw new RuntimeException("Đơn hàng đã hoàn tất hoặc đã hủy, không thể thay đổi trạng thái.");
         }
-        order.setStatus(request);
+
+        if (nextStatus.equals(OrderStatus.FAILURE.name())) {
+            rollbackStock(order);
+        }
+
+        order.setStatus(nextStatus);
         orderRepository.save(order);
     }
     public void cancelOrder(Integer id) {
@@ -210,5 +222,21 @@ public class OrderService {
                 }
             }
         }
+    }
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+
+        return orderPage.map(order -> {
+            OrderResponse res = orderMapper.toOrderResponse(order);
+
+            res.setItems(order.getOrderItems().stream()
+                    .map(orderMapper::toOrderItemResponse).toList());
+
+            if (order.getPayments() != null) {
+                res.setPayments(order.getPayments().stream()
+                        .map(paymentMapper::toResponse).toList());
+            }
+            return res;
+        });
     }
 }

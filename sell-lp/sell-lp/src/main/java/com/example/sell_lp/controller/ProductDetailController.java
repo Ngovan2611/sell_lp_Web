@@ -74,7 +74,7 @@ public class ProductDetailController {
                 .toList();
 
         List<ProductResponse> relatedProducts = productService.
-                getRelatedProducts(product.getCategory(), productId, PageRequest.of(0, 10));
+                getRelatedProducts(product.getCategory().getCategoryId(), productId, PageRequest.of(0, 10));
 
         model.addAttribute("relatedProducts", relatedProducts);
         model.addAttribute("variants", productVariant);

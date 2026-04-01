@@ -17,7 +17,6 @@ import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,7 +47,8 @@ public class User {
     @Email
     String email;
     String phone;
-    boolean isActive;
+    @Column(name = "is_active")
+    boolean active;
     Date createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)

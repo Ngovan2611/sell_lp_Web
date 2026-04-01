@@ -54,11 +54,10 @@ public class LoginController {
                 boolean isAdmin = user.getRoles().stream()
                         .anyMatch(role -> role.getRoleName().equals(Role.ADMIN.name()));
 
+                redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
                 if (isAdmin) {
-                    redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
                     return "redirect:/admin/index";
                 } else {
-                    redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
                     return "redirect:/home";
                 }
             }

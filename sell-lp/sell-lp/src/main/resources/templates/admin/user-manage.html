@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý người dùng - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/admin-common.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/user-manage.css}">
+
+
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-header :: div}"></div>
+
+<div class="main-content">
+
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2><i class="fas fa-users-cog"></i> Quản lý người dùng</h2>
+            <div class="search-box">
+                <form th:action="@{/admin/users/search}" method="get">
+                    <input type="text" name="keyword" placeholder="Tìm tên, email, sđt...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Họ và tên</th>
+                    <th>Email</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.userId}">1</td>
+                    <td th:text="${user.username}" class="fw-bold">admin</td>
+                    <td th:text="${user.fullName}">Nguyễn Văn A</td>
+                    <td th:text="${user.email}">admin@gmail.com</td>
+                    <td>
+    <span th:if="${user.active}" class="status-active">
+        <i class="fas fa-check-circle"></i> Hoạt động
+    </span>
+
+                        <span th:unless="${user.active}" class="status-locked">
+        <i class="fas fa-lock"></i> Đã khóa
+    </span>
+                    </td>
+                    <td th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy')}">20/03/2026</td>
+                    <td class="actions">
+                        <button type="button"
+                                class="btn-toggle"
+                                th:data-id="${user.userId}"
+                                th:title="${user.active ? 'Khóa tài khoản' : 'Mở khóa'}"
+                                onclick="handleToggle(this)">
+                            <i th:class="${user.active ? 'fas fa-user-slash' : 'fas fa-user-check'}"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" th:if="${totalPages > 1}">
+        </div>
+    </div>
+</div>
+<script>
+    function handleToggle(button) {
+        const userId = button.getAttribute('data-id');
+
+        if (confirm("Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?")) {
+            fetch(`/admin/users/toggle-status/${userId}`, {
+                method: 'POST'
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert("Có lỗi xảy ra khi thực hiện thao tác này.");
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert("Lỗi kết nối máy chủ.");
+            });
+        }
+    }
+</script>
+</body>
+</html>

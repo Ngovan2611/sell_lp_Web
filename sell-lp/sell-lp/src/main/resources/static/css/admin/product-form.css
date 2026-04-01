@@ -1,0 +1,174 @@
+:root {
+    --primary-color: #f57c00;
+    --primary-hover: #e66a00;
+    --bg-body: #f1f5f9;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --white: #ffffff;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: var(--bg-body);
+    margin: 0;
+    padding: 20px;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.admin-product-manager {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.admin-product-manager h2 {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-main);
+}
+
+.admin-product-manager h2 i { color: var(--primary-color); }
+
+/* --- Grid Layout cho thông tin chung --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-label { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(245, 124, 0, 0.1);
+}
+
+/* --- Biến thể (Fix lỗi sát nhau) --- */
+.variant-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid var(--bg-body);
+}
+
+.variant-table { width: 100%; border-collapse: collapse; }
+
+/* Header bảng */
+.variant-table thead tr {
+    display: flex;
+    padding: 0 15px;
+    margin-bottom: 10px;
+    gap: 20px; /* Khoảng cách ngang giữa các tiêu đề */
+}
+
+.variant-table th {
+    flex: 1;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+}
+
+/* Body bảng - Biến mỗi dòng thành một Card */
+#variant-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách dọc giữa các hàng */
+}
+
+#variant-items tr {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Khoảng cách ngang giữa các ô input/select */
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+#variant-items tr:hover {
+    border-color: var(--primary-color);
+    background: var(--white);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+#variant-items td {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.variant-table th:last-child,
+#variant-items td:last-child {
+    flex: 0 0 45px;
+    justify-content: center;
+}
+
+.btn-add-variant {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    background: var(--white);
+    border: 2px dashed var(--border-color);
+    color: var(--text-muted);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-add-variant:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(245, 124, 0, 0.02);
+}
+
+.btn-submit {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.25);
+    transition: all 0.2s;
+}
+
+.btn-submit:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-remove {
+    color: #94a3b8;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+}
+
+.btn-remove:hover { color: #ef4444; background: #fee2e2; }

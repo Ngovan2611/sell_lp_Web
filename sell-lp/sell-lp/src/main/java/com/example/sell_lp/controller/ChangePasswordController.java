@@ -47,13 +47,11 @@ public class ChangePasswordController {
         if(token == null) {
             return  "redirect:/login";
         }
-
-
-
         String username = authenticationService.extractUsernameFromToken(token);
-
+        UserResponse user = userService.getUserByUsername(username);
 
         model.addAttribute("username", username);
+        model.addAttribute("provider", user.getProvider());
 
 
         try {

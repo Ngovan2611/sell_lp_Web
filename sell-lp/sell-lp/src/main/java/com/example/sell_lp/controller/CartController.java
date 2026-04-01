@@ -4,7 +4,6 @@ import com.example.sell_lp.dto.response.CartItemResponse;
 import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.CartItemService;
 import com.example.sell_lp.service.CartService;
-import com.example.sell_lp.service.CategoryService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

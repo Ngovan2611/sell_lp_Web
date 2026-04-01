@@ -2,7 +2,6 @@ package com.example.sell_lp.service;
 
 import com.example.sell_lp.dto.request.AddressUpdateRequest;
 import com.example.sell_lp.dto.response.AddressResponse;
-import com.example.sell_lp.dto.response.UserResponse;
 import com.example.sell_lp.entity.Address;
 import com.example.sell_lp.dto.request.AddressCreationRequest;
 import com.example.sell_lp.entity.User;
@@ -11,7 +10,6 @@ import com.example.sell_lp.repository.AddressRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

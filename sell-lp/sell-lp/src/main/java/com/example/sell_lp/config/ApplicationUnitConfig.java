@@ -42,7 +42,7 @@ public class ApplicationUnitConfig {
                         .username("admin")
                         .password(passwordEncoder.encode("admin1234"))
                         .roles(Set.of(adminRole))
-                        .isActive(true)
+                        .active(true)
                         .build();
 
                 userRepository.save(user);

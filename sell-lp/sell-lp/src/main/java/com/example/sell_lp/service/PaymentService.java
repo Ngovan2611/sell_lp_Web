@@ -1,7 +1,6 @@
 package com.example.sell_lp.service;
 
 import com.example.sell_lp.dto.request.PaymentRequest;
-import com.example.sell_lp.dto.response.PaymentResponse;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.Payment;
 import com.example.sell_lp.enums.PaymentStatus;
@@ -26,7 +25,7 @@ public class PaymentService {
     PaymentMapper paymentMapper;
 
     @Transactional
-    public PaymentResponse createPayment(PaymentRequest request) {
+    public void createPayment(PaymentRequest request) {
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
@@ -42,6 +41,6 @@ public class PaymentService {
 
         payment = paymentRepository.save(payment);
 
-        return paymentMapper.toResponse(payment);
+        paymentMapper.toResponse(payment);
     }
 }

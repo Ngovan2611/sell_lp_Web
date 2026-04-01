@@ -16,7 +16,6 @@ body {
     margin: 30px auto;
 }
 
-/* --- BREADCRUMB --- */
 .breadcrumb {
     margin-bottom: 20px;
     font-size: 14px;
@@ -68,9 +67,11 @@ body {
     text-transform: uppercase;
 }
 
-.status-pending { background: #fff3e0; color: #ef6c00; }
-.status-success { background: #e8f5e9; color: #2e7d32; }
-.status-failure { background: #ffebee; color: #c62828; }
+.status-PENDING { background: #fff3cd; color: #856404; }
+.status-PREPARING { background: #e0f2fe; color: #0369a1; }
+.status-SHIPPING { background: #f3e8ff; color: #7e22ce; }
+.status-SUCCESS { background: #d1fae5; color: #065f46; }
+.status-FAILURE { background: #fee2e2; color: #991b1b; }
 
 .info-grid {
     display: grid;

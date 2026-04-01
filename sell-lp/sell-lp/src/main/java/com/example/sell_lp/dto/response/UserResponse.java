@@ -22,7 +22,7 @@ public class UserResponse {
     String fullName;
     String email;
     String phone;
-    boolean isActive;
+    boolean active;
     Date createdAt;
     private Set<String> roles;
     String provider;
