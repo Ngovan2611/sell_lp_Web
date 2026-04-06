@@ -1,6 +1,6 @@
 package com.example.sell_lp.config;
 
-import com.example.sell_lp.service.CategoryService;
+import com.example.sell_lp.service.category.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

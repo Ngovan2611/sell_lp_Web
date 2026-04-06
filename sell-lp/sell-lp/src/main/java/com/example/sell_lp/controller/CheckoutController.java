@@ -3,17 +3,18 @@ package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.response.AddressResponse;
 import com.example.sell_lp.dto.response.CartItemResponse;
-import com.example.sell_lp.service.AddressService;
-import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.CartItemService;
+import com.example.sell_lp.service.address.AddressService;
+import com.example.sell_lp.service.cart.CartItemService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,18 +24,18 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@PreAuthorize("isAuthenticated()")
 public class CheckoutController {
-    AuthenticationService authenticationService;
     AddressService addressService;
     CartItemService cartItemService;
 
     @GetMapping("/checkout")
     public String checkout(Model model,
-                           @CookieValue(value = "jwt", required = false) String token,
-                           @RequestParam(value = "ids", required = false) String ids) throws Exception {
+                           Principal principal,
+                           @RequestParam(value = "ids", required = false) String ids) {
+        if (principal == null) return "redirect:/login";
 
-        String username = authenticationService.extractUsernameFromToken(token);
-        if (username == null) return "redirect:/login";
+        String username = principal.getName();
 
         List<CartItemResponse> selectedItems;
         if (ids != null && !ids.isEmpty()) {
@@ -51,9 +52,9 @@ public class CheckoutController {
     public String buyNow(@RequestParam("variantId") Long variantId,
                          @RequestParam(value = "qty", defaultValue = "1") int qty,
                          Model model,
-                         @CookieValue(value = "jwt", required = false) String token) throws Exception {
+                         Principal principal) {
 
-        String username = authenticationService.extractUsernameFromToken(token);
+        String username = principal.getName();
         if (username == null) return "redirect:/login";
 
         CartItemResponse item = cartItemService.createImmediateCheckoutItem(variantId, qty);

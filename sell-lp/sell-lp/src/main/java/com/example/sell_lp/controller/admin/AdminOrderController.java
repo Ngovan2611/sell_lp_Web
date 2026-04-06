@@ -1,7 +1,7 @@
 package com.example.sell_lp.controller.admin;
 
 import com.example.sell_lp.dto.response.OrderResponse;
-import com.example.sell_lp.service.order.OrderService;
+import com.example.sell_lp.service.order.AdminOrderService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminOrderController {
 
-    OrderService orderService;
+    AdminOrderService orderService;
 
     @GetMapping
     public String getAllOrders(
@@ -41,7 +41,7 @@ public class AdminOrderController {
 
     @GetMapping("/detail/{id}")
     public String getOrderDetail(@PathVariable Integer id, Model model) {
-        OrderResponse order = orderService.getOrderDetail(id);
+        OrderResponse order = orderService.getOrderDetailForAdmin(id);
         model.addAttribute("order", order);
         return "admin/order-details";
     }
@@ -55,6 +55,6 @@ public class AdminOrderController {
     @PostMapping("/cancel/{id}")
     @ResponseBody
     public void cancelOrder(@PathVariable Integer id) {
-        orderService.cancelOrder(id);
+        orderService.cancelOrderByAdmin(id);
     }
 }

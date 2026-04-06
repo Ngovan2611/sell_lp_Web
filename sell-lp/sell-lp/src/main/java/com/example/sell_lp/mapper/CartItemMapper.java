@@ -8,7 +8,7 @@ import com.example.sell_lp.entity.ProductVariant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ProductVariantResponseMapper.class})
 public interface CartItemMapper {
 
 
@@ -28,6 +28,5 @@ public interface CartItemMapper {
         variant.setVariantId(variantId);
         return variant;
     }
-
     CartItemResponse toCartItemResponse(CartItem cartItem);
 }

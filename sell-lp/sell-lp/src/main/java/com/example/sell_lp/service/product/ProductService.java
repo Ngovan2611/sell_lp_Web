@@ -1,4 +1,4 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.product;
 
 
 import com.example.sell_lp.dto.request.ProductRequest;
@@ -15,6 +15,8 @@ import com.example.sell_lp.repository.ProductVariantRepository;
 import com.example.sell_lp.repository.variantRepository.ColorRepository;
 import com.example.sell_lp.repository.variantRepository.RamRepository;
 import com.example.sell_lp.repository.variantRepository.RomRepository;
+import com.example.sell_lp.service.category.CategoryService;
+import com.example.sell_lp.service.variant.ProductVariantService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -139,7 +141,6 @@ public class ProductService {
 
                 variant.setPrice(vRequest.getPrice());
                 variant.setStockQty(vRequest.getStockQty());
-                // variantRepository.save(variant); // Nếu dùng JPA quản lý thực thể thì không cần save thủ công
             }
         }
 

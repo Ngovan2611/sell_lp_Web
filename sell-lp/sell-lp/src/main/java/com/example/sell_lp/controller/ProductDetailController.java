@@ -4,12 +4,10 @@ package com.example.sell_lp.controller;
 import com.example.sell_lp.dto.response.ProductResponse;
 import com.example.sell_lp.dto.response.ProductVariantResponse;
 import com.example.sell_lp.entity.Cart;
-import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.CartItemService;
-import com.example.sell_lp.service.CartService;
-import com.example.sell_lp.service.ProductService;
-import com.example.sell_lp.service.ProductVariantService;
-import com.nimbusds.jose.JOSEException;
+import com.example.sell_lp.service.cart.CartItemService;
+import com.example.sell_lp.service.cart.CartService;
+import com.example.sell_lp.service.product.ProductService;
+import com.example.sell_lp.service.variant.ProductVariantService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,13 +15,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.text.ParseException;
+
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -31,8 +29,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductDetailController {
     ProductVariantService productVariantService;
-
-    AuthenticationService authenticationService;
 
     ProductService productService;
 
@@ -44,13 +40,12 @@ public class ProductDetailController {
     @GetMapping("/product/{productId}")
     public String getProductDetail(Model model,
                                    @PathVariable("productId") Long productId,
-                                   @CookieValue(value = "jwt", required = false) String token)
-            throws ParseException, JOSEException {
-
-        String username = authenticationService.extractUsernameFromToken(token);
-        if(username == null) {
+                                   Principal principal) {
+        if(principal == null) {
             return "redirect:/login";
         }
+        String username = principal.getName();
+
 
 
 
@@ -91,10 +86,9 @@ public class ProductDetailController {
     @PostMapping("/cart/add")
     @ResponseBody
     public ResponseEntity<?> addToCartAjax(@RequestParam Long variantId,
-                                           @CookieValue(value = "jwt", required = false) String token)
-            throws ParseException, JOSEException {
+                                           Principal principal) {
 
-        String username = authenticationService.extractUsernameFromToken(token);
+        String username = principal.getName();
         if (username == null) {
             return ResponseEntity.status(401).body("NOT_LOGIN");
         }

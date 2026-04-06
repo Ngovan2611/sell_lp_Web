@@ -3,14 +3,17 @@ package com.example.sell_lp.service.order;
 
 import com.example.sell_lp.enums.OrderStatus;
 import com.example.sell_lp.repository.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 public class TotalOrderService {
-    @Autowired
     private OrderRepository orderRepository;
 
 

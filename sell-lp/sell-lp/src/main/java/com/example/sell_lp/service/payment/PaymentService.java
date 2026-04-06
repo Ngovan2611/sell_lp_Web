@@ -1,4 +1,4 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.payment;
 
 import com.example.sell_lp.dto.request.PaymentRequest;
 import com.example.sell_lp.entity.Order;

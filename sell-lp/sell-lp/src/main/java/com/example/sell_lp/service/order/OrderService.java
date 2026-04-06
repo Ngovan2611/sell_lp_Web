@@ -7,7 +7,6 @@ import com.example.sell_lp.dto.response.OrderResponse;
 import com.example.sell_lp.entity.CartItem;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.OrderItem;
-import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.entity.Address;
 import com.example.sell_lp.enums.OrderStatus;
@@ -24,8 +23,8 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -37,7 +36,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
+@Slf4j
 public class OrderService {
+
+    StockOrder stockOrder;
     OrderRepository orderRepository;
     UserRepository userRepository;
     AddressRepository addressRepository;
@@ -83,7 +85,10 @@ public class OrderService {
 
             if (cartItemOpt.isPresent()) {
                 CartItem cart = cartItemOpt.get();
-                processVariantStock(cart.getVariant(), cart.getQuantity());
+                if (!cart.getCart().getUser().getUsername().equals(user.getUsername())) {
+                    throw new RuntimeException("Vật phẩm giỏ hàng không hợp lệ");
+                }
+                stockOrder.processVariantStock(cart.getVariant(), cart.getQuantity());
 
                 OrderItem oi = createOrderItemEntity(order, cart.getVariant(), cart.getQuantity(), cart.getUnitPrice());
                 orderItemsList.add(oi);
@@ -95,7 +100,7 @@ public class OrderService {
                         .orElseThrow(() -> new RuntimeException("Sản phẩm không hợp lệ hoặc đã hết hạn giỏ hàng"));
 
                 int quantity = 1;
-                processVariantStock(variant, quantity);
+                stockOrder.processVariantStock(variant, quantity);
 
                 OrderItem oi = createOrderItemEntity(order, variant, quantity, variant.getPrice());
                 orderItemsList.add(oi);
@@ -111,13 +116,6 @@ public class OrderService {
         return order;
     }
 
-    private void processVariantStock(ProductVariant variant, int qty) {
-        if (variant.getStockQty() < qty) {
-            throw new RuntimeException("Sản phẩm " + variant.getProduct().getName() + " không đủ hàng");
-        }
-        variant.setStockQty(variant.getStockQty() - qty);
-        productVariantRepository.save(variant);
-    }
 
     private OrderItem createOrderItemEntity(Order order, com.example.sell_lp.entity.ProductVariant variant, int qty, Double price) {
         OrderItemCreationRequest reqItem = new OrderItemCreationRequest(
@@ -152,11 +150,13 @@ public class OrderService {
             return res;
         }).toList();
     }
-    public OrderResponse getOrderDetail(Integer orderId) {
+    public OrderResponse getOrderDetail(Integer orderId, String username) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
-
+        if (!order.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("Bạn không có quyền xem đơn hàng này!");
+        }
         OrderResponse res = orderMapper.toOrderResponse(order);
 
         List<OrderItemResponse> items = order.getOrderItems()
@@ -172,7 +172,30 @@ public class OrderService {
 
         return res;
     }
+
+
+    @Transactional
+    public void cancelOrderByUser(Integer id, String username) {
+
+        Order order = orderRepository.findByOrderId(id);
+
+        if (order == null) {
+            throw new RuntimeException("Không tìm thấy đơn hàng");
+        }
+        if (!order.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("Bạn không có quyền hủy đơn hàng của người khác!");
+        }
+        if (!OrderStatus.PENDING.name().equals(order.getStatus())) {
+            throw new RuntimeException("Đơn hàng không thể hủy");
+        }
+
+        order.setStatus(OrderStatus.FAILURE.name());
+        stockOrder.rollbackStock(order);
+        orderRepository.save(order);
+    }
+
     public void updateOrderStatus(Integer orderId, String nextStatus) {
+
         Order order = orderRepository.findByOrderId(orderId);
 
         if (order == null) {
@@ -187,56 +210,10 @@ public class OrderService {
         }
 
         if (nextStatus.equals(OrderStatus.FAILURE.name())) {
-            rollbackStock(order);
+            stockOrder.rollbackStock(order);
         }
 
         order.setStatus(nextStatus);
         orderRepository.save(order);
-    }
-    public void cancelOrder(Integer id) {
-
-        Order order = orderRepository.findByOrderId(id);
-
-        if (order == null) {
-            throw new RuntimeException("Không tìm thấy đơn hàng");
-        }
-
-        if (!OrderStatus.PENDING.name().equals(order.getStatus())) {
-            throw new RuntimeException("Đơn hàng không thể hủy");
-        }
-
-        order.setStatus(OrderStatus.FAILURE.name());
-        rollbackStock(order);
-        orderRepository.save(order);
-    }
-    private void rollbackStock(Order order) {
-        List<OrderItem> items = order.getOrderItems();
-        if (items != null) {
-            for (OrderItem item : items) {
-                ProductVariant variant = productVariantRepository.findById(item.getVariant().getVariantId())
-                        .orElse(null);
-                if (variant != null) {
-                    variant.setStockQty(variant.getStockQty() + item.getQuantity());
-                    productVariantRepository.save(variant);
-                    System.out.println("Đã hoàn kho sản phẩm: " + variant.getVariantId() + " số lượng: " + item.getQuantity());
-                }
-            }
-        }
-    }
-    public Page<OrderResponse> getAllOrders(Pageable pageable) {
-        Page<Order> orderPage = orderRepository.findAll(pageable);
-
-        return orderPage.map(order -> {
-            OrderResponse res = orderMapper.toOrderResponse(order);
-
-            res.setItems(order.getOrderItems().stream()
-                    .map(orderMapper::toOrderItemResponse).toList());
-
-            if (order.getPayments() != null) {
-                res.setPayments(order.getPayments().stream()
-                        .map(paymentMapper::toResponse).toList());
-            }
-            return res;
-        });
     }
 }

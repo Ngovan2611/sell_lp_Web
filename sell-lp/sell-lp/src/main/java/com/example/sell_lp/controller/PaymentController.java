@@ -6,16 +6,15 @@ import com.example.sell_lp.dto.request.PaymentRequest;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.enums.OrderStatus;
 import com.example.sell_lp.enums.PaymentStatus;
-import com.example.sell_lp.service.AuthenticationService;
 import com.example.sell_lp.service.order.OrderService;
-import com.example.sell_lp.service.PaymentService;
-import com.example.sell_lp.service.VNPayService;
+import com.example.sell_lp.service.payment.PaymentService;
+import com.example.sell_lp.service.payment.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.ui.Model;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +23,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@PreAuthorize("isAuthenticated()")
 public class PaymentController {
-    AuthenticationService authenticationService;
     OrderService orderService;
     VNPayService vnPayService;
     PaymentService paymentService;
@@ -37,11 +37,10 @@ public class PaymentController {
     @PostMapping("/order/create")
     public String createOrder(@ModelAttribute OrderCreationRequest request,
                               @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod,
-                              @CookieValue(value = "jwt", required = false) String token,
-                              HttpServletRequest httpRequest) throws Exception {
+                              Principal principal,
+                              HttpServletRequest httpRequest) {
+        if (principal == null) return "redirect:/login";
 
-        String username = authenticationService.extractUsernameFromToken(token);
-        if (username == null) return "redirect:/login";
 
         Order savedOrder = orderService.save(request);
 

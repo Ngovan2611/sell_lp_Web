@@ -1,32 +1,27 @@
 package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.response.ProductResponse;
-import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.ProductService;
+import com.example.sell_lp.service.product.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
+import java.security.Principal;
 import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Controller
 public class HomeController {
 
-    AuthenticationService authenticationService;
-
     ProductService productService;
-
-
 
     @GetMapping("/home")
     public String home(Model model,
-                       @CookieValue(value = "jwt", required = false) String token) {
+                       Principal principal) {
 
         try {
             List<ProductResponse> laps =
@@ -43,7 +38,7 @@ public class HomeController {
 
             model.addAttribute("laps", laps);
             model.addAttribute("desks", desks);
-            String username = authenticationService.extractUsernameFromToken(token);
+            String username = principal.getName();
 
 
             model.addAttribute("username", username);

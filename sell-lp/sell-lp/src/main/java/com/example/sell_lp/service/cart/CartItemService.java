@@ -1,13 +1,16 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.cart;
 
 
 import com.example.sell_lp.dto.response.CartItemResponse;
+import com.example.sell_lp.dto.response.ProductVariantResponse;
 import com.example.sell_lp.entity.CartItem;
 import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.CartItemMapper;
+import com.example.sell_lp.mapper.ProductVariantResponseMapper;
 import com.example.sell_lp.repository.CartItemRepository;
 import com.example.sell_lp.repository.CartRepository;
 import com.example.sell_lp.repository.ProductVariantRepository;
+import com.example.sell_lp.service.variant.ProductVariantService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +33,7 @@ public class CartItemService {
 
     ProductVariantRepository productVariantRepository;
 
+    ProductVariantResponseMapper productVariantResponseMapper;
 
     public List<CartItemResponse> getCartItemsByCartId(Integer cartId) {
         return cartItemRepository.findByCart_CartId(cartId).stream()
@@ -37,10 +41,16 @@ public class CartItemService {
                 .toList();
     }
 
-    public void deleteCartItem(Long cartItemId) {
-        cartItemRepository.deleteById(cartItemId);
-    }
+    public void deleteCartItem(Long cartItemId, String username) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy vật phẩm"));
 
+        if (!cartItem.getCart().getUser().getUsername().equals(username)) {
+            throw new RuntimeException("Bạn không có quyền xóa vật phẩm này!");
+        }
+
+        cartItemRepository.delete(cartItem);
+    }
     public void addOrUpdateCartItem(Integer cartId, Long variantId, Integer quantity) {
 
         Optional<CartItem> optional = cartItemRepository
@@ -77,12 +87,15 @@ public class CartItemService {
     }
 
 
-    public void updateQuantity(Long cartItemId, Integer quantity) {
+    public void updateQuantity(Long cartItemId, Integer quantity, String username) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy vật phẩm"));
+
+        if (!cartItem.getCart().getUser().getUsername().equals(username)) {
+            throw new RuntimeException("Hành động không hợp lệ!");
+        }
 
         int stock = cartItem.getVariant().getStockQty();
-
         if (quantity > stock) {
             throw new RuntimeException("Số lượng vượt quá tồn kho");
         }
@@ -107,8 +120,8 @@ public class CartItemService {
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
 
         CartItemResponse response = new CartItemResponse();
-
-        response.setVariant(variant);
+        ProductVariantResponse productVariantResponse = productVariantResponseMapper.toProductVariantResponse(variant);
+        response.setVariant(productVariantResponse);
         response.setQuantity(quantity);
         response.setUnitPrice(variant.getPrice());
 

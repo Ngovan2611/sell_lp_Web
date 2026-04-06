@@ -1,28 +1,27 @@
 package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.response.ProductResponse;
-import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.ProductService;
-import com.nimbusds.jose.JOSEException;
+import com.example.sell_lp.service.product.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@PreAuthorize("isAuthenticated()")
 public class ProductController {
 
 
     ProductService productService;
-    AuthenticationService authenticationService;
 
     @GetMapping("/products")
     public String showProducts(
@@ -31,16 +30,12 @@ public class ProductController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             Model model,
-            @CookieValue(value = "jwt", required = false) String token
-    ) throws ParseException, JOSEException {
+            Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        String username = principal.getName();
 
-        if (token == null) {
-            return "redirect:/login";
-        }
-        String username = authenticationService.extractUsernameFromToken(token);
-        if (username == null) {
-            return "redirect:/login";
-        }
 
         PageRequest pageable = PageRequest.of(page, 10);
         Page<ProductResponse> productPage = productService.getProductsFiltered(categoryId, keyword, sort, pageable);

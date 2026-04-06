@@ -1,4 +1,4 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.variant;
 
 
 import com.example.sell_lp.dto.response.ProductVariantResponse;

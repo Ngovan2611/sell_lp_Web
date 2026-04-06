@@ -1,11 +1,12 @@
 package com.example.sell_lp.controller;
 
 import com.example.sell_lp.dto.response.UserResponse;
-import com.example.sell_lp.service.UserService;
+import com.example.sell_lp.service.user.UserService;
 import com.example.sell_lp.service.otp.EmailService;
 import com.example.sell_lp.service.otp.OtpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 public class AuthController {
     private final EmailService emailService;
     private final OtpService otpService;
@@ -31,7 +33,8 @@ public class AuthController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> verify(@RequestParam String email, @RequestParam String otp) {
+    public ResponseEntity<String> verify(@RequestParam String email,
+                                         @RequestParam String otp) {
         if (otpService.validateOtp(email, otp)) {
             return ResponseEntity.ok("Xác minh thành công!");
         }
