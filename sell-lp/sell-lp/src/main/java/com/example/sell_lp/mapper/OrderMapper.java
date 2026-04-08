@@ -16,7 +16,11 @@ public interface OrderMapper {
 
 
     @Mapping(target = "variantName",
-            expression = "java(mapVariantName(item.getVariant()))")    OrderItemResponse toOrderItemResponse(OrderItem item);
+            expression = "java(mapVariantName(item.getVariant()))")
+
+
+    @Mapping(target = "productId", source = "variant.product.productId")
+    OrderItemResponse toOrderItemResponse(OrderItem item);
 
     default String mapVariantName(ProductVariant variant) {
         if (variant == null) return "";

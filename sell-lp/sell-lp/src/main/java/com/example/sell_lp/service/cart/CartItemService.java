@@ -58,7 +58,9 @@ public class CartItemService {
 
         ProductVariant variant = productVariantService.getVariantEntityById(variantId);
         int stock = variant.getStockQty();
-
+        if (!variant.getProduct().isActive()) {
+            throw new RuntimeException("Sản phẩm này hiện đã ngừng kinh doanh và không thể thêm vào giỏ hàng!");
+        }
         if (optional.isPresent()) {
 
             CartItem existingItem = optional.get();
@@ -99,7 +101,9 @@ public class CartItemService {
         if (quantity > stock) {
             throw new RuntimeException("Số lượng vượt quá tồn kho");
         }
-
+        if (!cartItem.getVariant().getProduct().isActive()) {
+            throw new RuntimeException("Sản phẩm này hiện đã ngừng kinh doanh và không thể mua!");
+        }
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
     }
@@ -115,10 +119,13 @@ public class CartItemService {
                 .map(cartItemMapper::toCartItemResponse)
                 .toList();
     }
+
     public CartItemResponse createImmediateCheckoutItem(Long variantId, int quantity) {
         ProductVariant variant = productVariantRepository.findById(variantId)
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
-
+        if (!variant.getProduct().isActive()) {
+            throw new RuntimeException("Sản phẩm này hiện đã ngừng kinh doanh và không thể mua!");
+        }
         CartItemResponse response = new CartItemResponse();
         ProductVariantResponse productVariantResponse = productVariantResponseMapper.toProductVariantResponse(variant);
         response.setVariant(productVariantResponse);

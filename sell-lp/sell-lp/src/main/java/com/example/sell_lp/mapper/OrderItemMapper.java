@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {
-
+    
     @Mapping(target = "variant", source = "variantId")
     OrderItem toEntity(OrderItemCreationRequest req);
 

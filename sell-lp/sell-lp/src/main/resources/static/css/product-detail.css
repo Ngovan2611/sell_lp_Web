@@ -204,3 +204,64 @@ body {
     margin: 10px;
 
 }
+
+#relatedProducts .product {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.related-link-overlay::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+
+#relatedProducts .product h3,
+#relatedProducts .product p,
+#relatedProducts .product img {
+    position: relative;
+    z-index: 1;
+}
+
+.product-inactive-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    z-index: 5;
+}
+
+.badge-inactive {
+    background: #9e9e9e;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+button:disabled {
+    background: #ebebeb !important;
+    border-color: #d9d9d9 !important;
+    color: #bcbcbc !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.main-img img[style*="grayscale"] {
+    pointer-events: none;
+}

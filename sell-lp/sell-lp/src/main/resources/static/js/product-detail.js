@@ -11,7 +11,6 @@ function selectOption(btn, type) {
     } else {
         selected[type] = btn.dataset[type];
 
-        // active UI
         btn.parentElement.querySelectorAll("button")
             .forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
@@ -130,23 +129,26 @@ let currentIndex = 0;
 const itemsPerLoad = 5;
 
 function renderProducts() {
-    for (let i = 0; i < itemsPerLoad && currentIndex < relatedProducts.length; i++, currentIndex++) {
+    const loadLimit = currentIndex + itemsPerLoad;
+    for (; currentIndex < loadLimit && currentIndex < relatedProducts.length; currentIndex++) {
         const p = relatedProducts[currentIndex];
         const div = document.createElement("div");
         div.className = "product";
+
         div.innerHTML = `
             <img src="${p.imageUrl}">
             <h3>${p.name}</h3>
             <p>${p.description}</p>
-            <a href="/product/${p.productId}">
+            <a href="/product/${p.productId}" class="related-link-overlay">
                 <button class="view-btn">Xem chi tiết</button>
             </a>
         `;
         container.appendChild(div);
     }
 
-    if (currentIndex >= relatedProducts.length) {
-        document.getElementById("loadMoreBtn").style.display = "none";
+    const loadMoreBtn = document.getElementById("loadMoreBtn");
+    if (loadMoreBtn && currentIndex >= relatedProducts.length) {
+        loadMoreBtn.style.display = "none";
     }
 }
 
@@ -160,7 +162,17 @@ function addToCart() {
         showError("Vui lòng chọn phiên bản!");
         return;
     }
+    const container = document.querySelector(".product-detail-container");
+    const isActive = container.getAttribute("data-active") === "true";
 
+    if (!isActive) {
+        showError("Sản phẩm này hiện không còn kinh doanh!");
+        return;
+    }
+
+    const btn = event.currentTarget;
+
+    if (btn.disabled) return;
     fetch('/cart/add?variantId=' + variantId, {
         method: 'POST'
     })
@@ -206,11 +218,23 @@ function showError(message) {
     }
 }
 function buyNow() {
+    const container = document.querySelector(".product-detail-container");
+    const isActive = container.getAttribute("data-active") === "true";
+    const isActiveAttr = container ? container.getAttribute("data-active") : "false";
+    console.log("Trạng thái Active hiện tại trên HTML:", isActiveAttr);
+
+    if (!isActive) {
+        showError("Sản phẩm này hiện không còn kinh doanh!");
+        return;
+    }
+
+    const btn = event.currentTarget;
+    if (btn.disabled) return;
     const vId = document.getElementById("variantId").value;
     if (!vId) {
         showError("Vui lòng chọn phiên bản!");
         return;
     }
-    // Chuyển hướng thẳng đến /buy-now
+
     window.location.href = `/buy-now?variantId=${vId}&qty=1`;
 }

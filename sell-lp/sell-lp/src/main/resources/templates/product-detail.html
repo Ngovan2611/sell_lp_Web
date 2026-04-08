@@ -16,7 +16,6 @@
 </head>
 <style>
 
-    /* Nút Xem thêm */
     #loadMoreBtn {
         display: block;
         margin: 20px auto;
@@ -112,12 +111,14 @@
 <div th:replace="~{fragments/sidebar :: aside}"></div>
 <body>
 
-<div class="product-detail-container">
-
-    <!-- ===== GALLERY ===== -->
+<div class="product-detail-container" th:attr="data-active=${product.active}">
     <div class="gallery">
-        <div class="main-img">
-            <img id="mainImg" th:src="@{${product.imageUrl}}">
+        <div class="main-img" style="position: relative;"> <img id="mainImg" th:src="@{${product.imageUrl}}"
+                                                                th:style="${!product.active} ? 'filter: grayscale(1) opacity(0.5);' : ''">
+
+            <div th:if="${!product.active}" class="product-inactive-overlay">
+                <span>Sản phẩm hiện đã ẩn</span>
+            </div>
         </div>
 
         <div class="thumbs">
@@ -126,7 +127,6 @@
         </div>
     </div>
 
-    <!-- ===== INFO ===== -->
     <div class="info-detail">
         <h2 th:text="${product.name}"></h2>
         <div class="price" id="price">Chọn phiên bản</div>
@@ -163,7 +163,8 @@
                 <i class="fa-solid fa-cart-arrow-down"></i>
                 Thêm vào giỏ hàng
             </button>
-            <button class="buy-btn" onclick="buyNow()">Mua ngay</button>        </div>
+            <button class="buy-btn" onclick="buyNow()">Mua ngay</button>
+        </div>
 
         <input type="hidden" id="variantId">
     </div>
