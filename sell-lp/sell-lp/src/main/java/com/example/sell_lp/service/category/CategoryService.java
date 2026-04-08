@@ -1,4 +1,4 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.category;
 
 import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.entity.Category;
@@ -30,6 +30,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
     public Category getById(Integer id) {
-        return categoryRepository.findByCategoryId(id);
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy danh mục với ID: " + id));
     }
 }

@@ -35,17 +35,15 @@
                                    onchange="updateTotal()" />
                         </label>
 
-                        <img th:src="${#lists.isEmpty(item.variant.product.images)
-                 ? '/images/default-product.jpg'
-                 : item.variant.product.images[0].url}"
-                             alt="Product Image" />
+                        <img th:src="${item.variant.imageUrl ?: '/images/default-product.jpg'}" alt="Product Image" />
 
                         <div class="item-info">
-                            <strong th:text="${item.variant.product.name}">Tên sản phẩm</strong>
+                            <strong th:text="${item.variant.productName ?: 'Sản phẩm không xác định'}">Tên sản phẩm</strong>
                             <br/>
-                            <small class="text-muted" th:text="${item.variant.color?.colorName
-                                + (item.variant.ram != null ? ' / ' + item.variant.ram.ramSize + 'GB RAM' : '')
-                                + (item.variant.rom != null ? ' / ' + item.variant.rom.romSize + 'GB ROM' : '')}">
+                            <small class="text-muted"
+                                   th:text="${(item.variant.colorName ?: '')
+           + (item.variant.ramSize != null ? ' / ' + item.variant.ramSize + 'GB RAM' : '')
+           + (item.variant.romSize != null ? ' / ' + item.variant.romSize + 'GB ROM' : '')}">
                             </small>
                         </div>
 

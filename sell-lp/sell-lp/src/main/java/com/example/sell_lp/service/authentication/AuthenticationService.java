@@ -1,4 +1,4 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.authentication;
 
 
 import com.example.sell_lp.dto.request.AuthenticationRequest;
@@ -60,7 +60,7 @@ public class AuthenticationService {
                 .issuer("NVV")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(60, ChronoUnit.MINUTES).toEpochMilli()
+                        Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()
                 ))
                 .claim("role", buildRole(user))
                 .build();
@@ -88,5 +88,15 @@ public class AuthenticationService {
             user.getRoles().forEach(role -> joiner.add("ROLE_" + role.getRoleName()));
         }
         return joiner.toString();
+    }
+    public boolean isTokenValid(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+            return expiration.after(new Date());
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

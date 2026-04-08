@@ -1,6 +1,6 @@
 package com.example.sell_lp.controller.admin;
 
-import com.example.sell_lp.service.UserService;
+import com.example.sell_lp.service.user.UserService;
 import com.example.sell_lp.service.order.TotalOrderService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

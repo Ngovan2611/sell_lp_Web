@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 public class CartItemResponse {
     Integer cartItemId;
     Integer quantity;
-    ProductVariant variant;
+    ProductVariantResponse variant;
     Double unitPrice;
     public Double getUnitPrice() {
         return variant != null ? variant.getPrice() : 0.0;

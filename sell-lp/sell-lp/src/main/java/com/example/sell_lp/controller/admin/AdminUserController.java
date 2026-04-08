@@ -3,8 +3,8 @@ package com.example.sell_lp.controller.admin;
 
 import com.example.sell_lp.dto.response.UserResponse;
 import com.example.sell_lp.entity.Role;
-import com.example.sell_lp.service.RoleService;
-import com.example.sell_lp.service.UserService;
+import com.example.sell_lp.service.authorization.RoleService;
+import com.example.sell_lp.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

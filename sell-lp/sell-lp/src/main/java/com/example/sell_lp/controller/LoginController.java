@@ -4,8 +4,8 @@ package com.example.sell_lp.controller;
 import com.example.sell_lp.dto.request.AuthenticationRequest;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.Role;
-import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.UserService;
+import com.example.sell_lp.service.authentication.AuthenticationService;
+import com.example.sell_lp.service.user.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -24,9 +24,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class LoginController {
 
-    UserService userService;
     AuthenticationService authenticationService;
-
+    AuthService authService;
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -40,7 +39,7 @@ public class LoginController {
                             ) {
 
         try {
-            User user = userService.login(request);
+            User user = authService.login(request);
 
 
             if (user != null) {

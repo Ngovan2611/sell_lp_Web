@@ -1,4 +1,4 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.geography;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;

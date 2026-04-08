@@ -1,33 +1,31 @@
 package com.example.sell_lp.controller;
 
 
-import com.example.sell_lp.service.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.security.Principal;
 
 
 @Controller
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class IntroductionController {
-    AuthenticationService authenticationService;
 
     @GetMapping("/introduction")
-    public String intro(Model model,
-                        @CookieValue (value = "jwt", required = false) String token) {
-        try {
-            String username = authenticationService.extractUsernameFromToken(token);
-            model.addAttribute("username", username);
+    public String intro(Model model, Principal principal) {
 
-        }catch (Exception e){
-            return  "redirect:/login";
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+            model.addAttribute("isLoggedIn", true);
+        } else {
+            model.addAttribute("isLoggedIn", false);
         }
-        
-        return "/introduction";
+
+        return "introduction";
     }
 }

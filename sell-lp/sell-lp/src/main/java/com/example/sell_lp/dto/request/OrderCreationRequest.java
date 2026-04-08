@@ -12,7 +12,7 @@ public class OrderCreationRequest {
 
     private Long addressId;
 
-    private String ids; // list cart item ids (VD: "1,2,3")
+    private String ids;
 
     private String paymentMethod;
 }

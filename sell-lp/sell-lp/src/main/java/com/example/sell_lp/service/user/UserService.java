@@ -1,8 +1,6 @@
-package com.example.sell_lp.service;
+package com.example.sell_lp.service.user;
 
 
-import com.example.sell_lp.dto.request.AuthenticationRequest;
-import com.example.sell_lp.dto.request.UserChangePasswordRequest;
 import com.example.sell_lp.dto.request.UserCreationRequest;
 import com.example.sell_lp.dto.request.UserUpdateRequest;
 import com.example.sell_lp.dto.response.UserResponse;
@@ -11,12 +9,17 @@ import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.Provider;
 import com.example.sell_lp.mapper.UserMapper;
 import com.example.sell_lp.repository.UserRepository;
+import com.example.sell_lp.service.authorization.RoleService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -32,22 +35,7 @@ public class UserService {
     UserMapper userMapper;
 
 
-    public User login(AuthenticationRequest authenticationRequest) {
 
-        User user = userRepository.findByUsername(authenticationRequest.getUsername());
-
-        if(user == null){
-            return null;
-        }
-
-        boolean isMatch = passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
-
-        if(isMatch){
-            return user;
-        }
-
-        return null;
-    }
     public UserResponse getUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if(user == null){
@@ -90,35 +78,28 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    @Transactional
     public void updateUser(String userId, UserUpdateRequest userUpdateRequest) {
-        User user = userRepository.findByUserId(userId);
-        var existingUser = userRepository.findByEmail(userUpdateRequest.getEmail());
-        if(existingUser != null && !existingUser.getUserId().equals(userId)){
-            throw new RuntimeException("Email đã tồn tại");
-        }
-        userMapper.toUserUpdateRequest(user, userUpdateRequest);
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsername(currentUsername);
 
-        userRepository.save(user);
-    }
-    public void updatePassword(UserChangePasswordRequest request, String username) {
-        User user = userRepository.findByUsername(username);
-        if(user == null) {
-            throw new RuntimeException("User not found");
-        }
-        if (Provider.LOCAL.name().equals(user.getProvider())) {
-            if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()) || request.getOldPassword().isEmpty()) {
-                throw new RuntimeException("Mật khẩu cũ không đúng");
-            }
+        boolean isAdmin = currentUser.getRoles().stream()
+                .anyMatch(role -> role.getRoleName().equals(com.example.sell_lp.enums.Role.ADMIN.name()));
+
+        if (!isAdmin && !currentUser.getUserId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền này");
         }
 
-        if (user.getPassword() != null &&
-                passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
-            throw new RuntimeException("Mật khẩu mới không được trùng với mật khẩu cũ");
-        }
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        user.setProvider("LOCAL");
+        User userToUpdate = userRepository.findByUserId(userId);
+        if (userToUpdate == null) throw new RuntimeException("User not found");
 
-        userRepository.save(user);
+        User existingEmailUser = userRepository.findByEmail(userUpdateRequest.getEmail());
+        if (existingEmailUser != null && !existingEmailUser.getUserId().equals(userId)) {
+            throw new RuntimeException("Email này đã được sử dụng bởi tài khoản khác");
+        }
+
+        userMapper.toUserUpdateRequest(userToUpdate, userUpdateRequest);
+        userRepository.save(userToUpdate);
     }
     public List<UserResponse> getAllUsersByRoles(Role role) {
         List<User> users = userRepository.findByRoles(Set.of(role));

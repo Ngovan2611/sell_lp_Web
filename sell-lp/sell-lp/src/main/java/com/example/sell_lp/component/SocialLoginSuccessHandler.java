@@ -2,8 +2,8 @@ package com.example.sell_lp.component;
 
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.repository.UserRepository;
-import com.example.sell_lp.service.AuthenticationService;
-import com.example.sell_lp.service.RoleService;
+import com.example.sell_lp.service.authentication.AuthenticationService;
+import com.example.sell_lp.service.authorization.RoleService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

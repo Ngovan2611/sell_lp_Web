@@ -20,9 +20,11 @@ import lombok.experimental.FieldDefaults;
 public class ProductVariantResponse {
     Long variantId;
     Long productId;
+    String productName;
     String colorName;
     Integer ramSize;
     Integer romSize;
     Integer stockQty;
     double price;
+    String imageUrl;
 }
