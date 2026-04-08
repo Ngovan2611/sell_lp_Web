@@ -17,4 +17,5 @@ public class OrderItemResponse {
     String productName;
     String variantName;
     String imageUrl;
+    Integer ProductId;
 }

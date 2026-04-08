@@ -66,7 +66,7 @@
             <span th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + 'đ'"></span>
         </div>
 
-        <a th:href="@{/history/{id}(id=${order.orderId})}" class="btn">
+        <a th:href="@{/history/{id}(id=${order.orderId})}" class="btn order-link-overlay">
             Xem chi tiết
         </a>
 

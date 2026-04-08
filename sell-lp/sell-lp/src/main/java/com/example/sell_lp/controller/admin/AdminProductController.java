@@ -3,8 +3,9 @@ package com.example.sell_lp.controller.admin;
 import com.example.sell_lp.dto.request.ProductRequest;
 import com.example.sell_lp.dto.request.ProductUpdateRequest;
 import com.example.sell_lp.dto.response.ProductResponse;
-import com.example.sell_lp.service.product.ProductService;
+import com.example.sell_lp.service.product.AdminProductService;
 import com.example.sell_lp.service.category.CategoryService;
+import com.example.sell_lp.service.product.ProductService;
 import com.example.sell_lp.service.variant.ColorService;
 import com.example.sell_lp.service.variant.RamService;
 import com.example.sell_lp.service.variant.RomService;
@@ -41,8 +42,9 @@ public class AdminProductController {
 
     RomService romService;
 
-    ProductService productService;
+    AdminProductService adminProductService;
 
+    ProductService productService;
     CategoryService categoryService;
 
 
@@ -101,7 +103,7 @@ public class AdminProductController {
     }
     @PostMapping("/add")
     public String createProduct(@ModelAttribute("productRequest") ProductRequest request) {
-        productService.createProduct(request);
+        adminProductService.createProduct(request);
         return "redirect:/admin/products?success";
     }
 
@@ -113,7 +115,7 @@ public class AdminProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(@PathVariable Integer id, @RequestBody ProductUpdateRequest request) {
-        ProductResponse response = productService.updateProduct(id, request);
+        ProductResponse response = adminProductService.updateProduct(id, request);
         return ResponseEntity.ok(response);
     }
 }

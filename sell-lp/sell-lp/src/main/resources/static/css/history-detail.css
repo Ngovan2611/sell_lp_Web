@@ -255,3 +255,31 @@ body {
     .order-header { flex-direction: column; align-items: flex-start; gap: 15px; }
     .summary .row { gap: 20px; }
 }
+
+/* Loại bỏ định dạng mặc định của thẻ link trong đơn hàng */
+.item-link, .item-name-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.item-name-link b:hover {
+    color: #db263c;
+    transition: 0.3s;
+}
+
+.item-link img {
+    transition: transform 0.3s ease;
+}
+
+.item-link:hover img {
+    transform: scale(1.05);
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
