@@ -7,6 +7,7 @@ import com.example.sell_lp.service.product.AdminProductService;
 import com.example.sell_lp.service.category.CategoryService;
 import com.example.sell_lp.service.product.ProductService;
 import com.example.sell_lp.service.variant.ColorService;
+import com.example.sell_lp.service.variant.ImageUploadService;
 import com.example.sell_lp.service.variant.RamService;
 import com.example.sell_lp.service.variant.RomService;
 import lombok.AccessLevel;
@@ -28,6 +29,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -46,7 +52,7 @@ public class AdminProductController {
 
     ProductService productService;
     CategoryService categoryService;
-
+    ImageUploadService imageUploadService;
 
     @GetMapping
     public String getAllProducts(
@@ -117,5 +123,20 @@ public class AdminProductController {
     public ResponseEntity<ProductResponse> update(@PathVariable Integer id, @RequestBody ProductUpdateRequest request) {
         ProductResponse response = adminProductService.updateProduct(id, request);
         return ResponseEntity.ok(response);
+    }
+    // Thêm ImageUploadService vào constructor
+    @PostMapping("/upload")
+    @ResponseBody
+    public ResponseEntity<List<String>> uploadImages(@RequestParam("files") MultipartFile[] files) {
+        List<String> urls = new ArrayList<>();
+        try {
+            for (MultipartFile file : files) {
+                String url = imageUploadService.uploadImage(file); // Service đã viết ở bước trước
+                urls.add(url);
+            }
+            return ResponseEntity.ok(urls);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 }

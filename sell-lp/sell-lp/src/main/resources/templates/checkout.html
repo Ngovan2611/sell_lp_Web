@@ -74,7 +74,7 @@
         <h3>Phương thức thanh toán</h3>
 
         <label>
-            <input type="radio" name="paymentMethod" value="COD" checked >
+            <input type="radio" name="paymentMethod" value="COD" checked>
             Thanh toán khi nhận hàng (COD)
         </label>
         <br>
@@ -82,6 +82,12 @@
         <label>
             <input type="radio" name="paymentMethod" value="VNPAY">
             Thanh toán VNPay
+        </label>
+        <br>
+
+        <label>
+            <input type="radio" name="paymentMethod" value="PAYOS">
+            Thanh toán VietQR (payOS)
         </label>
     </div>
 
@@ -97,7 +103,7 @@
 
         <h3>
             Tổng thanh toán:
-            <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+            <span th:text="${#numbers.formatDecimal(total + 30000, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
         </h3>
 
         <form id="orderForm" method="post" action="/order/create">

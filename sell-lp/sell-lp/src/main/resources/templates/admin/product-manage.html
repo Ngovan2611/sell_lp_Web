@@ -197,8 +197,19 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">URL hình ảnh (mỗi link một dòng)</label>
-                    <textarea id="editImages" class="form-control" rows="3"></textarea>
+                    <label class="form-label">Quản lý hình ảnh (Cloudinary)</label>
+                    <div class="d-flex gap-2 mb-2">
+                        <input type="file" id="modalFilePicker" style="display:none" multiple accept="image/*">
+                        <button type="button" class="btn-filter" onclick="document.getElementById('modalFilePicker').click()">
+                            <i class="fas fa-upload"></i> Thêm ảnh từ máy tính
+                        </button>
+                    </div>
+
+                    <div id="imagePreviewContainer" class="d-flex flex-wrap gap-2 mb-2" style="border: 1px dashed #ccc; padding: 10px; min-height: 50px; border-radius: 8px;">
+                        <span class="text-muted" style="font-size: 0.8rem;">Chưa có ảnh nào...</span>
+                    </div>
+
+                    <textarea id="editImages" class="form-control" rows="3" placeholder="Các URL ảnh sẽ hiện ở đây..."></textarea>
                 </div>
 
                 <div class="variant-edit-section">
@@ -240,7 +251,7 @@
                 document.getElementById('editActive').value = product.active.toString();
                 if (product.category) document.getElementById('editCategoryId').value = product.category.categoryId;
                 document.getElementById('editImages').value = product.images ? product.images.join('\n') : '';
-
+                renderPreviews();
                 const container = document.getElementById('variantEditContainer');
                 container.innerHTML = product.variants.map(v => `
                     <div class="variant-edit-row">
@@ -259,7 +270,47 @@
     function closeModal() {
         document.getElementById('editProductModal').style.display = 'none';
     }
+    document.getElementById('modalFilePicker').onchange = async function(e) {
+        const files = e.target.files;
+        if (files.length === 0) return;
 
+        const btn = e.target.nextElementSibling;
+        const originalText = btn.innerHTML;
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải...';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        for (let file of files) {
+            formData.append('files', file);
+        }
+
+        try {
+            const res = await fetch('/admin/products/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                const urls = await res.json();
+                const textarea = document.getElementById('editImages');
+                const existingUrls = textarea.value.trim();
+
+                textarea.value = (existingUrls ? existingUrls + '\n' : '') + urls.join('\n');
+
+                renderPreviews();
+            } else {
+                alert("Lỗi khi upload ảnh lên Cloudinary!");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Không thể kết nối đến server!");
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            e.target.value = ''; // Reset input để có thể chọn lại file cũ
+        }
+    };
     document.getElementById('editProductForm').onsubmit = function(e) {
         e.preventDefault();
         const productId = parseInt(document.getElementById('editProductId').value);
@@ -291,6 +342,52 @@
             }
         });
     };
+    function renderPreviews() {
+        const textarea = document.getElementById('editImages');
+        const container = document.getElementById('imagePreviewContainer');
+        const urls = textarea.value.split('\n').map(u => u.trim()).filter(u => u !== "");
+
+        container.innerHTML = ""; // Xóa cũ
+
+        if (urls.length === 0) {
+            container.innerHTML = '<span class="text-muted" style="font-size: 0.8rem;">Chưa có ảnh nào...</span>';
+            return;
+        }
+
+        urls.forEach((url, index) => {
+            const wrapper = document.createElement('div');
+            // Thiết lập kích thước cố định cho mỗi khung ảnh
+            wrapper.style.cssText = `
+            position: relative;
+            min-width: 80px;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        `;
+
+            wrapper.innerHTML = `
+            <img src="${url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <button type="button" onclick="removeImage(${index})"
+                style="position: absolute; top: -8px; right: -8px; background: #ff4757; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                <i class="fas fa-times"></i>
+            </button>
+            ${index === 0 ? '<span style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,123,255,0.8); color:white; font-size:9px; text-align:center; border-radius:0 0 4px 4px;">Ảnh chính</span>' : ''}
+        `;
+            container.appendChild(wrapper);
+        });
+    }
+
+    // Hàm xóa ảnh khi nhấn nút X
+    function removeImage(index) {
+        const textarea = document.getElementById('editImages');
+        let urls = textarea.value.split('\n').map(u => u.trim()).filter(u => u !== "");
+        urls.splice(index, 1); // Xóa URL tại vị trí index
+        textarea.value = urls.join('\n');
+        renderPreviews(); // Vẽ lại giao diện
+    }
+
+    // Lắng nghe sự kiện thay đổi trong textarea
+    document.getElementById('editImages').addEventListener('input', renderPreviews);
 </script>
 </body>
 </html>

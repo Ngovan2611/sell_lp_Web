@@ -13,6 +13,7 @@
     grid-template-columns: repeat(5, 1fr); /* 👈 4 cột cố định */
     gap: 25px;
     padding: 20px;
+    overflow: hidden;
 }
 
 .product:hover {
@@ -23,10 +24,10 @@
 
 .product img {
     width: 100%;
-    height: 150px;
+    height: 180px;
     object-fit: contain;
     margin-bottom: 12px;
-    transition: 0.4s;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     z-index: 1;
     position: relative;
 
@@ -35,7 +36,6 @@
 .product:hover img {
     transform: scale(1.08);
 }
-
 
 .product h3 {
     font-size: 17px;
@@ -326,4 +326,40 @@ h2::after {
 .product img, .product h3, .product p {
     position: relative;
     z-index: 1;
+}
+/* Khung chứa ảnh chính ở trang chi tiết */
+.main-img {
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+}
+
+#mainImg {
+    width: 100%;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.4s ease;
+}
+
+.main-img:hover #mainImg {
+    transform: scale(1.08);
+    cursor: zoom-in;
+}
+
+.thumbs img {
+    cursor: pointer;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.thumbs img:hover {
+    border-color: #c42f2f;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.thumbs img.active {
+    border-color: #c42f2f;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(196, 47, 47, 0.2);
 }

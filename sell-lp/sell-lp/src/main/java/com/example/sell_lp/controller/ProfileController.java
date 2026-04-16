@@ -49,6 +49,9 @@ public class ProfileController {
         String username = principal.getName();
 
         UserResponse user = userService.getUserByUsername(username);
+        if(request.getEmail() != null || !request.getEmail().isEmpty()) {
+            request.setEmail(user.getEmail());
+        }
         userService.updateUser(user.getUserId(), request);
         redirectAttributes.addFlashAttribute("success", "cập nhật thành công!");
 

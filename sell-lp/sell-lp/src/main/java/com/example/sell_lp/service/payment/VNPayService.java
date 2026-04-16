@@ -112,7 +112,7 @@ public class VNPayService {
         }
     }
 
-    private String hashAllFields(Map fields) throws UnsupportedEncodingException {
+    private String hashAllFields(Map fields) {
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();

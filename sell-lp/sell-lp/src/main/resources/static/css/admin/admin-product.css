@@ -475,3 +475,25 @@
     cursor: default;
     color: var(--text-muted);
 }
+
+#imagePreviewContainer {
+    display: flex;
+    flex-direction: row; /* Ép hiển thị hàng ngang */
+    flex-wrap: nowrap;   /* Không cho nhảy xuống dòng */
+    overflow-x: auto;    /* Hiện thanh cuộn ngang nếu ảnh quá dài */
+    padding: 10px;
+    gap: 15px;
+    background: #f8f9fa;
+    border: 1px dashed #ddd;
+    border-radius: 8px;
+    min-height: 110px;
+}
+
+/* Tùy chỉnh thanh cuộn cho đẹp */
+#imagePreviewContainer::-webkit-scrollbar {
+    height: 6px;
+}
+#imagePreviewContainer::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}

@@ -4,21 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("sidebar");
 
     if (btn && overlay && sidebar) {
-
         btn.addEventListener("click", () => {
             overlay.classList.add("active");
             sidebar.classList.add("highlight");
+            // Khóa cuộn nhưng layout không bị đẩy nhờ scrollbar-gutter: stable ở CSS
             document.body.style.overflow = "hidden";
-
         });
 
         overlay.addEventListener("click", () => {
             overlay.classList.remove("active");
             sidebar.classList.remove("highlight");
             document.body.style.overflow = "auto";
-
         });
-
     }
 
 

@@ -7,6 +7,7 @@ import com.example.sell_lp.dto.request.ProductVariantUpdateRequest;
 import com.example.sell_lp.dto.response.ProductResponse;
 import com.example.sell_lp.entity.Category;
 import com.example.sell_lp.entity.Product;
+import com.example.sell_lp.entity.ProductImage;
 import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.ProductMapper;
 import com.example.sell_lp.mapper.ProductVariantResponseMapper;
@@ -51,7 +52,14 @@ public class AdminProductService {
         product.setCategory(category);
         product.setActive(true);
         Product savedProduct = productRepository.saveAndFlush(product);
-
+        if (request.getImageUrl() != null && !request.getImageUrl().isEmpty()) {
+            ProductImage mainImg = new ProductImage();
+            mainImg.setUrl(request.getImageUrl());
+            mainImg.setPrimary(true);
+            mainImg.setProduct(product);
+            product.getImages().clear();
+            product.getImages().add(mainImg);
+        }
         if (request.getVariants() != null && !request.getVariants().isEmpty()) {
             List<ProductVariant> variants = request.getVariants().stream()
                     .map(vReq -> {
@@ -83,11 +91,29 @@ public class AdminProductService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
         product.setName(request.getName());
+        product.setDescription(request.getDescription());
         product.setActive(request.isActive());
 
         if (request.getImageUrls() != null) {
-            List<String> newImages = new ArrayList<>(request.getImageUrls());
+            product.getImages().clear();
+
+            for (int i = 0; i < request.getImageUrls().size(); i++) {
+                String url = request.getImageUrls().get(i);
+                if (url != null && !url.trim().isEmpty()) {
+                    ProductImage img = new ProductImage();
+                    img.setUrl(url.trim());
+                    img.setProduct(product);
+                    img.setPrimary(i == 0);
+                    product.getImages().add(img);
+                }
+            }
         }
+
+        if (request.getCategoryId() != null) {
+            Category category = categoryService.getById(request.getCategoryId());
+            product.setCategory(category);
+        }
+
 
         if (request.getVariants() != null) {
             for (ProductVariantUpdateRequest vRequest : request.getVariants()) {

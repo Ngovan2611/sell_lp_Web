@@ -21,3 +21,25 @@ if (btn && sidebar && overlay) {
         overlay.classList.remove("active");
     });
 }
+function toggleContact() {
+    const wrapper = document.getElementById('floatingContact');
+    const icon = document.getElementById('contactIcon');
+
+    wrapper.classList.toggle('active');
+
+    // Đổi icon từ comment sang dấu X
+    if (wrapper.classList.contains('active')) {
+        icon.className = 'fas fa-times';
+    } else {
+        icon.className = 'fas fa-comments';
+    }
+}
+
+// Tự động đóng nếu người dùng nhấn ra ngoài
+document.addEventListener('click', function(e) {
+    const container = document.getElementById('floatingContact');
+    if (!container.contains(e.target)) {
+        container.classList.remove('active');
+        document.getElementById('contactIcon').className = 'fas fa-comments';
+    }
+});

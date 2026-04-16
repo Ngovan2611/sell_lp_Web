@@ -217,6 +217,8 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
 
     } else if (selectedPayment.value === "VNPAY") {
         console.log("Đang chuyển hướng sang VNPay...");
+    } else if (selectedPayment.value === "PAYOS") {
+        console.log("Đang chuyển hướng sang payOS...");
     }
 });
 function showSuccessPopup() {

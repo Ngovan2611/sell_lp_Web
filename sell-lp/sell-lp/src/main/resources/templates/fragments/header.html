@@ -36,10 +36,30 @@
         </div>
 
         <ul class="menu">
-            <li><a href="/home">Trang chủ</a></li>
-            <li><a href="/products">Sản phẩm</a></li>
-            <li><a href="/introduction">Giới thiệu</a></li>
-            <li><a href="/history-order">Đơn hàng</a></li>
+            <li>
+                <a href="/home">
+                    <i class="fa-solid fa-house"></i> Trang chủ
+                </a>
+            </li>
+
+            <li>
+                <a href="/products">
+                    <i class="fa-solid fa-box"></i> Sản phẩm
+                </a>
+            </li>
+
+            <li>
+                <a href="/introduction">
+                    <i class="fa-solid fa-circle-info"></i> Giới thiệu
+                </a>
+            </li>
+
+            <li>
+                <a href="/history-order">
+                    <i class="fa-solid fa-receipt"></i> Đơn hàng
+                </a>
+            </li>
+
             <li>
                 <div class="cart">
                     <a href="/cart">
@@ -47,11 +67,13 @@
                     </a>
                 </div>
             </li>
+
             <li th:if="${username == null}">
                 <a href="/login">
-                    <i class="fa-solid fa-user"></i> Đăng nhập
+                    <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
                 </a>
             </li>
+
             <li class="user-menu" th:if="${username != null}">
                 <a class="user-icon">
                     <i class="fa-solid fa-user"></i>
@@ -60,21 +82,35 @@
                 <div class="user-popup">
                     <p class="username">
                         <i class="fa-solid fa-user"></i>
-                        Chào mừng:
-                        <span th:text="${username}"></span>
+                        Chào mừng: <span th:text="${username}"></span>
                     </p>
+
                     <a class="profile" href="/profile">
-                        <i class="fa-solid fa-circle-user"></i>
-                        Thông tin cá nhân
+                        <i class="fa-solid fa-id-card"></i> Thông tin cá nhân
                     </a>
+
                     <a class="password-change" href="/change-password">
-                        <i class="fa-solid fa-key"></i>
-                        Thay đổi mật khẩu
+                        <i class="fa-solid fa-key"></i> Thay đổi mật khẩu
                     </a>
+
                     <a class="logout-btn" href="/logout">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        Đăng xuất
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
                     </a>
+                </div>
+            </li>
+            <li class="notification-menu">
+                <a href="/notifications" class="notification-icon">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="notif-badge">3</span>
+                </a>
+
+                <div class="notif-popup">
+                    <p class="notif-title">Thông báo mới</p>
+                    <ul>
+                        <li>Đơn hàng #123 đã được xác nhận.</li>
+                        <li>Sản phẩm trong giỏ hàng đang giảm giá!</li>
+                    </ul>
+                    <a href="/notifications" class="view-all-notif">Xem tất cả</a>
                 </div>
             </li>
         </ul>
@@ -83,6 +119,26 @@
          style="position:fixed; top:25px; right:20px; background:green; color:white; padding:15px;">
         <i class="fa-solid fa-check"></i>
         <span th:text="${success}"></span>
+    </div>
+    <div class="floating-contact" id="floatingContact">
+        <div class="contact-list">
+            <a href="https://zalo.me/0123456789" target="_blank" class="contact-item zalo" title="Zalo">
+                <img src="https://stc-zaloprofile.zdn.vn/pc/v1/images/zalo_sharelogo.png" alt="Zalo">
+            </a>
+
+            <a href="https://m.me/your_fb_id" target="_blank" class="contact-item messenger" title="Messenger">
+                <i class="fab fa-facebook-messenger"></i>
+            </a>
+
+            <a href="mailto:your-email@gmail.com" class="contact-item gmail" title="Gửi Email">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+
+        <div class="contact-main" onclick="toggleContact()">
+            <i class="fas fa-comments" id="contactIcon"></i>
+            <span class="notification-badge">1</span>
+        </div>
     </div>
 </header>
 
