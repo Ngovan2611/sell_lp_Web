@@ -31,8 +31,18 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 25px;">
-            <label class="form-label">URL Hình ảnh</label>
-            <input type="text" th:field="*{imageUrl}" class="form-input" placeholder="https://example.com/image.jpg">
+            <label class="form-label">Hình ảnh chính của sản phẩm</label>
+
+            <div id="singlePreview" class="mb-2" style="display: none;">
+                <img id="previewImg" src="" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #eee;">
+                <p style="font-size: 0.75rem; color: #28a745;"><i class="fas fa-check-circle"></i> Đã chọn làm ảnh chính</p>
+            </div>
+
+            <input type="file" id="filePicker" class="form-input" accept="image/*">
+
+            <input type="hidden" th:field="*{imageUrl}" id="finalImageUrl">
+
+            <div id="uploadStatus" style="font-size: 0.8rem; color: #666; margin-top: 5px;"></div>
         </div>
 
         <div class="variant-section">
@@ -119,6 +129,53 @@
         tbody.innerHTML = '';
         variantIdx = 0;
         addVariant();
+    });
+</script>
+<script>
+    document.getElementById('filePicker').addEventListener('change', async function(e) {
+        const files = e.target.files;
+        if (files.length === 0) return;
+
+        const status = document.getElementById('uploadStatus');
+        const previewDiv = document.getElementById('singlePreview');
+        const previewImg = document.getElementById('previewImg');
+        const finalInput = document.getElementById('finalImageUrl');
+
+        status.innerText = "Đang xử lý ảnh...";
+        status.style.color = "#666";
+
+        const formData = new FormData();
+        // Dù chỉ lấy 1 ảnh, ta vẫn gửi qua List 'files' để khớp với Controller /upload hiện tại
+        formData.append('files', files[0]);
+
+        try {
+            const res = await fetch('/admin/products/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                const urls = await res.json();
+                const uploadedUrl = urls[0]; // Lấy URL duy nhất
+
+                // 1. Lưu vào input ẩn để gửi Form
+                finalInput.value = uploadedUrl;
+
+                // 2. Hiển thị ảnh xem trước
+                previewImg.src = uploadedUrl;
+                previewDiv.style.display = 'block';
+
+                status.innerText = "Tải ảnh thành công!";
+                status.style.color = "green";
+            } else {
+                status.innerText = "Lỗi khi tải ảnh lên server!";
+                status.style.color = "red";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            status.innerText = "Lỗi kết nối server!";
+            status.style.color = "red";
+        }
     });
 </script>
 </body>

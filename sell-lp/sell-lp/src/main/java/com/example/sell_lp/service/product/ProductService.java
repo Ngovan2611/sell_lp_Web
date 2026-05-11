@@ -4,7 +4,7 @@ import com.example.sell_lp.dto.response.ProductResponse;
 import com.example.sell_lp.entity.Category;
 import com.example.sell_lp.entity.Product;
 import com.example.sell_lp.mapper.ProductMapper;
-import com.example.sell_lp.repository.ProductRepository;
+import com.example.sell_lp.repository.product.ProductRepository;
 import com.example.sell_lp.service.category.CategoryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,18 +34,68 @@ public class ProductService {
                 .toList();
 
     }
-    public Page<ProductResponse> getProductsFiltered(Integer categoryId, String keyword, String sort, Pageable pageable) {
+    public Page<ProductResponse> getProductsForUser(
+            Integer categoryId,
+            String keyword,
+            String price,
+            String sort,
+            Pageable pageable
+    ) {
+
         Page<Product> productPage;
 
+        switch (sort) {
 
-            if ("price_asc".equals(sort)) {
-                productPage = productRepository.searchProductsOrderByPriceAsc(keyword, categoryId, pageable);
-            } else if ("price_desc".equals(sort)) {
-                productPage = productRepository.searchProductsOrderByPriceDesc(keyword, categoryId, pageable);
-            } else {
-                productPage = productRepository.searchProducts(keyword, categoryId, pageable);
-            }
+            case "price_asc":
 
+                productPage =
+                        productRepository
+                                .searchProductsPriceAsc(
+                                        keyword,
+                                        categoryId,
+                                        price,
+                                        pageable
+                                );
+
+                break;
+
+            case "price_desc":
+
+                productPage =
+                        productRepository
+                                .searchProductsPriceDesc(
+                                        keyword,
+                                        categoryId,
+                                        price,
+                                        pageable
+                                );
+
+                break;
+
+            case "name_asc":
+
+                productPage =
+                        productRepository
+                                .searchProductsNameAsc(
+                                        keyword,
+                                        categoryId,
+                                        price,
+                                        pageable
+                                );
+
+                break;
+
+            default:
+
+                productPage =
+                        productRepository
+                                .searchProductsNewest(
+                                        keyword,
+                                        categoryId,
+                                        price,
+                                        pageable
+                                );
+        }
 
         return productPage.map(productMapper::productToProductResponse);
     }

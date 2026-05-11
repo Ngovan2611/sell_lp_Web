@@ -3,7 +3,7 @@ package com.example.sell_lp.service.category;
 import com.example.sell_lp.dto.response.CategoryResponse;
 import com.example.sell_lp.entity.Category;
 import com.example.sell_lp.mapper.CategoryMapper;
-import com.example.sell_lp.repository.CategoryRepository;
+import com.example.sell_lp.repository.category.CategoryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

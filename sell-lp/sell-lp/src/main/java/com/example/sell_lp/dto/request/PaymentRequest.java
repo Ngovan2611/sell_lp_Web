@@ -1,5 +1,6 @@
 package com.example.sell_lp.dto.request;
 
+import com.example.sell_lp.enums.PaymentMethod;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PaymentRequest {
     Integer orderId;
-    String method;
+    PaymentMethod method;
     BigDecimal amount;
     String transactionId;
     String responseCode;

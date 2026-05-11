@@ -1,3 +1,5 @@
+
+
 .banner{
     flex:1;
     position:relative;
@@ -192,4 +194,81 @@
     top: 80px;
     height: fit-content;
     z-index:900;
+}
+/* =========================
+   NEWS MAGAZINE LAYOUT
+========================= */
+
+.news-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 40px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.news-row:hover {
+    transform: translateY(-5px);
+}
+
+/* Nội dung */
+.news-text {
+    flex: 1;
+}
+
+.news-text h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.news-text p {
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+/* Ảnh */
+.news-image {
+    flex: 1;
+    text-align: center;
+}
+
+.news-image img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: 0.4s;
+}
+
+.news-row:hover .news-image img {
+    transform: scale(1.05);
+}
+
+/* Nút */
+.news-btn {
+    padding: 10px 18px;
+    border: none;
+    background: #e60f0f;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.news-btn:hover {
+    background: #7c0517;
+    transform: scale(1.05);
+}
+
+/* Đảo chiều layout */
+.news-row.reverse {
+    flex-direction: row-reverse;
 }

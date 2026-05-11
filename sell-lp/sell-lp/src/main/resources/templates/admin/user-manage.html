@@ -56,13 +56,29 @@
                     </td>
                     <td th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy')}">20/03/2026</td>
                     <td class="actions">
+
+                        <!-- KHÓA / MỞ KHÓA -->
                         <button type="button"
                                 class="btn-toggle"
                                 th:data-id="${user.userId}"
                                 th:title="${user.active ? 'Khóa tài khoản' : 'Mở khóa'}"
                                 onclick="handleToggle(this)">
+
                             <i th:class="${user.active ? 'fas fa-user-slash' : 'fas fa-user-check'}"></i>
+
                         </button>
+
+                        <!-- GỬI THÔNG BÁO -->
+                        <button type="button"
+                                class="btn-notify"
+                                th:data-id="${user.userId}"
+                                th:data-name="${user.fullName}"
+                                onclick="openNotifyModal(this)">
+
+                            <i class="fas fa-bell"></i>
+
+                        </button>
+
                     </td>
                 </tr>
                 </tbody>
@@ -73,25 +89,186 @@
         </div>
     </div>
 </div>
+<!-- =========================
+     NOTIFICATION MODAL
+========================= -->
+
+<div id="notifyModal" class="notify-modal">
+
+    <div class="notify-box">
+
+        <div class="notify-header">
+            <h3>
+                <i class="fas fa-bell"></i>
+                Gửi thông báo
+            </h3>
+
+            <button onclick="closeNotifyModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="notify-body">
+
+            <input type="hidden" id="notifyUserId">
+
+            <div class="form-group">
+                <label>Người nhận</label>
+                <input type="text" id="notifyUserName" disabled>
+            </div>
+
+            <div class="form-group">
+                <label>Tiêu đề</label>
+                <input type="text" id="notifyTitle"
+                       placeholder="Nhập tiêu đề">
+            </div>
+
+            <div class="form-group">
+                <label>Nội dung</label>
+                <textarea id="notifyMessage"
+                          rows="5"
+                          placeholder="Nhập nội dung thông báo"></textarea>
+            </div>
+
+            <button class="send-btn"
+                    onclick="sendNotification()">
+
+                <i class="fas fa-paper-plane"></i>
+                Gửi thông báo
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 <script>
+
+    /* =========================
+       TOGGLE USER STATUS
+    ========================= */
+
     function handleToggle(button) {
+
         const userId = button.getAttribute('data-id');
 
         if (confirm("Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?")) {
+
             fetch(`/admin/users/toggle-status/${userId}`, {
                 method: 'POST'
-            }).then(response => {
-                if (response.ok) {
-                    location.reload();
-                } else {
-                    alert("Có lỗi xảy ra khi thực hiện thao tác này.");
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-                alert("Lỗi kết nối máy chủ.");
-            });
+            })
+                .then(response => {
+
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert("Có lỗi xảy ra.");
+                    }
+
+                })
+                .catch(error => {
+
+                    console.error(error);
+
+                    alert("Lỗi máy chủ.");
+
+                });
+
         }
+
     }
+
+    /* =========================
+       MODAL
+    ========================= */
+
+    function openNotifyModal(button){
+
+        const modal = document.getElementById("notifyModal");
+
+        document.getElementById("notifyUserId").value =
+            button.dataset.id;
+
+        document.getElementById("notifyUserName").value =
+            button.dataset.name;
+
+        modal.classList.add("active");
+    }
+
+    function closeNotifyModal(){
+
+        document.getElementById("notifyModal")
+            .classList.remove("active");
+
+    }
+
+    /* =========================
+       SEND NOTIFICATION
+    ========================= */
+
+    function sendNotification(){
+
+        const userId =
+            document.getElementById("notifyUserId").value;
+
+        const title =
+            document.getElementById("notifyTitle").value;
+
+        const message =
+            document.getElementById("notifyMessage").value;
+
+        if(!title || !message){
+
+            alert("Vui lòng nhập đầy đủ.");
+
+            return;
+        }
+
+        fetch(`/admin/notifications/send/${userId}`,{
+
+            method:'POST',
+
+            headers:{
+                'Content-Type':'application/json'
+            },
+
+            body:JSON.stringify({
+
+                title:title,
+                message:message,
+                type:'OTHER'
+
+            })
+
+        })
+            .then(response => {
+
+                if(response.ok){
+
+                    alert("Gửi thông báo thành công.");
+
+                    closeNotifyModal();
+
+                }else{
+
+                    alert("Không thể gửi thông báo.");
+
+                }
+
+            })
+            .catch(error => {
+
+                console.error(error);
+
+                alert("Lỗi máy chủ.");
+
+            });
+
+    }
+
 </script>
+<script th:src="@{/js/admin-common.js}"></script>
+
 </body>
 </html>

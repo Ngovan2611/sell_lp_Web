@@ -74,7 +74,7 @@
         <h3>Phương thức thanh toán</h3>
 
         <label>
-            <input type="radio" name="paymentMethod" value="COD" checked >
+            <input type="radio" name="paymentMethod" value="COD" checked>
             Thanh toán khi nhận hàng (COD)
         </label>
         <br>
@@ -82,6 +82,12 @@
         <label>
             <input type="radio" name="paymentMethod" value="VNPAY">
             Thanh toán VNPay
+        </label>
+        <br>
+
+        <label>
+            <input type="radio" name="paymentMethod" value="PAYOS">
+            Thanh toán VietQR (payOS)
         </label>
     </div>
 
@@ -97,10 +103,10 @@
 
         <h3>
             Tổng thanh toán:
-            <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+            <span th:text="${#numbers.formatDecimal(total + 30000, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
         </h3>
 
-        <form id="orderForm" method="post" action="/order/create">
+        <form id="orderForm" method="post" th:action="@{/order/create}">
             <input type="hidden" name="ids" th:value="${ids}">
 
             <input type="hidden" name="paymentMethod" id="paymentMethodInput">
@@ -117,7 +123,7 @@
 
     <h3>Thêm địa chỉ</h3>
 
-    <form id="addAddressForm">
+    <form id="addAddressForm" th:action="@{/address/create}">
         <input type="text" name="recipientName" placeholder="Tên người nhận" required><br>
         <input type="text" name="phone" placeholder="SĐT" required><br>
         <input type="text" name="city" placeholder="Tỉnh/Thành phố" required><br>
@@ -169,7 +175,7 @@
 <div id="editAddressPopup" class="addressPopup">
     <span class="close-btn" onclick="closeEditAddressPopup()">×</span>
     <h3>Sửa địa chỉ</h3>
-    <form id="editAddressForm" method="post" action="/address/edit">
+    <form id="editAddressForm" method="post" th:action="@{/address/edit}">
         <input type="hidden" name="addressId" id="editAddressId">
 
         <input type="text" name="recipientName" id="editRecipientName" placeholder="Tên người nhận" required><br>

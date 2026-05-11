@@ -1,53 +1,101 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("categoryBtn");
+
+    /* =========================================
+       SIDEBAR + OVERLAY
+    ========================================= */
+
+    const categoryBtn = document.getElementById("categoryBtn");
     const overlay = document.getElementById("overlay");
     const sidebar = document.getElementById("sidebar");
 
-    if (btn && overlay && sidebar) {
+    function openSidebar() {
+        if (!sidebar || !overlay) return;
 
-        btn.addEventListener("click", () => {
-            overlay.classList.add("active");
-            sidebar.classList.add("highlight");
-            document.body.style.overflow = "hidden";
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
 
-        });
+        document.body.style.overflow = "hidden";
+    }
 
-        overlay.addEventListener("click", () => {
-            overlay.classList.remove("active");
-            sidebar.classList.remove("highlight");
-            document.body.style.overflow = "auto";
+    function closeSidebar() {
+        if (!sidebar || !overlay) return;
+
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+
+        document.body.style.overflow = "auto";
+    }
+
+    if (categoryBtn) {
+
+        categoryBtn.addEventListener("click", () => {
+
+            if (sidebar.classList.contains("active")) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
 
         });
 
     }
 
+    if (overlay) {
 
+        overlay.addEventListener("click", () => {
+            closeSidebar();
+        });
 
+    }
 
+    /* =========================================
+       AUTO CLOSE SIDEBAR WHEN RESIZE DESKTOP
+    ========================================= */
+
+    window.addEventListener("resize", () => {
+
+        if (window.innerWidth > 992) {
+            closeSidebar();
+        }
+
+    });
+
+    /* =========================================
+       PRODUCT SCROLL ANIMATION
+    ========================================= */
 
     const products = document.querySelectorAll(".product");
 
-    const observer = new IntersectionObserver((entries) => {
+    if (products.length > 0) {
 
-        entries.forEach(entry => {
+        const observer = new IntersectionObserver((entries) => {
 
-            if (entry.isIntersecting) {
-                entry.target.classList.add("show");
-            }
+            entries.forEach(entry => {
 
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("show");
+                }
+
+            });
+
+        }, {
+            threshold: 0.15
         });
 
-    }, {
-        threshold: 0.2
-    });
+        products.forEach(product => {
+            observer.observe(product);
+        });
 
-    products.forEach(product => observer.observe(product));
+    }
 
-    /* ===== BANNER SLIDER ===== */
+    /* =========================================
+       BANNER SLIDER
+    ========================================= */
 
     const slides = document.querySelectorAll(".banner-slide");
 
     let currentSlide = 0;
+    let slideInterval;
 
     function showSlide(index) {
 
@@ -56,10 +104,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         slides[index].classList.add("active");
-
     }
 
-    setInterval(() => {
+    function nextSlide() {
 
         currentSlide++;
 
@@ -68,6 +115,114 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         showSlide(currentSlide);
+    }
 
-    }, 2000);
+    function startSlider() {
+
+        if (slides.length <= 1) return;
+
+        slideInterval = setInterval(() => {
+            nextSlide();
+        }, 2000);
+
+    }
+
+    function stopSlider() {
+
+        clearInterval(slideInterval);
+
+    }
+
+    if (slides.length > 0) {
+
+        showSlide(currentSlide);
+
+        startSlider();
+
+        /* Pause khi hover banner */
+
+        const banner = document.querySelector(".banner");
+
+        if (banner) {
+
+            banner.addEventListener("mouseenter", () => {
+                stopSlider();
+            });
+
+            banner.addEventListener("mouseleave", () => {
+                startSlider();
+            });
+
+        }
+
+    }
+
+    /* =========================================
+       SMOOTH SCROLL VIEW
+    ========================================= */
+
+    const scrollLinks = document.querySelectorAll('a[href^="#"]');
+
+    scrollLinks.forEach(link => {
+
+        link.addEventListener("click", function (e) {
+
+            const targetId = this.getAttribute("href");
+
+            if (targetId.length > 1) {
+
+                const target = document.querySelector(targetId);
+
+                if (target) {
+
+                    e.preventDefault();
+
+                    target.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+                }
+
+            }
+
+        });
+
+    });
+
+    /* =========================================
+       FLOATING CONTACT TOGGLE
+    ========================================= */
+
+    const floatingContact = document.getElementById("floatingContact");
+
+    window.toggleContact = function () {
+
+        if (floatingContact) {
+            floatingContact.classList.toggle("active");
+        }
+
+    };
+
+    /* =========================================
+       AUTO HIDE TOAST
+    ========================================= */
+
+    const toast = document.querySelector(".toast");
+
+    if (toast) {
+
+        setTimeout(() => {
+
+            toast.style.opacity = "0";
+            toast.style.transform = "translateX(100%)";
+
+            setTimeout(() => {
+                toast.remove();
+            }, 500);
+
+        }, 3000);
+
+    }
+
 });

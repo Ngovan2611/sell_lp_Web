@@ -3,8 +3,8 @@ package com.example.sell_lp.config;
 
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.entity.Role;
-import com.example.sell_lp.repository.RoleRepository;
-import com.example.sell_lp.repository.UserRepository;
+import com.example.sell_lp.repository.user.RoleRepository;
+import com.example.sell_lp.repository.user.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

@@ -4,7 +4,7 @@ package com.example.sell_lp.service.authentication;
 import com.example.sell_lp.dto.request.AuthenticationRequest;
 import com.example.sell_lp.dto.response.AuthenticationResponse;
 import com.example.sell_lp.entity.User;
-import com.example.sell_lp.repository.UserRepository;
+import com.example.sell_lp.repository.user.UserRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SellLP - Shop Laptop & PC</title>
@@ -56,17 +57,18 @@
         <h2 style="margin-bottom:20px;">Sản phẩm Laptop thịnh hành</h2>
         <div class="products-wrapper">
             <div class="products">
+                <div class="product" th:each="p : ${laps}">
+                    <img th:src="@{{img}(img=${p.imageUrl})}">
 
-                <div class="products">
-                    <div class="product" th:each="p : ${laps}">
-                        <img th:src="@{{img}(img=${p.imageUrl})}">
-                        <h3 th:text="${p.name}"></h3>
-                        <p th:text="${p.description}"></p>
+                    <h3 th:text="${p.name}"></h3>
 
-                        <a th:href="@{/product/{id}(id=${p.productId})}">
-                            <button class="view-btn">Xem chi tiết</button>
-                        </a>
-                    </div>
+                    <p th:text="${p.description}"></p>
+
+                    <a th:href="@{/product/{id}(id=${p.productId})}">
+                        <button class="view-btn">
+                            Xem chi tiết
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -92,7 +94,6 @@
 
         <div class="products">
 
-            <div class="products">
                 <div class="product" th:each="p : ${desks}">
                     <img th:src="@{{img}(img=${p.imageUrl})}">
                     <h3 th:text="${p.name}"></h3>
@@ -102,7 +103,6 @@
                         <button class="view-btn">Xem chi tiết</button>
                     </a>
                 </div>
-            </div>
         </div>
 
         <div class="view-more">
@@ -114,6 +114,94 @@
         </div>
 
     </section>
+<section class="container">
+
+    <h2 style="margin-bottom:20px;">
+        <i class="fa-solid fa-newspaper"></i> Tin tức công nghệ
+    </h2>
+
+    <!-- BÀI 1 -->
+    <div class="news-row">
+        <div class="news-text">
+            <h3>RTX 50 series sắp ra mắt</h3>
+            <p>
+                NVIDIA đang chuẩn bị ra mắt thế hệ GPU RTX 50 series với nhiều cải tiến đáng kể về hiệu năng xử lý đồ họa và trí tuệ nhân tạo.
+                Theo các thông tin rò rỉ, dòng card mới không chỉ cải thiện tốc độ khung hình trong các tựa game AAA mà còn tối ưu mạnh mẽ cho các tác vụ AI,
+                render 3D và xử lý dữ liệu lớn.
+
+                Bên cạnh đó, kiến trúc mới được cho là sẽ tiết kiệm điện năng hơn so với thế hệ trước,
+                giúp game thủ và nhà sáng tạo nội dung có trải nghiệm mượt mà nhưng vẫn đảm bảo hiệu suất năng lượng.
+
+                RTX 50 series được kỳ vọng sẽ tạo ra bước nhảy vọt lớn trong ngành công nghiệp GPU,
+                đặc biệt trong thời kỳ AI đang phát triển mạnh mẽ và được ứng dụng rộng rãi trong mọi lĩnh vực.
+            </p>
+            <a href="/news/1">
+                <button class="news-btn">
+                    <i class="fa-solid fa-eye"></i> Xem chi tiết
+                </button>
+            </a>
+        </div>
+
+        <div class="news-image">
+            <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704"
+                 alt="RTX GPU">
+        </div>
+    </div>
+
+
+    <!-- BÀI 2 (đảo layout) -->
+    <div class="news-row reverse">
+        <div class="news-text">
+            <h3>Laptop AI thế hệ mới 2026</h3>
+            <p>
+                Laptop AI thế hệ mới đang trở thành xu hướng nổi bật trong năm 2026 khi các hãng công nghệ lớn tích hợp trí tuệ nhân tạo trực tiếp vào phần cứng.
+                Những chiếc laptop này không chỉ phục vụ nhu cầu học tập và làm việc thông thường mà còn có khả năng tự tối ưu hiệu năng theo thói quen sử dụng của người dùng.
+
+                Nhờ vào chip AI chuyên dụng (NPU), các tác vụ như chỉnh sửa ảnh, dựng video, dịch ngôn ngữ hay phân tích dữ liệu đều được xử lý nhanh hơn đáng kể.
+                Ngoài ra, thời lượng pin cũng được cải thiện nhờ khả năng phân bổ tài nguyên thông minh.
+
+                Đây được xem là bước tiến quan trọng, mở ra kỷ nguyên mới cho máy tính xách tay thông minh, nơi thiết bị có thể “học” và thích nghi với người dùng theo thời gian.
+            </p>
+            <a href="/news/2">
+                <button class="news-btn">
+                    <i class="fa-solid fa-eye"></i> Xem chi tiết
+                </button>
+            </a>
+        </div>
+
+        <div class="news-image">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
+                 alt="Laptop AI">
+        </div>
+    </div>
+
+
+    <!-- BÀI 3 -->
+    <div class="news-row">
+        <div class="news-text">
+            <h3>PC Gaming cấu hình mạnh 2026</h3>
+            <p>
+                PC gaming năm 2026 tiếp tục phát triển mạnh với các cấu hình tối ưu hơn về cả hiệu năng lẫn chi phí.
+                Các bộ máy mới thường được trang bị CPU đa nhân thế hệ mới kết hợp với GPU mạnh mẽ, giúp xử lý mượt mà các tựa game AAA ở độ phân giải cao.
+
+                Không chỉ phục vụ gaming, những bộ PC này còn được tối ưu cho livestream, dựng video và làm đồ họa chuyên nghiệp.
+                Xu hướng hiện nay là build PC theo nhu cầu thay vì chạy theo cấu hình quá cao, giúp người dùng tiết kiệm chi phí nhưng vẫn đảm bảo hiệu suất.
+
+                Bên cạnh đó, công nghệ tản nhiệt và thiết kế case cũng ngày càng được chú trọng, mang lại sự ổn định và thẩm mỹ cao hơn cho toàn bộ hệ thống.
+            </p>
+            <a href="/news/3">
+                <button class="news-btn">
+                    <i class="fa-solid fa-eye"></i> Xem chi tiết
+                </button>
+            </a>
+        </div>
+
+        <div class="news-image">
+            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7"
+                 alt="Gaming PC">
+        </div>
+    </div>
+</section>
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 

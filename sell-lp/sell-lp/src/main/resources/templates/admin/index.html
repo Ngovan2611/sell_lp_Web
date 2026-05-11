@@ -20,22 +20,26 @@
                 <p th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' VND'"></p>
             </div>
         </div>
-
-        <div class="stat-card">
-            <i class="fas fa-users stat-icon" style="color: #2ecc71;"></i>
-            <div class="stat-info">
-                <h3>Khách hàng</h3>
-                <p th:text="${totalCustomers}"></p>
+        <a th:href="@{/admin/users}" style="text-decoration: none; cursor: pointer">
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon" style="color: #2ecc71;"></i>
+                <div class="stat-info">
+                    <h3>Khách hàng</h3>
+                    <p th:text="${totalCustomers}"></p>
+                </div>
             </div>
-        </div>
+        </a>
 
-        <div class="stat-card">
-            <i class="fas fa-shopping-bag stat-icon" style="color: #e67e22;"></i>
-            <div class="stat-info">
-                <h3>Đơn mới</h3>
-                <p th:text="${newOrders}"></p>
+        <a th:href="@{/admin/orders}" style="text-decoration: none; cursor: pointer">
+            <div class="stat-card">
+                <i class="fas fa-shopping-bag stat-icon" style="color: #e67e22;"></i>
+                <div class="stat-info">
+                    <h3>Đơn mới</h3>
+                    <p th:text="${newOrders}"></p>
+                </div>
             </div>
-        </div>
+        </a>
+
     </div>
     <div class="charts-container" style="margin-top: 30px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
         <div class="stat-card" style="display: block;">
@@ -140,5 +144,7 @@
         }
     });
 </script>
+<script th:src="@{/js/admin-common.js}"></script>
+
 </body>
 </html>

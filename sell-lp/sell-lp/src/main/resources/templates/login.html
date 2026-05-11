@@ -21,7 +21,7 @@
                 <h1 class="logo"><a href="/home">SellLP</a></h1>
                 <h2>Chào mừng bạn đến với web-lap!</h2>
                 <p>Vui lòng nhập đủ thông tin để đăng nhập</p>
-                <form action="/login" method="post" id="form-login">
+                <form th:action="@{/login}" method="post" id="form-login">
                     <div class="input-group">
                         <i class='bx bx-user'></i>
                         <input type="text" name="username" placeholder=" " required>

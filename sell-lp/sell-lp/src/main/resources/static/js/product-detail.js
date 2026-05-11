@@ -238,3 +238,50 @@ function buyNow() {
 
     window.location.href = `/buy-now?variantId=${vId}&qty=1`;
 }
+
+let currentImgIndex = 0;
+let slideInterval;
+
+function initSlideshow() {
+    const thumbs = document.querySelectorAll('.thumbs img');
+    if (thumbs.length <= 1) return;
+
+    startInterval();
+
+    const gallery = document.querySelector('.gallery');
+    gallery.addEventListener('mouseenter', () => clearInterval(slideInterval));
+    gallery.addEventListener('mouseleave', () => startInterval());
+}
+
+function startInterval() {
+    clearInterval(slideInterval);
+    slideInterval = setInterval(() => {
+        const thumbs = document.querySelectorAll('.thumbs img');
+        currentImgIndex = (currentImgIndex + 1) % thumbs.length;
+
+        changeImg(thumbs[currentImgIndex]);
+    }, 4000);
+}
+
+function changeImg(element) {
+    const mainImg = document.getElementById('mainImg');
+    const thumbs = document.querySelectorAll('.thumbs img');
+
+    mainImg.style.opacity = '0.8';
+
+    setTimeout(() => {
+        mainImg.src = element.src;
+        mainImg.style.opacity = '1';
+
+        thumbs.forEach(img => img.classList.remove('active'));
+        element.classList.add('active');
+
+        currentImgIndex = Array.from(thumbs).indexOf(element);
+    }, 100);
+}
+
+const originalOnload = window.onload;
+window.onload = () => {
+    if (originalOnload) originalOnload();
+    initSlideshow();
+};

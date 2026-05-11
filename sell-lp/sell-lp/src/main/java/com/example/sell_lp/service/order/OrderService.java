@@ -9,28 +9,29 @@ import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.OrderItem;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.entity.Address;
+import com.example.sell_lp.enums.NotificationType;
 import com.example.sell_lp.enums.OrderStatus;
 import com.example.sell_lp.mapper.OrderItemMapper;
 import com.example.sell_lp.mapper.OrderMapper;
 import com.example.sell_lp.mapper.PaymentMapper;
-import com.example.sell_lp.repository.AddressRepository;
-import com.example.sell_lp.repository.CartItemRepository;
-import com.example.sell_lp.repository.OrderItemRepository;
-import com.example.sell_lp.repository.OrderRepository;
-import com.example.sell_lp.repository.ProductVariantRepository;
-import com.example.sell_lp.repository.UserRepository;
+import com.example.sell_lp.repository.address.AddressRepository;
+import com.example.sell_lp.repository.cart.CartItemRepository;
+import com.example.sell_lp.repository.order.OrderItemRepository;
+import com.example.sell_lp.repository.order.OrderRepository;
+import com.example.sell_lp.repository.product.ProductVariantRepository;
+import com.example.sell_lp.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import com.example.sell_lp.service.notification.NotificationService;
 
 
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class OrderService {
     OrderItemRepository orderItemRepository;
     ProductVariantRepository productVariantRepository;
     PaymentMapper paymentMapper;
-
+    NotificationService notificationService;
     @Transactional
     public Order save(OrderCreationRequest req) {
         User user = userRepository.findByUsername(
@@ -113,6 +114,10 @@ public class OrderService {
 
         orderRepository.save(order);
         orderItemRepository.saveAll(orderItemsList);
+        notificationService.sendToUser(
+                NotificationType.ORDER_SUCCESS,"Mã đơn hàng #" + String.valueOf(order.getOrderId()),
+                user.getUserId()
+        );
         return order;
     }
 
@@ -192,6 +197,9 @@ public class OrderService {
         order.setStatus(OrderStatus.FAILURE.name());
         stockOrder.rollbackStock(order);
         orderRepository.save(order);
+        notificationService.sendToUser(NotificationType.ORDER_CANCELLED_USER,
+                "đơn hàng: " + String.valueOf(order.getOrderId()),
+                order.getUser().getUserId());
     }
 
     public void updateOrderStatus(Integer orderId, String nextStatus) {

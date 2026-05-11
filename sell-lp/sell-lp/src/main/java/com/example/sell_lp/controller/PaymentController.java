@@ -5,6 +5,7 @@ import com.example.sell_lp.dto.request.OrderCreationRequest;
 import com.example.sell_lp.dto.request.PaymentRequest;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.enums.OrderStatus;
+import com.example.sell_lp.enums.PaymentMethod;
 import com.example.sell_lp.enums.PaymentStatus;
 import com.example.sell_lp.service.order.OrderService;
 import com.example.sell_lp.service.payment.PaymentService;
@@ -33,32 +34,34 @@ public class PaymentController {
     OrderService orderService;
     VNPayService vnPayService;
     PaymentService paymentService;
-
     @PostMapping("/order/create")
     public String createOrder(@ModelAttribute OrderCreationRequest request,
                               @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod,
                               Principal principal,
-                              HttpServletRequest httpRequest) {
-        if (principal == null) return "redirect:/login";
+                              HttpServletRequest httpRequest) throws Exception {
 
+        if (principal == null) return "redirect:/login";
 
         Order savedOrder = orderService.save(request);
 
-        if ("VNPAY".equals(paymentMethod)) {
-            String baseUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort();
+        String baseUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort();
 
-            int amount = savedOrder.getTotalAmount().intValue();
-            String orderInfo = "Thanh toan don hang #" + savedOrder.getOrderId();
-
-            String vnpayUrl = vnPayService.createOrder(amount, orderInfo, baseUrl + "/vnpay-return");
-
-            return "redirect:" + vnpayUrl;
+        int amount = savedOrder.getTotalAmount().intValue();
+        String orderInfo = "Don hang " + savedOrder.getOrderId();
+        if ("VNPAY".equalsIgnoreCase(paymentMethod)) {
+            String url = vnPayService.createOrder(
+                    amount,
+                    orderInfo,
+                    baseUrl + "/vnpay-return"
+            );
+            return "redirect:" + url;
         }
+
 
         return "redirect:/history-order";
     }
     @GetMapping("/vnpay-return")
-    public String vnpayReturn(HttpServletRequest request, Model model) {
+    public String paySuccessfully(HttpServletRequest request, Model model) {
         String vnp_ResponseCode = request.getParameter("vnp_ResponseCode");
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String amountStr = request.getParameter("vnp_Amount");
@@ -70,7 +73,7 @@ public class PaymentController {
         if (orderId != null) {
             PaymentRequest paymentRequest = new PaymentRequest();
             paymentRequest.setOrderId(orderId);
-            paymentRequest.setMethod("VNPAY - " + bankCode);
+            paymentRequest.setMethod(PaymentMethod.VN_PAY);
             paymentRequest.setTransactionId(transactionNo);
             paymentRequest.setResponseCode(vnp_ResponseCode);
             paymentRequest.setAmount(new BigDecimal(amountStr).divide(new BigDecimal(100)));

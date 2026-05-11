@@ -7,11 +7,12 @@ import com.example.sell_lp.dto.request.ProductVariantUpdateRequest;
 import com.example.sell_lp.dto.response.ProductResponse;
 import com.example.sell_lp.entity.Category;
 import com.example.sell_lp.entity.Product;
+import com.example.sell_lp.entity.ProductImage;
 import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.ProductMapper;
 import com.example.sell_lp.mapper.ProductVariantResponseMapper;
-import com.example.sell_lp.repository.ProductRepository;
-import com.example.sell_lp.repository.ProductVariantRepository;
+import com.example.sell_lp.repository.product.ProductRepository;
+import com.example.sell_lp.repository.product.ProductVariantRepository;
 import com.example.sell_lp.repository.variantRepository.ColorRepository;
 import com.example.sell_lp.repository.variantRepository.RamRepository;
 import com.example.sell_lp.repository.variantRepository.RomRepository;
@@ -20,11 +21,12 @@ import com.example.sell_lp.service.variant.ProductVariantService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -51,7 +53,14 @@ public class AdminProductService {
         product.setCategory(category);
         product.setActive(true);
         Product savedProduct = productRepository.saveAndFlush(product);
-
+        if (request.getImageUrl() != null && !request.getImageUrl().isEmpty()) {
+            ProductImage mainImg = new ProductImage();
+            mainImg.setUrl(request.getImageUrl());
+            mainImg.setPrimary(true);
+            mainImg.setProduct(product);
+            product.getImages().clear();
+            product.getImages().add(mainImg);
+        }
         if (request.getVariants() != null && !request.getVariants().isEmpty()) {
             List<ProductVariant> variants = request.getVariants().stream()
                     .map(vReq -> {
@@ -83,11 +92,29 @@ public class AdminProductService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
         product.setName(request.getName());
+        product.setDescription(request.getDescription());
         product.setActive(request.isActive());
 
         if (request.getImageUrls() != null) {
-            List<String> newImages = new ArrayList<>(request.getImageUrls());
+            product.getImages().clear();
+
+            for (int i = 0; i < request.getImageUrls().size(); i++) {
+                String url = request.getImageUrls().get(i);
+                if (url != null && !url.trim().isEmpty()) {
+                    ProductImage img = new ProductImage();
+                    img.setUrl(url.trim());
+                    img.setProduct(product);
+                    img.setPrimary(i == 0);
+                    product.getImages().add(img);
+                }
+            }
         }
+
+        if (request.getCategoryId() != null) {
+            Category category = categoryService.getById(request.getCategoryId());
+            product.setCategory(category);
+        }
+
 
         if (request.getVariants() != null) {
             for (ProductVariantUpdateRequest vRequest : request.getVariants()) {
@@ -99,5 +126,67 @@ public class AdminProductService {
         }
 
         return productMapper.productToProductResponse(productRepository.save(product));
+    }
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getAdminProducts(
+            String keyword,
+            Integer categoryId,
+            String stock,
+            Boolean active,
+            String sort,
+            Pageable pageable
+    ) {
+
+        Page<Product> productPage;
+
+        switch (sort) {
+
+            case "price_asc" ->
+                    productPage =
+                            productRepository.adminSearchPriceAsc(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+
+            case "price_desc" ->
+                    productPage =
+                            productRepository.adminSearchPriceDesc(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+
+            case "name_asc" ->
+                    productPage =
+                            productRepository.adminSearchNameAsc(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+
+            default ->
+                    productPage =
+                            productRepository.adminSearchNewest(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+        }
+
+        return productPage.map(
+                productMapper::productToProductResponse
+        );
+    }
+    public Long countLowStockProducts() {
+        return (long) productRepository.findLowStockProducts().size();
     }
 }

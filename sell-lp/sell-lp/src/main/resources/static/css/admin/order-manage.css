@@ -10,13 +10,6 @@
     --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-body {
-    background-color: var(--bg-body);
-    font-family: 'Inter', sans-serif;
-    color: var(--text-main);
-    margin: 0;
-    padding-bottom: 50px;
-}
 
 .admin-main {
     max-width: 1000px;
