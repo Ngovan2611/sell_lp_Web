@@ -5,7 +5,7 @@ import com.example.sell_lp.dto.request.AuthenticationRequest;
 import com.example.sell_lp.dto.request.UserChangePasswordRequest;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.Provider;
-import com.example.sell_lp.repository.UserRepository;
+import com.example.sell_lp.repository.user.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

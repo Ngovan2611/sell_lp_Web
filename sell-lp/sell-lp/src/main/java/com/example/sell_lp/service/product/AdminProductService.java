@@ -11,8 +11,8 @@ import com.example.sell_lp.entity.ProductImage;
 import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.ProductMapper;
 import com.example.sell_lp.mapper.ProductVariantResponseMapper;
-import com.example.sell_lp.repository.ProductRepository;
-import com.example.sell_lp.repository.ProductVariantRepository;
+import com.example.sell_lp.repository.product.ProductRepository;
+import com.example.sell_lp.repository.product.ProductVariantRepository;
 import com.example.sell_lp.repository.variantRepository.ColorRepository;
 import com.example.sell_lp.repository.variantRepository.RamRepository;
 import com.example.sell_lp.repository.variantRepository.RomRepository;
@@ -21,11 +21,12 @@ import com.example.sell_lp.service.variant.ProductVariantService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -125,5 +126,67 @@ public class AdminProductService {
         }
 
         return productMapper.productToProductResponse(productRepository.save(product));
+    }
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getAdminProducts(
+            String keyword,
+            Integer categoryId,
+            String stock,
+            Boolean active,
+            String sort,
+            Pageable pageable
+    ) {
+
+        Page<Product> productPage;
+
+        switch (sort) {
+
+            case "price_asc" ->
+                    productPage =
+                            productRepository.adminSearchPriceAsc(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+
+            case "price_desc" ->
+                    productPage =
+                            productRepository.adminSearchPriceDesc(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+
+            case "name_asc" ->
+                    productPage =
+                            productRepository.adminSearchNameAsc(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+
+            default ->
+                    productPage =
+                            productRepository.adminSearchNewest(
+                                    keyword,
+                                    categoryId,
+                                    stock,
+                                    active,
+                                    pageable
+                            );
+        }
+
+        return productPage.map(
+                productMapper::productToProductResponse
+        );
+    }
+    public Long countLowStockProducts() {
+        return (long) productRepository.findLowStockProducts().size();
     }
 }

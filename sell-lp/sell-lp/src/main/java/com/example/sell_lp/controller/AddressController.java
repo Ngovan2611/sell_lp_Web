@@ -30,29 +30,28 @@ public class AddressController {
     @ResponseBody
     public ResponseEntity<?> createAddress(@ModelAttribute AddressCreationRequest request,
                                            Principal principal) {
-
+        // Cần return ngay nếu principal null
         if (principal == null) {
-            ResponseEntity.status(401).body("Bạn chưa đăng nhập");
+            return ResponseEntity.status(401).body("Bạn chưa đăng nhập");
         }
 
         try {
             AddressResponse address = addressService.saveAddress(request);
-            return ResponseEntity.ok(address);
+            return ResponseEntity.ok(address); // Trả về đối tượng JSON
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
         }
     }
 
-
-
     @PostMapping("/address/edit")
+    @ResponseBody
     public ResponseEntity<?> editAddress(@ModelAttribute AddressUpdateRequest request,
                                          Principal principal) {
-        String username = (String) principal.getName();
-        if(username == null) {
+        if(principal == null) {
             return ResponseEntity.status(401).body("Không thể xử lý...");
         }
 
+        String username = principal.getName();
         try {
             addressService.updateAddress(request, username);
             return ResponseEntity.ok("Cập nhật thành công");
@@ -60,5 +59,4 @@ public class AddressController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 }

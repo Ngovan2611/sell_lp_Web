@@ -6,7 +6,7 @@ import com.example.sell_lp.entity.Address;
 import com.example.sell_lp.dto.request.AddressCreationRequest;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.mapper.AddressMapper;
-import com.example.sell_lp.repository.AddressRepository;
+import com.example.sell_lp.repository.address.AddressRepository;
 import com.example.sell_lp.service.user.UserService;
 import com.example.sell_lp.service.geography.GeoCodingService;
 import lombok.AccessLevel;

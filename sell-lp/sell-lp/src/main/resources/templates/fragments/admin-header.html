@@ -1,12 +1,78 @@
 <div class="sidebar">
     <div class="sidebar-header">SellLP Admin</div>
+
     <ul class="nav-menu">
-        <li class="nav-item"><a href="/admin"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li class="nav-item"><a href="/admin/products"><i class="fas fa-box"></i> Sản phẩm</a></li>
-        <li class="nav-item"><a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
-        <li class="nav-item"><a href="/admin/users"><i class="fas fa-users"></i> Người dùng</a></li>
-        <li class="nav-item"><a href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+
+        <li class="nav-item">
+            <a href="/admin">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </li>
+
+        <!-- Quản lý sản phẩm -->
+        <li class="nav-item">
+            <a href="/admin/products">
+                <i class="fas fa-box"></i> Sản phẩm
+            </a>
+        </li>
+
+        <!-- Quản lý danh mục -->
+        <li class="nav-item">
+            <a href="/admin/categories">
+                <i class="fas fa-list"></i> Danh mục
+            </a>
+        </li>
+
+        <!-- Quản lý đơn hàng -->
+        <li class="nav-item">
+            <a href="/admin/orders">
+                <i class="fas fa-shopping-cart"></i> Đơn hàng
+            </a>
+        </li>
+
+        <!-- Quản lý người dùng -->
+        <li class="nav-item">
+            <a href="/admin/users">
+                <i class="fas fa-users"></i> Người dùng
+            </a>
+        </li>
+
+        <li class="nav-item has-submenu">
+
+            <a href="#">
+        <span>
+            <i class="fas fa-desktop"></i>
+            Quản lý trang chủ
+        </span>
+
+                <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+
+            <ul class="submenu">
+
+                <li>
+                    <a href="/admin/banners">
+                        <i class="fas fa-image"></i>
+                        Banner
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/admin/news">
+                        <i class="fas fa-newspaper"></i>
+                        Tin tức
+                    </a>
+                </li>
+
+            </ul>
+
+        </li>
+        <!-- Đăng xuất -->
+        <li class="nav-item">
+            <a href="/logout">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </a>
+        </li>
+
     </ul>
-
 </div>
-

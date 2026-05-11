@@ -98,17 +98,40 @@
                     </a>
                 </div>
             </li>
-            <li class="notification-menu">
-                <a href="/notifications" class="notification-icon">
+            <li class="notification-menu" th:if="${username != null}">
+                <a href="javascript:void(0)" class="notification-icon">
                     <i class="fa-solid fa-bell"></i>
-                    <span class="notif-badge">3</span>
+                    <!-- Gán ID cho badge để cập nhật số lượng -->
+                    <span id="global-notif-badge" class="notif-badge" th:if="${unreadCount > 0}"
+                          th:text="${unreadCount}">
+                    </span>
                 </a>
 
                 <div class="notif-popup">
                     <p class="notif-title">Thông báo mới</p>
-                    <ul>
-                        <li>Đơn hàng #123 đã được xác nhận.</li>
-                        <li>Sản phẩm trong giỏ hàng đang giảm giá!</li>
+                    <ul id="global-notif-list">
+                        <!-- Sử dụng th:if an toàn để tránh null mỗi phần tử -->
+                        <li th:each="notif : ${notifications}"
+                            th:if="${notif != null}"
+                            th:data-id="${notif.notificationId}"
+                            th:classappend="${notif.read} ? 'read' : 'unread'"
+                            class="notif-item">
+
+                            <div class="notif-content-wrapper">
+                                <!-- Fix lỗi: Nếu message dài quá nên dùng th:utext hoặc giới hạn độ dài -->
+                                <span class="notif-text" th:text="${notif.message}">Nội dung</span>
+                                <div class="notif-time"
+                                     th:text="${#temporals.format(notif.createdAt, 'HH:mm dd/MM/yyyy')}">
+                                    10:30 11/05/2026
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Hiển thị khi không có thông báo -->
+                        <li th:if="${notifications == null || notifications.isEmpty()}"
+                            style="text-align: center; color: #999; padding: 10px;">
+                            Không có thông báo mới
+                        </li>
                     </ul>
                     <a href="/notifications" class="view-all-notif">Xem tất cả</a>
                 </div>

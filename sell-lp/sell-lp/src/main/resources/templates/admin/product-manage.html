@@ -26,23 +26,134 @@
                 <div class="stat-icon icon-yellow"><i class="fas fa-history"></i></div>
                 <div>
                     <p class="stat-label">Sắp hết hàng</p>
-                    <h3>12</h3>
+                    <h3 th:text="${lowStockCount}">0</h3>
                 </div>
             </div>
         </div>
 
         <div class="product-card">
             <div class="toolbar">
-                <form th:action="@{/admin/products}" method="get" class="search-form">
-                    <input type="text" name="keyword" placeholder="Tìm sản phẩm..." class="form-input">
-                    <button type="submit" class="btn-filter">Lọc</button>
+
+                <form th:action="@{/admin/products}"
+                      method="get"
+                      class="admin-filter-form">
+
+                    <input type="text"
+                           name="keyword"
+                           th:value="${keyword}"
+                           placeholder="Tìm sản phẩm..."
+                           class="form-input search-input">
+
+                    <!-- CATEGORY -->
+
+                    <select name="category"
+                            class="form-select">
+
+                        <option value="">
+                            Tất cả danh mục
+                        </option>
+
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.categoryId}"
+                                th:text="${cat.categoryName}"
+                                th:selected="${selectedCategory == cat.categoryId}">
+                        </option>
+
+                    </select>
+
+                    <!-- STOCK -->
+
+                    <select name="stock"
+                            class="form-select">
+
+                        <option value="">
+                            Tất cả kho
+                        </option>
+
+                        <option value="in"
+                                th:selected="${stock == 'in'}">
+                            Còn hàng
+                        </option>
+
+                        <option value="low"
+                                th:selected="${stock == 'low'}">
+                            Sắp hết
+                        </option>
+
+                        <option value="out"
+                                th:selected="${stock == 'out'}">
+                            Hết hàng
+                        </option>
+
+                    </select>
+
+                    <!-- STATUS -->
+
+                    <select name="active"
+                            class="form-select">
+
+                        <option value="">
+                            Tất cả trạng thái
+                        </option>
+
+                        <option value="true"
+                                th:selected="${active == true}">
+                            Đang bán
+                        </option>
+
+                        <option value="false"
+                                th:selected="${active == false}">
+                            Ngừng bán
+                        </option>
+
+                    </select>
+
+                    <!-- SORT -->
+
+                    <select name="sort"
+                            class="form-select">
+
+                        <option value="newest"
+                                th:selected="${sort == 'newest'}">
+                            Mới nhất
+                        </option>
+
+                        <option value="price_asc"
+                                th:selected="${sort == 'price_asc'}">
+                            Giá tăng dần
+                        </option>
+
+                        <option value="price_desc"
+                                th:selected="${sort == 'price_desc'}">
+                            Giá giảm dần
+                        </option>
+
+                        <option value="name_asc"
+                                th:selected="${sort == 'name_asc'}">
+                            A-Z
+                        </option>
+
+                    </select>
+
+                    <button type="submit"
+                            class="btn-filter">
+
+                        <i class="fas fa-filter"></i>
+                        Lọc
+
+                    </button>
+
                 </form>
 
-                <a th:href="@{/admin/products/add}" class="btn-add">
-                    <i class="fas fa-plus-circle"></i> THÊM MỚI
-                </a>
-            </div>
+                <a th:href="@{/admin/products/add}"
+                   class="btn-add">
 
+                    <i class="fas fa-plus-circle"></i>
+                    THÊM MỚI
+
+                </a>
+
+            </div>
             <table class="custom-table">
                 <thead>
                 <tr>
@@ -120,40 +231,112 @@
             </table>
 
             <div class="pagination-container" th:if="${totalPages > 1}">
+
+                <!-- PREV -->
+
                 <a class="page-link"
                    th:classappend="${currentPage <= 1} ? 'disabled' : ''"
-                   th:href="@{/admin/products(page=${currentPage - 1}, keyword=${keyword})}">
+
+                   th:href="@{/admin/products(
+            page=${currentPage - 1},
+            keyword=${keyword},
+            category=${selectedCategory},
+            stock=${stock},
+            active=${active},
+            sort=${sort}
+       )}">
+
                     <i class="fas fa-chevron-left"></i>
+
                 </a>
+
+                <!-- FIRST PAGE -->
 
                 <a class="page-link"
                    th:classappend="${1 == currentPage} ? 'active' : ''"
-                   th:href="@{/admin/products(page=1, keyword=${keyword})}">1</a>
 
-                <span class="page-link disabled" th:if="${currentPage > 3}">...</span>
+                   th:href="@{/admin/products(
+            page=1,
+            keyword=${keyword},
+            category=${selectedCategory},
+            stock=${stock},
+            active=${active},
+            sort=${sort}
+       )}">
+
+                    1
+
+                </a>
+
+                <span class="page-link disabled"
+                      th:if="${currentPage > 3}">
+        ...
+    </span>
+
+                <!-- MIDDLE PAGES -->
 
                 <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+
                     <a class="page-link"
+
                        th:if="${i > 1 && i < totalPages && i >= currentPage - 1 && i <= currentPage + 1}"
+
                        th:classappend="${i == currentPage} ? 'active' : ''"
-                       th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
-                       th:text="${i}"></a>
+
+                       th:href="@{/admin/products(
+                page=${i},
+                keyword=${keyword},
+                category=${selectedCategory},
+                stock=${stock},
+                active=${active},
+                sort=${sort}
+           )}"
+
+                       th:text="${i}">
+                    </a>
+
                 </th:block>
 
-                <span class="page-link disabled" th:if="${currentPage < totalPages - 2}">...</span>
+                <span class="page-link disabled"
+                      th:if="${currentPage < totalPages - 2}">
+        ...
+    </span>
+
 
                 <a class="page-link"
                    th:classappend="${totalPages == currentPage} ? 'active' : ''"
-                   th:href="@{/admin/products(page=${totalPages}, keyword=${keyword})}"
-                   th:text="${totalPages}"></a>
+
+                   th:href="@{/admin/products(
+            page=${totalPages},
+            keyword=${keyword},
+            category=${selectedCategory},
+            stock=${stock},
+            active=${active},
+            sort=${sort}
+       )}"
+
+                   th:text="${totalPages}">
+                </a>
+
+                <!-- NEXT -->
 
                 <a class="page-link"
                    th:classappend="${currentPage >= totalPages} ? 'disabled' : ''"
-                   th:href="@{/admin/products(page=${currentPage + 1}, keyword=${keyword})}">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </div>
 
+                   th:href="@{/admin/products(
+            page=${currentPage + 1},
+            keyword=${keyword},
+            category=${selectedCategory},
+            stock=${stock},
+            active=${active},
+            sort=${sort}
+       )}">
+
+                    <i class="fas fa-chevron-right"></i>
+
+                </a>
+
+            </div>
             <div th:if="${totalItems == 0}" class="empty-state">
                 <i class="fas fa-folder-open"></i>
                 <p>Hiện tại chưa có sản phẩm nào trong hệ thống.</p>
@@ -186,7 +369,14 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Mô tả sản phẩm</label>
 
+                    <textarea id="editDescription"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Nhập mô tả sản phẩm..."></textarea>
+                </div>
                 <div class="form-group">
                     <label class="form-label">Danh mục</label>
                     <select id="editCategoryId" class="form-control">
@@ -249,6 +439,8 @@
                 document.getElementById('editProductId').value = product.productId;
                 document.getElementById('editName').value = product.name;
                 document.getElementById('editActive').value = product.active.toString();
+                document.getElementById('editDescription').value =
+                    product.description || '';
                 if (product.category) document.getElementById('editCategoryId').value = product.category.categoryId;
                 document.getElementById('editImages').value = product.images ? product.images.join('\n') : '';
                 renderPreviews();
@@ -325,6 +517,7 @@
             name: document.getElementById('editName').value,
             active: document.getElementById('editActive').value === 'true',
             categoryId: parseInt(document.getElementById('editCategoryId').value) || null,
+            description: document.getElementById('editDescription').value,
             imageUrls: document.getElementById('editImages').value.split('\n').map(u => u.trim()).filter(u => u),
             variants: variants
         };
@@ -389,5 +582,7 @@
     // Lắng nghe sự kiện thay đổi trong textarea
     document.getElementById('editImages').addEventListener('input', renderPreviews);
 </script>
+<script th:src="@{/js/admin-common.js}"></script>
+
 </body>
 </html>

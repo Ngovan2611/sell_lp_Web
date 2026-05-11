@@ -3,10 +3,12 @@ package com.example.sell_lp.service.order;
 import com.example.sell_lp.dto.response.OrderItemResponse;
 import com.example.sell_lp.dto.response.OrderResponse;
 import com.example.sell_lp.entity.Order;
+import com.example.sell_lp.enums.NotificationType;
 import com.example.sell_lp.enums.OrderStatus;
 import com.example.sell_lp.mapper.OrderMapper;
 import com.example.sell_lp.mapper.PaymentMapper;
-import com.example.sell_lp.repository.OrderRepository;
+import com.example.sell_lp.repository.order.OrderRepository;
+import com.example.sell_lp.service.notification.NotificationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,11 +29,11 @@ public class AdminOrderService {
     OrderRepository orderRepository;
     OrderMapper orderMapper;
     PaymentMapper paymentMapper;
+    NotificationService notificationService;
 
     public void cancelOrderByAdmin(Integer id) {
 
         Order order = orderRepository.findByOrderId(id);
-
         if (order == null) {
             throw new RuntimeException("Không tìm thấy đơn hàng");
         }
@@ -43,6 +45,9 @@ public class AdminOrderService {
         order.setStatus(OrderStatus.FAILURE.name());
         stockOrder.rollbackStock(order);
         orderRepository.save(order);
+        notificationService.sendToUser(NotificationType.ORDER_CANCELLED_SYSTEM,
+                "đơn hàng: #" + String.valueOf(order.getOrderId()),
+                order.getUser().getUserId());
     }
     public Page<OrderResponse> getAllOrders(Pageable pageable) {
         Page<Order> orderPage = orderRepository.findAll(pageable);
@@ -76,12 +81,13 @@ public class AdminOrderService {
 
         if (nextStatus.equals(OrderStatus.FAILURE.name())) {
             stockOrder.rollbackStock(order);
+
         }
 
         order.setStatus(nextStatus);
         orderRepository.save(order);
+        sendNotificationToUser(order, nextStatus);
     }
-    @PreAuthorize("hasRole('ADMIN')")
     public OrderResponse getOrderDetailForAdmin(Integer orderId) {
 
         Order order = orderRepository.findById(orderId)
@@ -100,5 +106,26 @@ public class AdminOrderService {
         res.setItems(items);
 
         return res;
+    }
+
+    private void sendNotificationToUser(Order order, String status) {
+
+
+        if(status.equals(OrderStatus.SUCCESS.name())) {
+            notificationService.sendToUser(NotificationType.ORDER_DELIVERED,
+                    "đơn hàng: #" + String.valueOf(order.getOrderId()),
+                    order.getUser().getUserId());
+        }
+        if(status.equals(OrderStatus.PREPARING.name())) {
+            notificationService.sendToUser(NotificationType.ORDER_CONFIRMED,
+                    "đơn hàng: #" + String.valueOf(order.getOrderId()),
+                    order.getUser().getUserId());
+        }
+
+        if(status.equals(OrderStatus.SHIPPING.name())) {
+            notificationService.sendToUser(NotificationType.ORDER_SHIPPING,
+                    "đơn hàng: #" + String.valueOf(order.getOrderId()),
+                    order.getUser().getUserId());
+        }
     }
 }

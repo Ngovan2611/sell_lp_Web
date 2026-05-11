@@ -25,28 +25,58 @@ public class ProductController {
 
     @GetMapping("/products")
     public String showProducts(
-            @RequestParam(required = false) Integer categoryId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String sort,
-            Model model,
-            Principal principal) {
-        if (principal == null) {
-            return "redirect:/login";
-        }
-        String username = principal.getName();
 
+            @RequestParam(required = false)
+            Integer categoryId,
+
+            @RequestParam(required = false)
+            String keyword,
+
+            @RequestParam(required = false)
+            String price,
+
+            @RequestParam(defaultValue = "newest")
+            String sort,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            Model model,
+            Principal principal
+    ) {
+
+        String username =
+                principal != null
+                        ? principal.getName()
+                        : null;
 
         PageRequest pageable = PageRequest.of(page, 10);
-        Page<ProductResponse> productPage = productService.getProductsFiltered(categoryId, keyword, sort, pageable);
+
+        Page<ProductResponse> productPage =
+                productService.getProductsForUser(
+                        categoryId,
+                        keyword,
+                        price,
+                        sort,
+                        pageable
+                );
 
         model.addAttribute("products", productPage.getContent());
+
         model.addAttribute("keyword", keyword);
+
+        model.addAttribute("price", price);
+
         model.addAttribute("sort", sort);
+
         model.addAttribute("categoryId", categoryId);
+
         model.addAttribute("username", username);
+
         model.addAttribute("currentPage", page);
+
         model.addAttribute("totalPages", productPage.getTotalPages());
+
         return "products";
     }
 }

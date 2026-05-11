@@ -57,12 +57,29 @@ public class JwtFilter extends OncePerRequestFilter {
                     String username;
                     try {
                         if (!authenticationService.isTokenValid(token)) {
-                            logger.warn("Token hết hạn - Xóa cookie");
+                            logger.warn("Token hết hạn: " + requestURI);
+
+                            // Xóa cookie cũ
                             Cookie deleteCookie = new Cookie("jwt", null);
                             deleteCookie.setMaxAge(0);
                             deleteCookie.setPath("/");
-                            if(!isPublicPage) {
-                                response.addCookie(deleteCookie);
+                            response.addCookie(deleteCookie);
+
+                            // PHẦN QUAN TRỌNG: Kiểm tra nếu là request từ Fetch/AJAX
+                            String acceptHeader = request.getHeader("Accept");
+                            String xRequestedWith = request.getHeader("X-Requested-With");
+
+                            if ((acceptHeader != null && acceptHeader.contains("application/json")) ||
+                                    "XMLHttpRequest".equals(xRequestedWith) ||
+                                    requestURI.startsWith("/api/")) {
+
+                                // Trả về 401 thay vì Redirect để Frontend xử lý
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.setContentType("application/json;charset=UTF-8");
+                                response.getWriter().write("{\"message\": \"Phiên đăng nhập đã hết hạn\"}");
+                                return;
+                            } else {
+                                // Nếu là load trang web bình thường thì mới Redirect
                                 response.sendRedirect("/login?error=expired");
                                 return;
                             }

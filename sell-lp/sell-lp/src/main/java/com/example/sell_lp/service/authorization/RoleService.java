@@ -2,7 +2,7 @@ package com.example.sell_lp.service.authorization;
 
 
 import com.example.sell_lp.entity.Role;
-import com.example.sell_lp.repository.RoleRepository;
+import com.example.sell_lp.repository.user.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

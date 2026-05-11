@@ -2,7 +2,7 @@ package com.example.sell_lp.service.order;
 
 
 import com.example.sell_lp.enums.OrderStatus;
-import com.example.sell_lp.repository.OrderRepository;
+import com.example.sell_lp.repository.order.OrderRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

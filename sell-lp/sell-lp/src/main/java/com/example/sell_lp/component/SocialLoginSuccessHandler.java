@@ -1,9 +1,11 @@
 package com.example.sell_lp.component;
 
 import com.example.sell_lp.entity.User;
-import com.example.sell_lp.repository.UserRepository;
+import com.example.sell_lp.enums.NotificationType;
+import com.example.sell_lp.repository.user.UserRepository;
 import com.example.sell_lp.service.authentication.AuthenticationService;
 import com.example.sell_lp.service.authorization.RoleService;
+import com.example.sell_lp.service.notification.NotificationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -30,6 +33,7 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     RoleService roleService;
 
+    NotificationService notificationService;
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request,
@@ -74,8 +78,31 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .build();
 
             userRepository.save(user);
+            notificationService.sendToUser(
+                    NotificationType.REGISTER_SUCCESS, user.getUsername(),
+                    user.getUserId()
+            );
         }
 
+        if (!user.isActive()) {
+
+            SecurityContextHolder.clearContext();
+
+            request.getSession().invalidate();
+
+            Cookie cookie = new Cookie("jwt", null);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+
+            response.addCookie(cookie);
+
+            clearAuthenticationAttributes(request);
+
+            response.sendRedirect("/login?locked");
+
+            return;
+        }
         String token = authenticationService.generateToken(user);
 
         Cookie cookie = new Cookie("jwt", token);

@@ -19,7 +19,7 @@
                 <h1 class="logo"><a href="/home">SellLP</a></h1>
                 <h2>Đăng kí</h2>
                 <p>Vui lòng nhập đủ thông tin để đăng kí</p>
-                <form action="/register" method="post" id="form-login">
+                <form th:action="@{/register}" method="post" id="form-login">
                     <div class="input-group">
                         <i class='bx bx-user'></i>
                         <input type="text" name="username" placeholder=" " required>

@@ -57,43 +57,52 @@ public class AdminProductController {
     @GetMapping
     public String getAllProducts(
             Model model,
-            @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "category", required = false) Integer categoryId,
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "sort", defaultValue = "productId,asc") String sortField) {
 
-        if (keyword != null && keyword.trim().isEmpty()) {
-            keyword = null;
-        }
+            @RequestParam(required = false) String keyword,
 
-        String[] sortParams = sortField.split(",");
-        String property = sortParams[0];
-        String directionStr = (sortParams.length > 1) ? sortParams[1] : "desc";
+            @RequestParam(required = false) Integer category,
 
-        Sort.Direction direction = directionStr.equalsIgnoreCase("asc")
-                ? Sort.Direction.ASC
-                : Sort.Direction.DESC;
+            @RequestParam(required = false) String stock,
 
-        Sort sort = Sort.by(direction, property);
-        PageRequest pageable = PageRequest.of(page - 1, size, sort);
+            @RequestParam(required = false) Boolean active,
 
-        Page<ProductResponse> productPage = productService.getProductsFiltered(
-                categoryId,
-                keyword,
-                directionStr.toLowerCase(),
-                pageable
-        );
+            @RequestParam(required = false, defaultValue = "newest")
+            String sort,
+
+            @RequestParam(defaultValue = "1")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size
+    ) {
+
+        PageRequest pageable = PageRequest.of(page - 1, size);
+
+        Page<ProductResponse> productPage =
+                adminProductService.getAdminProducts(
+                        keyword,
+                        category,
+                        stock,
+                        active,
+                        sort,
+                        pageable
+                );
 
         model.addAttribute("products", productPage.getContent());
+
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("totalItems", productPage.getTotalElements());
-        model.addAttribute("size", size);
-        model.addAttribute("sortField", sortField);
+
         model.addAttribute("keyword", keyword);
-        model.addAttribute("selectedCategory", categoryId);
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("stock", stock);
+        model.addAttribute("active", active);
+        model.addAttribute("sort", sort);
+        model.addAttribute("lowStockCount",
+                adminProductService.countLowStockProducts());
+        model.addAttribute("categories",
+                categoryService.findAll());
 
         return "admin/product-manage";
     }

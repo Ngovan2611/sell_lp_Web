@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SellLP - Shop Laptop & PC</title>
@@ -56,17 +57,18 @@
         <h2 style="margin-bottom:20px;">Sản phẩm Laptop thịnh hành</h2>
         <div class="products-wrapper">
             <div class="products">
+                <div class="product" th:each="p : ${laps}">
+                    <img th:src="@{{img}(img=${p.imageUrl})}">
 
-                <div class="products">
-                    <div class="product" th:each="p : ${laps}">
-                        <img th:src="@{{img}(img=${p.imageUrl})}">
-                        <h3 th:text="${p.name}"></h3>
-                        <p th:text="${p.description}"></p>
+                    <h3 th:text="${p.name}"></h3>
 
-                        <a th:href="@{/product/{id}(id=${p.productId})}">
-                            <button class="view-btn">Xem chi tiết</button>
-                        </a>
-                    </div>
+                    <p th:text="${p.description}"></p>
+
+                    <a th:href="@{/product/{id}(id=${p.productId})}">
+                        <button class="view-btn">
+                            Xem chi tiết
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -92,7 +94,6 @@
 
         <div class="products">
 
-            <div class="products">
                 <div class="product" th:each="p : ${desks}">
                     <img th:src="@{{img}(img=${p.imageUrl})}">
                     <h3 th:text="${p.name}"></h3>
@@ -102,7 +103,6 @@
                         <button class="view-btn">Xem chi tiết</button>
                     </a>
                 </div>
-            </div>
         </div>
 
         <div class="view-more">

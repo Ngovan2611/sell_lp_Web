@@ -63,10 +63,10 @@ body {
 }
 
 /* ===== INFO ===== */
-.info-detail {
+.info-detail{
     width: 55%;
+    position: relative;
 }
-
 .info-detail h2 {
     margin-bottom: 10px;
 }
@@ -264,4 +264,179 @@ button:disabled {
 
 .main-img img[style*="grayscale"] {
     pointer-events: none;
+}
+
+/* =========================
+   FAVORITE STAR
+========================= */
+
+.favorite-btn{
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    width: 54px;
+    height: 54px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.96);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+            0 8px 22px rgba(0,0,0,0.08);
+
+    transition:
+            transform .35s ease,
+            box-shadow .35s ease,
+            background .35s ease;
+}
+
+/* Hover button */
+
+.favorite-btn:hover{
+    transform: translateY(-4px) scale(1.08);
+
+    box-shadow:
+            0 14px 32px rgba(255,215,0,.28);
+}
+
+
+
+.favorite-btn i{
+    position: relative;
+
+    font-size: 24px;
+
+    color: #9ca3af;
+
+    z-index: 2;
+}
+
+/* SAO VÀNG */
+
+.favorite-btn i::after{
+    content: "\f005";
+
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+
+    position: absolute;
+
+    inset: 0;
+
+    color: #FFD700;
+
+    /* Ẩn toàn bộ lúc đầu */
+    clip-path: inset(100% 0 0 0);
+
+    transition:
+            clip-path .8s cubic-bezier(0.22,1,0.36,1);
+
+    filter:
+            drop-shadow(0 0 8px rgba(255,215,0,.5));
+}
+
+/* FILL TỪ DƯỚI LÊN */
+
+.favorite-btn:hover i::after{
+    clip-path: inset(0 0 0 0);
+}
+
+/* Glow effect */
+
+.favorite-btn::before{
+    content: "";
+
+    position: absolute;
+
+    width: 0;
+    height: 0;
+
+    border-radius: 50%;
+
+    background:
+            radial-gradient(
+                    circle,
+                    rgba(255,215,0,.25),
+                    transparent 70%
+            );
+
+    transition:
+            width .45s ease,
+            height .45s ease;
+}
+
+.favorite-btn:hover::before{
+    width: 120px;
+    height: 120px;
+}
+
+/* Click */
+
+.favorite-btn:active{
+    transform: scale(.92);
+}
+.error-box {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.4s ease;
+    z-index: 9999;
+}
+
+.error-box.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.error-box p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background-color: #d19403;
+    color: #f6f6f6;
+    border: 1px solid #f3c809;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin: 0;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.error-box i {
+    font-size: 16px;
+}
+.error-box i {
+    background: white;
+    color: #edac06;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Ẩn các button variant nếu không có chữ bên trong */
+.variant-group button:empty {
+    display: none;
+}
+
+/* Nếu tất cả button bên trong đều ẩn, ẩn luôn cả nhóm (Dùng cho trình duyệt hiện đại) */
+.variant-group:has(button:empty:only-of-type) {
+    display: none;
 }

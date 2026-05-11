@@ -4,12 +4,15 @@ package com.example.sell_lp.service.user;
 import com.example.sell_lp.dto.request.UserCreationRequest;
 import com.example.sell_lp.dto.request.UserUpdateRequest;
 import com.example.sell_lp.dto.response.UserResponse;
+import com.example.sell_lp.entity.Notifications;
 import com.example.sell_lp.entity.Role;
 import com.example.sell_lp.entity.User;
+import com.example.sell_lp.enums.NotificationType;
 import com.example.sell_lp.enums.Provider;
 import com.example.sell_lp.mapper.UserMapper;
-import com.example.sell_lp.repository.UserRepository;
+import com.example.sell_lp.repository.user.UserRepository;
 import com.example.sell_lp.service.authorization.RoleService;
+import com.example.sell_lp.service.notification.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +36,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     UserRepository userRepository;
     UserMapper userMapper;
-
+    NotificationService notificationService;
 
 
     public UserResponse getUserByEmail(String email) {
@@ -47,7 +50,6 @@ public class UserService {
     public void createUser(UserCreationRequest userCreationRequest) {
 
         User existingUser = userRepository.findByUsername(userCreationRequest.getUsername());
-
         if(existingUser != null){
             throw new RuntimeException("Tên đăng nhập đã tồn tại");
         }
@@ -61,7 +63,13 @@ public class UserService {
         user.setActive(true);
         user.setCreatedAt(now);
         user.setProvider(Provider.LOCAL.name());
+
         userRepository.save(user);
+        notificationService.sendToUser(
+                NotificationType.REGISTER_SUCCESS, user.getUsername(),
+                user.getUserId()
+        );
+
     }
 
 
