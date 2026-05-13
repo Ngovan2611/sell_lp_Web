@@ -47,8 +47,8 @@ public class PaymentController {
         String baseUrl = httpRequest.getScheme() + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort();
 
         int amount = savedOrder.getTotalAmount().intValue();
-        String orderInfo = "Don hang " + savedOrder.getOrderId();
-        if ("VNPAY".equalsIgnoreCase(paymentMethod)) {
+        String orderInfo = "Don hang #" + savedOrder.getOrderId();
+        if (paymentMethod.equals(PaymentMethod.VN_PAY.name())) {
             String url = vnPayService.createOrder(
                     amount,
                     orderInfo,
@@ -57,7 +57,22 @@ public class PaymentController {
             return "redirect:" + url;
         }
 
+        if ("COD".equalsIgnoreCase(paymentMethod)) {
 
+            PaymentRequest paymentRequest = new PaymentRequest();
+
+            paymentRequest.setOrderId(savedOrder.getOrderId());
+            paymentRequest.setMethod(PaymentMethod.COD);
+            paymentRequest.setAmount(savedOrder.getTotalAmount());
+            paymentRequest.setStatus(PaymentStatus.PENDING.name());
+
+            paymentService.createPayment(paymentRequest);
+
+            orderService.updateOrderStatus(
+                    savedOrder.getOrderId(),
+                    OrderStatus.PENDING.name()
+            );
+        }
         return "redirect:/history-order";
     }
     @GetMapping("/vnpay-return")

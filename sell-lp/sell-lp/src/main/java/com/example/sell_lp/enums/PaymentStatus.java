@@ -3,5 +3,5 @@ package com.example.sell_lp.enums;
 public enum PaymentStatus {
     SUCCESS,
     FAILED,
-
+    PENDING,
 }

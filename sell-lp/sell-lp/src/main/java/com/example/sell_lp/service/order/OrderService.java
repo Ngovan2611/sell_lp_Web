@@ -38,6 +38,7 @@ import com.example.sell_lp.service.notification.NotificationService;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 @Slf4j
+@Transactional
 public class OrderService {
 
     StockOrder stockOrder;
@@ -51,7 +52,6 @@ public class OrderService {
     ProductVariantRepository productVariantRepository;
     PaymentMapper paymentMapper;
     NotificationService notificationService;
-    @Transactional
     public Order save(OrderCreationRequest req) {
         User user = userRepository.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()
