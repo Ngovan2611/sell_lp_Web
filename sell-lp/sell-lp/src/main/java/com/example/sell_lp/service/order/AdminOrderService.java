@@ -3,12 +3,15 @@ package com.example.sell_lp.service.order;
 import com.example.sell_lp.dto.response.OrderItemResponse;
 import com.example.sell_lp.dto.response.OrderResponse;
 import com.example.sell_lp.entity.Order;
+import com.example.sell_lp.entity.Payment;
 import com.example.sell_lp.enums.NotificationType;
 import com.example.sell_lp.enums.OrderStatus;
+import com.example.sell_lp.enums.PaymentMethod;
 import com.example.sell_lp.mapper.OrderMapper;
 import com.example.sell_lp.mapper.PaymentMapper;
 import com.example.sell_lp.repository.order.OrderRepository;
 import com.example.sell_lp.service.notification.NotificationService;
+import com.example.sell_lp.service.payment.PaymentService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +33,7 @@ public class AdminOrderService {
     OrderMapper orderMapper;
     PaymentMapper paymentMapper;
     NotificationService notificationService;
+    private final PaymentService paymentService;
 
     public void cancelOrderByAdmin(Integer id) {
 
@@ -112,6 +116,11 @@ public class AdminOrderService {
 
 
         if(status.equals(OrderStatus.SUCCESS.name())) {
+            Payment payment = paymentService.getByOrderOrderId(order.getOrderId());
+            if(payment.getMethod().equals(PaymentMethod.COD.name())) {
+                paymentService.completeCODPayment(order.getOrderId());
+
+            }
             notificationService.sendToUser(NotificationType.ORDER_DELIVERED,
                     "đơn hàng: #" + String.valueOf(order.getOrderId()),
                     order.getUser().getUserId());

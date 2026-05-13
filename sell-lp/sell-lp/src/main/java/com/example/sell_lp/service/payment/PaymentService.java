@@ -1,5 +1,6 @@
 package com.example.sell_lp.service.payment;
 
+import com.example.sell_lp.component.TransactionCodeGenerator;
 import com.example.sell_lp.dto.request.PaymentRequest;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.Payment;
@@ -24,7 +25,7 @@ public class PaymentService {
     PaymentRepository paymentRepository;
     OrderRepository orderRepository;
     PaymentMapper paymentMapper;
-
+    TransactionCodeGenerator transactionCodeGenerator;
     @Transactional
     public void createPayment(PaymentRequest request) {
         Order order = orderRepository.findById(request.getOrderId())
@@ -39,11 +40,28 @@ public class PaymentService {
             } else {
                 payment.setStatus(PaymentStatus.FAILED.name());
             }
+        } else if(request.getMethod() == PaymentMethod.COD) {
+
+            payment.setStatus(PaymentStatus.PENDING.name());
+
         }
 
         payment.setOrder(order);
         payment = paymentRepository.save(payment);
 
         paymentMapper.toResponse(payment);
+    }
+    public void completeCODPayment(Integer orderId) {
+
+        Payment payment = paymentRepository.findByOrderOrderId(orderId);
+
+        payment.setStatus(PaymentStatus.SUCCESS.name());
+
+        payment.setPaidAt(LocalDateTime.now());
+        payment.setTransactionId(transactionCodeGenerator.generate());
+        paymentRepository.save(payment);
+    }
+    public Payment getByOrderOrderId(Integer orderId) {
+        return paymentRepository.findByOrderOrderId(orderId);
     }
 }
