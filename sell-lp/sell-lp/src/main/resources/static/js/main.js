@@ -1,228 +1,207 @@
-document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("categoryBtn");
+        const overlay = document.getElementById("overlay");
+        const sidebar = document.getElementById("sidebar");
 
-    /* =========================================
-       SIDEBAR + OVERLAY
-    ========================================= */
+        if (btn && overlay && sidebar) {
 
-    const categoryBtn = document.getElementById("categoryBtn");
-    const overlay = document.getElementById("overlay");
-    const sidebar = document.getElementById("sidebar");
+            btn.addEventListener("click", () => {
+                overlay.classList.add("active");
+                sidebar.classList.add("highlight");
+                document.body.style.overflow = "hidden";
 
-    function openSidebar() {
-        if (!sidebar || !overlay) return;
+            });
 
-        sidebar.classList.add("active");
-        overlay.classList.add("active");
+            overlay.addEventListener("click", () => {
+                overlay.classList.remove("active");
+                sidebar.classList.remove("highlight");
+                document.body.style.overflow = "auto";
 
-        document.body.style.overflow = "hidden";
-    }
+            });
 
-    function closeSidebar() {
-        if (!sidebar || !overlay) return;
+        }
 
-        sidebar.classList.remove("active");
-        overlay.classList.remove("active");
+        /* =========================================
+           AUTO CLOSE SIDEBAR WHEN RESIZE DESKTOP
+        ========================================= */
 
-        document.body.style.overflow = "auto";
-    }
+        window.addEventListener("resize", () => {
 
-    if (categoryBtn) {
+            if (window.innerWidth > 992) {
 
-        categoryBtn.addEventListener("click", () => {
+                overlay.classList.remove("active");
+                sidebar.classList.remove("highlight");
 
-            if (sidebar.classList.contains("active")) {
-                closeSidebar();
-            } else {
-                openSidebar();
+                document.body.style.overflow = "auto";
             }
 
         });
 
-    }
 
-    if (overlay) {
 
-        overlay.addEventListener("click", () => {
-            closeSidebar();
-        });
+        /* =========================================
+           PRODUCT SCROLL ANIMATION
+        ========================================= */
 
-    }
+        const products = document.querySelectorAll(".product");
 
-    /* =========================================
-       AUTO CLOSE SIDEBAR WHEN RESIZE DESKTOP
-    ========================================= */
+        if (products.length > 0) {
 
-    window.addEventListener("resize", () => {
+            const observer = new IntersectionObserver((entries) => {
 
-        if (window.innerWidth > 992) {
-            closeSidebar();
-        }
+                entries.forEach(entry => {
 
-    });
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("show");
+                    }
 
-    /* =========================================
-       PRODUCT SCROLL ANIMATION
-    ========================================= */
+                });
 
-    const products = document.querySelectorAll(".product");
-
-    if (products.length > 0) {
-
-        const observer = new IntersectionObserver((entries) => {
-
-            entries.forEach(entry => {
-
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("show");
-                }
-
+            }, {
+                threshold: 0.15
             });
 
-        }, {
-            threshold: 0.15
-        });
-
-        products.forEach(product => {
-            observer.observe(product);
-        });
-
-    }
-
-    /* =========================================
-       BANNER SLIDER
-    ========================================= */
-
-    const slides = document.querySelectorAll(".banner-slide");
-
-    let currentSlide = 0;
-    let slideInterval;
-
-    function showSlide(index) {
-
-        slides.forEach(slide => {
-            slide.classList.remove("active");
-        });
-
-        slides[index].classList.add("active");
-    }
-
-    function nextSlide() {
-
-        currentSlide++;
-
-        if (currentSlide >= slides.length) {
-            currentSlide = 0;
-        }
-
-        showSlide(currentSlide);
-    }
-
-    function startSlider() {
-
-        if (slides.length <= 1) return;
-
-        slideInterval = setInterval(() => {
-            nextSlide();
-        }, 2000);
-
-    }
-
-    function stopSlider() {
-
-        clearInterval(slideInterval);
-
-    }
-
-    if (slides.length > 0) {
-
-        showSlide(currentSlide);
-
-        startSlider();
-
-        /* Pause khi hover banner */
-
-        const banner = document.querySelector(".banner");
-
-        if (banner) {
-
-            banner.addEventListener("mouseenter", () => {
-                stopSlider();
-            });
-
-            banner.addEventListener("mouseleave", () => {
-                startSlider();
+            products.forEach(product => {
+                observer.observe(product);
             });
 
         }
 
-    }
+        /* =========================================
+           BANNER SLIDER
+        ========================================= */
 
-    /* =========================================
-       SMOOTH SCROLL VIEW
-    ========================================= */
+        const slides = document.querySelectorAll(".banner-slide");
 
-    const scrollLinks = document.querySelectorAll('a[href^="#"]');
+        let currentSlide = 0;
+        let slideInterval;
 
-    scrollLinks.forEach(link => {
+        function showSlide(index) {
 
-        link.addEventListener("click", function (e) {
+            slides.forEach(slide => {
+                slide.classList.remove("active");
+            });
 
-            const targetId = this.getAttribute("href");
+            slides[index].classList.add("active");
+        }
 
-            if (targetId.length > 1) {
+        function nextSlide() {
 
-                const target = document.querySelector(targetId);
+            currentSlide++;
 
-                if (target) {
+            if (currentSlide >= slides.length) {
+                currentSlide = 0;
+            }
 
-                    e.preventDefault();
+            showSlide(currentSlide);
+        }
 
-                    target.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
+        function startSlider() {
 
-                }
+            if (slides.length <= 1) return;
+
+            slideInterval = setInterval(() => {
+                nextSlide();
+            }, 2000);
+
+        }
+
+        function stopSlider() {
+
+            clearInterval(slideInterval);
+
+        }
+
+        if (slides.length > 0) {
+
+            showSlide(currentSlide);
+
+            startSlider();
+
+            /* Pause khi hover banner */
+
+            const banner = document.querySelector(".banner");
+
+            if (banner) {
+
+                banner.addEventListener("mouseenter", () => {
+                    stopSlider();
+                });
+
+                banner.addEventListener("mouseleave", () => {
+                    startSlider();
+                });
 
             }
 
-        });
-
-    });
-
-    /* =========================================
-       FLOATING CONTACT TOGGLE
-    ========================================= */
-
-    const floatingContact = document.getElementById("floatingContact");
-
-    window.toggleContact = function () {
-
-        if (floatingContact) {
-            floatingContact.classList.toggle("active");
         }
 
-    };
+        /* =========================================
+           SMOOTH SCROLL VIEW
+        ========================================= */
 
-    /* =========================================
-       AUTO HIDE TOAST
-    ========================================= */
+        const scrollLinks = document.querySelectorAll('a[href^="#"]');
 
-    const toast = document.querySelector(".toast");
+        scrollLinks.forEach(link => {
 
-    if (toast) {
+            link.addEventListener("click", function (e) {
 
-        setTimeout(() => {
+                const targetId = this.getAttribute("href");
 
-            toast.style.opacity = "0";
-            toast.style.transform = "translateX(100%)";
+                if (targetId.length > 1) {
+
+                    const target = document.querySelector(targetId);
+
+                    if (target) {
+
+                        e.preventDefault();
+
+                        target.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
+                    }
+
+                }
+
+            });
+
+        });
+
+        /* =========================================
+           FLOATING CONTACT TOGGLE
+        ========================================= */
+
+        const floatingContact = document.getElementById("floatingContact");
+
+        window.toggleContact = function () {
+
+            if (floatingContact) {
+                floatingContact.classList.toggle("active");
+            }
+
+        };
+
+        /* =========================================
+           AUTO HIDE TOAST
+        ========================================= */
+
+        const toast = document.querySelector(".toast");
+
+        if (toast) {
 
             setTimeout(() => {
-                toast.remove();
-            }, 500);
 
-        }, 3000);
+                toast.style.opacity = "0";
+                toast.style.transform = "translateX(100%)";
 
-    }
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
 
-});
+            }, 3000);
+
+        }
+
+    });

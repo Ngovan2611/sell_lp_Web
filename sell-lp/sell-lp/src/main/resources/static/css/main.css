@@ -272,3 +272,143 @@
 .news-row.reverse {
     flex-direction: row-reverse;
 }
+
+@media (max-width:768px){
+
+    /* HEADER */
+    .main-header{
+        padding:10px !important;
+    }
+
+    /* row ngang */
+    .main-header > div,
+    .main-header .container,
+    .main-header .header-top,
+    .main-header .header-main{
+
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+
+        flex-wrap:nowrap; /* QUAN TRỌNG */
+
+        gap:10px;
+    }
+
+    /* logo nằm cạnh menu */
+    .main-header h1,
+    .main-header .logo,
+    .main-header h2{
+
+        font-size:26px !important;
+
+        margin:0 !important;
+
+        white-space:nowrap;
+
+        flex-shrink:0;
+    }
+
+    /* button menu */
+    #categoryBtn{
+
+        padding:8px 12px;
+
+        font-size:14px;
+
+        border-radius:10px;
+
+        display:flex;
+        align-items:center;
+        gap:6px;
+
+        flex-shrink:0;
+    }
+
+    /* nav xuống dưới */
+    nav,
+    .nav,
+    .menu,
+    .navbar{
+
+        width:100%;
+
+        display:flex;
+
+        justify-content:space-around;
+
+        margin-top:12px;
+    }
+
+    /* search full */
+    form,
+    .search-box,
+    .search-bar{
+        width:100%;
+        margin-top:10px;
+    }
+
+    /* SIDEBAR */
+    #sidebar{
+
+        position:fixed !important;
+
+        top:0;
+        left:0;
+
+        width:260px;
+        height:100vh;
+
+        background:#fff;
+
+        z-index:99999;
+
+        overflow-y:auto;
+
+        transform:translateX(-100%);
+
+        transition:0.35s ease;
+
+        box-shadow:5px 0 30px rgba(0,0,0,0.2);
+    }
+
+    /* mở sidebar */
+    #sidebar.highlight{
+        transform:translateX(0);
+    }
+
+    /* OVERLAY */
+    #overlay{
+
+        position:fixed;
+
+        inset:0;
+
+        background:rgba(0,0,0,0.35);
+
+        backdrop-filter:blur(5px);
+
+        opacity:0;
+        visibility:hidden;
+
+        transition:0.3s;
+
+        z-index:99998;
+    }
+
+    #overlay.active{
+        opacity:1;
+        visibility:visible;
+    }
+
+    /* hero */
+    .hero{
+        display:block;
+    }
+
+    /* banner */
+    .banner{
+        height:180px;
+    }
+
+}
