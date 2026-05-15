@@ -4,9 +4,23 @@
     <meta charset="UTF-8">
     <title>Quản trị Đơn hàng - Hệ thống Admin</title>
     <link rel="stylesheet" th:href="@{/css/admin/admin-common.css}">
-    <link rel="stylesheet" th:href="@{/css/admin/order-manage.css}">y
+    <link rel="stylesheet" th:href="@{/css/admin/order-manage.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* CSS bổ sung tạo hiệu ứng trực quan khi rê chuột vào card đơn hàng */
+        .order-card {
+            cursor: pointer;
+            transition: box-shadow 0.2s ease;
+        }
+        .order-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        /* Giữ nguyên con trỏ chuột mặc định khi rê vào cụm nút bấm điều hướng hành động */
+        .btn-group {
+            cursor: default;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{fragments/admin-header :: div}"></div>
@@ -17,7 +31,7 @@
         <span class="total-count">Toàn bộ: <span th:text="${totalItems}">0</span> đơn</span>
     </div>
 
-    <div th:each="order : ${orders}" class="order-card">
+    <div th:each="order : ${orders}" class="order-card" th:data-id="${order.orderId}">
         <div class="order-header">
             <div>
                 <span class="order-id">#<span th:text="${order.orderId}"></span></span>
@@ -106,6 +120,22 @@
     </div>
 </div>
 <script>
+    // XỬ LÝ SỰ KIỆN CLICK TOÀN BỘ CARD ĐƠN HÀNG
+    document.querySelectorAll('.order-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            // Ngăn chuyển trang nếu admin click trúng các thành phần nằm trong ô .btn-group (Duyệt, Hủy, Chi tiết)
+            if (e.target.closest('.btn-group')) {
+                return;
+            }
+
+            // Lấy ID ẩn từ data-id và thực hiện chuyển trang
+            const orderId = this.dataset.id;
+            if (orderId) {
+                location.href = `/admin/orders/detail/${orderId}`;
+            }
+        });
+    });
+
     function updateStatus(orderId, status) {
         if(!confirm("Xác nhận thay đổi trạng thái đơn hàng?")) return;
 

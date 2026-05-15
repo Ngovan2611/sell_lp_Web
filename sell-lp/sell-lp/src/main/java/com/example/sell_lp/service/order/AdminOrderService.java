@@ -7,6 +7,7 @@ import com.example.sell_lp.entity.Payment;
 import com.example.sell_lp.enums.NotificationType;
 import com.example.sell_lp.enums.OrderStatus;
 import com.example.sell_lp.enums.PaymentMethod;
+import com.example.sell_lp.enums.PaymentStatus;
 import com.example.sell_lp.mapper.OrderMapper;
 import com.example.sell_lp.mapper.PaymentMapper;
 import com.example.sell_lp.repository.order.OrderRepository;
@@ -71,7 +72,6 @@ public class AdminOrderService {
     }
     public void updateOrderStatus(Integer orderId, String nextStatus) {
         Order order = orderRepository.findByOrderId(orderId);
-
         if (order == null) {
             throw new RuntimeException("Không tìm thấy đơn hàng");
         }
@@ -82,7 +82,11 @@ public class AdminOrderService {
                 currentStatus.equals(OrderStatus.FAILURE.name())) {
             throw new RuntimeException("Đơn hàng đã hoàn tất hoặc đã hủy, không thể thay đổi trạng thái.");
         }
+        Payment payment = paymentService.getByOrderOrderId(orderId);
 
+        if(payment.getMethod().equals(PaymentMethod.VN_PAY.name()) && payment.getStatus().equals(PaymentStatus.PENDING.name())) {
+            throw new RuntimeException("không thể cập nhật trạng thái vì đơn hàng chưa được thanh toán");
+        }
         if (nextStatus.equals(OrderStatus.FAILURE.name())) {
             stockOrder.rollbackStock(order);
 

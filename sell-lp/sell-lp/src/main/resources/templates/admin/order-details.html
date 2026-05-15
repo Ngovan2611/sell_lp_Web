@@ -59,21 +59,42 @@
                 <div class="payment-content">
                     <div th:if="${order.payments != null and !order.payments.isEmpty()}">
                         <th:block th:each="pay : ${order.payments}">
-                            <p class="payment-status success" th:if="${pay.status == 'SUCCESS'}">
-                                <i class="fa-solid fa-check-circle"></i> Đã thanh toán (Online)
-                            </p>
+
+                            <div th:if="${pay.status == 'SUCCESS'}">
+                                <p class="payment-status success">
+                                    <i class="fa-solid fa-check-circle"></i> Đã thanh toán thành công
+                                </p>
+                            </div>
+
+                            <div th:if="${pay.status == 'PENDING'}">
+                                <p class="payment-status pending">
+                                    <i class="fa-solid fa-clock"></i> Chờ thanh toán (Online)
+                                </p>
+                            </div>
+
+                            <div th:if="${pay.status == 'FAILED'}">
+                                <p class="payment-status failure" style="color: #e74c3c; font-weight: bold;">
+                                    <i class="fa-solid fa-circle-xmark"></i> Giao dịch thất bại / Quá hạn hủy
+                                </p>
+                            </div>
+
                             <p style="margin: 5px 0; font-size: 0.9em;">
                                 <b>Phương thức:</b> <span th:text="${pay.method}"></span><br>
-                                <b>Mã GD:</b> <span th:text="${pay.transactionId}"></span><br>
-                                <b>Thời gian:</b> <span th:text="${#temporals.format(pay.paidAt, 'HH:mm dd/MM/yyyy')}"></span>
+                                <th:block th:if="${pay.transactionId != null}">
+                                    <b>Mã GD:</b> <span th:text="${pay.transactionId}"></span><br>
+                                </th:block>
+                                <th:block th:if="${pay.paidAt != null}">
+                                    <b>Thời gian nhận tiền:</b> <span th:text="${#temporals.format(pay.paidAt, 'HH:mm dd/MM/yyyy')}"></span>
+                                </th:block>
                             </p>
                         </th:block>
                     </div>
+
                     <div th:unless="${order.payments != null and !order.payments.isEmpty()}">
                         <p class="payment-status pending">
-                            <i class="fa-solid fa-clock"></i> Chờ thanh toán / COD
+                            <i class="fa-solid fa-clock"></i> Chưa thanh toán / Thu tiền COD
                         </p>
-                        <p style="font-size: 0.85em; color: #666;">Vui lòng thu tiền khi giao hàng nếu là đơn COD.</p>
+                        <p style="font-size: 0.85em; color: #666; margin-top: 5px;">Vui lòng thu tiền trực tiếp khi shipper giao hàng.</p>
                     </div>
                 </div>
             </div>
@@ -138,6 +159,7 @@
                     <i class="fa-solid fa-circle-check"></i> Xác nhận hoàn thành
                 </button>
             </th:block>
+
         </div>
     </div>
 </div>
