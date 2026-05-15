@@ -143,7 +143,7 @@ document.getElementById("addAddressForm").addEventListener("submit", function(e)
     })
         .then(res => {
             if(!res.ok) throw new Error("Lỗi server");
-            return res.json(); // nhận JSON
+            return res.json();
         })
         .then(address => {
             const msgBox = document.getElementById("address-message");

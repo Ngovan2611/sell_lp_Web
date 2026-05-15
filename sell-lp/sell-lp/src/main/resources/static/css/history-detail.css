@@ -283,3 +283,38 @@ body {
     padding: 15px 0;
     border-bottom: 1px solid #eee;
 }
+
+/* Màu cho trạng thái thanh toán thất bại */
+.payment-status.failure {
+    color: #dc3545;
+}
+.status-FAILURE {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Định dạng văn bản cảnh báo nhanh */
+.text-danger { color: #dc3545; font-size: 13px; }
+.text-warning { color: #d97706; font-size: 13px; }
+
+/* Thao tác tùy chỉnh cho nút Thanh toán lại giống Shopee */
+.btn-repay {
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #ee4d2d;
+    color: #fff;
+    border: 1px solid #ee4d2d;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-repay:hover {
+    background: #d73a1e;
+    border-color: #d73a1e;
+    box-shadow: 0 4px 10px rgba(238, 77, 45, 0.3);
+}

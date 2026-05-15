@@ -8,6 +8,22 @@
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/history-detail.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* CSS bổ sung cho phần hiển thị đếm ngược */
+        .countdown-timer {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: #fff9db;
+            border: 1px solid #ffe066;
+            border-radius: 4px;
+            color: #f59f00;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .countdown-timer i {
+            margin-right: 6px;
+        }
+    </style>
 </head>
 <body>
 
@@ -27,7 +43,7 @@
                 <h2>Đơn hàng #<span th:text="${order.orderId}"></span></h2>
                 <p class="order-date">
                     Ngày đặt:
-                    <span th:text="${#dates.format(order.orderDate,'dd/MM/yyyy HH:mm')}"></span>
+                    <span id="orderTimestamp" th:data-timestamp="${order.orderDate.time}" th:text="${#dates.format(order.orderDate,'dd/MM/yyyy HH:mm')}"></span>
                 </p>
             </div>
 
@@ -63,22 +79,56 @@
                     <span>Trạng thái thanh toán</span>
                 </div>
                 <div class="payment-content">
-                    <div th:with="paidPayment=${order.payments != null ? #lists.toList(order.payments).?[status == 'SUCCESS'] : null}">
-                        <div th:if="${paidPayment != null and !paidPayment.isEmpty()}">
-                            <p class="payment-status success">
-                                <i class="fa-solid fa-circle-check"></i> Đã thanh toán thành công
-                            </p>
-                            <p class="payment-detail" th:text="'Qua: ' + ${paidPayment[0].method}"></p>
-                            <p class="payment-detail" th:text="'Mã GD: ' + ${paidPayment[0].transactionId}"></p>
-                            <p class="payment-detail" th:if="${paidPayment != null && !paidPayment.isEmpty()}">
-                                <span th:text="'Thanh toán lúc: ' + ${#temporals.format(paidPayment[0].paidAt, 'hh:mm:ss | dd/MM/yyyy ')}"></span>
-                            </p>                      </div>
-                        <div th:unless="${paidPayment != null and !paidPayment.isEmpty()}">
-                            <p class="payment-status pending">
-                                <i class="fa-solid fa-clock"></i> Chưa thanh toán / Chờ thanh toán
-                            </p>
-                            <p class="payment-detail">Phương thức: Thanh toán khi nhận hàng (COD) hoặc VNPay chưa hoàn tất.</p>
+                    <div th:with="currentPayment=${order.payments != null and !#lists.toList(order.payments).isEmpty() ? #lists.toList(order.payments)[0] : null}">
+
+                        <div th:if="${currentPayment != null}">
+
+                            <div th:if="${currentPayment.status == 'PENDING'}">
+                                <p class="payment-status pending">
+                                    <i class="fa-solid fa-clock"></i> Chưa thanh toán
+                                </p>
+
+                                <div th:if="${#strings.toString(currentPayment.method) == 'VN_PAY'}">
+                                    <p class="payment-detail">Hình thức: Thanh toán qua cổng VNPay.</p>
+                                    <p class="payment-detail text-warning">Đơn hàng chưa hoàn tất thanh toán.</p>
+
+                                    <div id="countdownContainer" class="countdown-timer">
+                                        <i class="fa-solid fa-hourglass-half fa-spin"></i> Thời gian thanh toán còn lại: <span id="timer">--:--</span>
+                                    </div>
+                                </div>
+                                <div th:if="${#strings.toString(currentPayment.method) == 'COD'}">
+                                    <p class="payment-detail">Hình thức: Thanh toán khi nhận hàng (COD).</p>
+                                </div>
+                            </div>
+
+                            <div th:if="${currentPayment.status == 'SUCCESS'}">
+                                <p class="payment-status success">
+                                    <i class="fa-solid fa-circle-check"></i> Đã thanh toán thành công
+                                </p>
+                                <p class="payment-detail" th:text="'Hình thức: ' + ${currentPayment.method}"></p>
+                                <p class="payment-detail" th:text="'Mã GD: ' + ${currentPayment.transactionId}"></p>
+                                <p class="payment-detail">
+                                    <span th:text="'Thanh toán lúc: ' + ${#temporals.format(currentPayment.paidAt, 'HH:mm:ss | dd/MM/yyyy')}"></span>
+                                </p>
+                            </div>
+
+                            <div th:if="${currentPayment.status == 'FAILED'}">
+                                <p class="payment-status failure">
+                                    <i class="fa-solid fa-circle-xmark"></i> Thanh toán thất bại
+                                </p>
+                                <p class="payment-detail" th:text="'Cổng thanh toán: ' + ${currentPayment.method}"></p>
+                                <p class="payment-detail text-danger">Giao dịch bị hủy bỏ hoặc thanh toán không thành công.</p>
+                            </div>
+
                         </div>
+
+                        <div th:unless="${currentPayment != null}">
+                            <p class="payment-status pending">
+                                <i class="fa-solid fa-clock"></i> Chưa thanh toán
+                            </p>
+                            <p class="payment-detail">Chưa ghi nhận thông tin giao dịch khởi tạo.</p>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -125,6 +175,16 @@
             <i class="fa-solid fa-left-long"></i> Quay lại
         </a>
 
+        <div th:with="currentPayment=${order.payments != null and !#lists.toList(order.payments).isEmpty() ? #lists.toList(order.payments)[0] : null}">
+            <form id="repayFormContainer" th:if="${currentPayment != null and currentPayment.status != 'SUCCESS' and order.status != 'FAILURE' and #strings.toString(currentPayment.method) == 'VN_PAY'}"
+                  th:action="@{/order/repay}" method="POST" style="display: inline;">
+                <input type="hidden" name="orderId" th:value="${order.orderId}" />
+                <button type="submit" class="btn-repay">
+                    <i class="fa-solid fa-rotate-right"></i> Thanh toán lại qua VNPay
+                </button>
+            </form>
+        </div>
+
         <button class="btn-cancel"
                 th:if="${order.status == 'PENDING' or order.status == 'PREPARING'}"
                 th:attr="data-id=${order.orderId}">
@@ -134,12 +194,60 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
 <script>
+    // Logic đếm ngược thời gian thanh toán VNPay (2 giờ)
+    const orderTimestampEl = document.getElementById('orderTimestamp');
+    const timerEl = document.getElementById('timer');
+    const countdownContainer = document.getElementById('countdownContainer');
+    const repayFormContainer = document.getElementById('repayFormContainer');
+
+    if (orderTimestampEl && timerEl) {
+        // Lấy thời gian đặt hàng (miliseconds) và cộng thêm 2 tiếng (2 * 60 * 60 * 1000)
+        const orderTime = parseInt(orderTimestampEl.dataset.timestamp);
+        const expireTime = orderTime + (2 * 60 * 60 * 1000);
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = expireTime - now;
+
+            if (distance <= 0) {
+                clearInterval(countdownInterval);
+                timerEl.textContent = "Đã hết thời gian thanh toán";
+                if (countdownContainer) {
+                    countdownContainer.style.color = "#e03131";
+                    countdownContainer.style.backgroundColor = "#fff5f5";
+                    countdownContainer.style.borderColor = "#ffc9c9";
+                }
+                // Ẩn nút "Thanh toán lại" nếu đã quá 2h
+                if (repayFormContainer) {
+                    repayFormContainer.style.display = 'none';
+                }
+                return;
+            }
+
+            // Tính toán giờ, phút, giây còn lại
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Định dạng chuỗi hiển thị HH:mm:ss hoặc mm:ss
+            const displayHours = hours > 0 ? hours + "h " : "";
+            const displayMinutes = minutes < 10 ? "0" + minutes : minutes;
+            const displaySeconds = seconds < 10 ? "0" + seconds : seconds;
+
+            timerEl.textContent = `${displayHours}${displayMinutes}:${displaySeconds}`;
+        }
+
+        // Chạy ngay lập tức lần đầu và lặp lại mỗi giây
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    // Logic xử lý nút hủy đơn hàng bằng Ajax
     document.querySelectorAll('.btn-cancel').forEach(btn => {
         btn.addEventListener('click', function () {
-
             const orderId = this.dataset.id;
-
             if (!confirm("Bạn có chắc muốn hủy đơn hàng này không?")) return;
 
             fetch('/cancel/' + orderId, {
