@@ -24,13 +24,15 @@ public class VNPayService {
     @Value("${vnpay.url}")
     private String vnp_PayUrl;
 
-//    @Value("${vnpay.returnUrl}")
-//    private String vnp_ReturnUrl;
-
-    public String createOrder(int amount, String orderInfor, String urlReturn) {
+    // SỬA TẠI ĐÂY: Tham số cuối cùng đổi từ (int amount, String orderInfor, String urlReturn)
+    // thành nhận thêm chuỗi String txnRef (Chính là mã LAP... truyền từ Controller sang)
+    public String createOrder(int amount, String orderInfor, String urlReturn, String txnRef) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_TxnRef = getRandomNumber(8);
+
+        // SỬA TẠI ĐÂY: Gán trực tiếp mã định dạng LAP... làm mã tham chiếu giao dịch gửi sang VNPay
+        String vnp_TxnRef = txnRef;
+
         String vnp_IpAddr = "127.0.0.1";
         String vnp_TmnCode = this.vnp_TmnCode;
 
@@ -40,7 +42,7 @@ public class VNPayService {
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount * 100));
         vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+        vnp_Params.put("vnp_TxnRef", vnp_TxnRef); // Đã được đồng bộ mã LAP...
         vnp_Params.put("vnp_OrderInfo", orderInfor);
         vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_Locale", "vn");
@@ -56,14 +58,14 @@ public class VNPayService {
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
-        List fieldNames = new ArrayList(vnp_Params.keySet());
+        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames);
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
+        Iterator<String> itr = fieldNames.iterator();
         while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) vnp_Params.get(fieldName);
+            String fieldName = itr.next();
+            String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (!fieldValue.isEmpty())) {
                 hashData.append(fieldName);
                 hashData.append('=');
@@ -82,44 +84,16 @@ public class VNPayService {
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         return vnp_PayUrl + "?" + queryUrl;
     }
-    public int orderReturn(HttpServletRequest request) throws UnsupportedEncodingException {
-        Map fields = new HashMap();
-        for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements(); ) {
-            String fieldName = (String) params.nextElement();
-            String fieldValue = request.getParameter(fieldName);
-            if ((fieldValue != null) && (!fieldValue.isEmpty())) {
-                fields.put(fieldName, fieldValue);
-            }
-        }
 
-        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
-        if (fields.containsKey("vnp_SecureHashType")) {
-            fields.remove("vnp_SecureHashType");
-        }
-        if (fields.containsKey("vnp_SecureHash")) {
-            fields.remove("vnp_SecureHash");
-        }
-
-        String signValue = hashAllFields(fields);
-        if (signValue.equals(vnp_SecureHash)) {
-            if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } else {
-            return -1;
-        }
-    }
-
-    private String hashAllFields(Map fields) {
-        List fieldNames = new ArrayList(fields.keySet());
+    // Hàm mã hóa đối soát dữ liệu (Giữ nguyên logic gốc của bạn nhưng thêm Generic <String, String> cho sạch code)
+    private String hashAllFields(Map<String, String> fields) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
+        Iterator<String> itr = fieldNames.iterator();
         while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) fields.get(fieldName);
+            String fieldName = itr.next();
+            String fieldValue = fields.get(fieldName);
             if ((fieldValue != null) && (!fieldValue.isEmpty())) {
                 sb.append(fieldName);
                 sb.append("=");
@@ -151,13 +125,5 @@ public class VNPayService {
         }
     }
 
-    public static String getRandomNumber(int len) {
-        Random rnd = new Random();
-        String chars = "0123456789";
-        StringBuilder sb = new StringBuilder(len);
-        for (int i = 0; i < len; i++) {
-            sb.append(chars.charAt(rnd.nextInt(chars.length())));
-        }
-        return sb.toString();
-    }
+    // Bạn có thể xóa hàm getRandomNumber cũ đi vì hệ thống không cần dùng đến nữa.
 }
