@@ -30,9 +30,6 @@ public class PaymentTimeoutScheduler {
     @Scheduled(fixedRate = 300000)
     @Transactional
     public void cancelExpiredPayments() {
-        log.info("Bắt đầu quét kiểm tra các đơn hàng VNPay quá hạn thanh toán...");
-
-        // Tính mốc thời gian: Hiện tại trừ đi 2 tiếng
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR, -2);
         Date twoHoursAgo = calendar.getTime();
