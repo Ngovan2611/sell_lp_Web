@@ -10,6 +10,7 @@ import com.example.sell_lp.service.variant.ColorService;
 import com.example.sell_lp.service.variant.ImageUploadService;
 import com.example.sell_lp.service.variant.RamService;
 import com.example.sell_lp.service.variant.RomService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -117,7 +118,7 @@ public class AdminProductController {
         return "admin/product-form";
     }
     @PostMapping("/add")
-    public String createProduct(@ModelAttribute("productRequest") ProductRequest request) {
+    public String createProduct(@Valid @ModelAttribute("productRequest") ProductRequest request) {
         adminProductService.createProduct(request);
         return "redirect:/admin/products?success";
     }

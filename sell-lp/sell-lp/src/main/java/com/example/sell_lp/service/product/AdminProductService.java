@@ -66,7 +66,12 @@ public class AdminProductService {
                     .map(vReq -> {
                         ProductVariant variant = productVariantResponseMapper.toProductVariant(vReq);
                         variant.setProduct(savedProduct);
-
+                        if (vReq.getPrice() == null || vReq.getPrice() < 0) {
+                            throw new RuntimeException("Giá bán không hợp lệ (phải từ 0 trở lên)");
+                        }
+                        if (vReq.getStockQty() == null || vReq.getStockQty() < 0) {
+                            throw new RuntimeException("Số lượng kho không hợp lệ (phải từ 0 trở lên)");
+                        }
                         if (vReq.getColorId() != null) {
                             variant.setColor(colorRepository.getReferenceById(vReq.getColorId()));
                         }
@@ -119,7 +124,12 @@ public class AdminProductService {
         if (request.getVariants() != null) {
             for (ProductVariantUpdateRequest vRequest : request.getVariants()) {
                 ProductVariant variant = productVariantService.getVariantEntityById(vRequest.getVariantId());
-
+                if (vRequest.getPrice() == null || vRequest.getPrice() < 0) {
+                    throw new RuntimeException("Giá bán cập nhật không hợp lệ");
+                }
+                if (vRequest.getStockQty() == null || vRequest.getStockQty() < 0) {
+                    throw new RuntimeException("Số lượng kho cập nhật không hợp lệ");
+                }
                 variant.setPrice(vRequest.getPrice());
                 variant.setStockQty(vRequest.getStockQty());
             }

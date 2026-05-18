@@ -108,8 +108,9 @@
                 ${roms.map(r => `<option value="${r.romId}">${r.romSize}</option>`).join('')}
             </select>
         </td>
-        <td><input type="number" name="variants[${variantIdx}].price" class="form-input" placeholder="Giá" required></td>
-        <td><input type="number" name="variants[${variantIdx}].stockQty" class="form-input" placeholder="Kho" required></td>
+        // Thêm thuộc tính min="0" vào ô giá và ô kho trong file add.html của bạn:
+        <td><input type="number" name="variants[${variantIdx}].price" min="0" class="form-input" placeholder="Giá" required></td>
+        <td><input type="number" name="variants[${variantIdx}].stockQty" min="0" class="form-input" placeholder="Kho" required></td>
         <td>
             <button type="button" class="btn-remove" onclick="this.closest('tr').remove()">
                 <i class="fas fa-trash"></i>
