@@ -1,8 +1,8 @@
 package com.example.sell_lp.controller;
 
 
-import com.example.sell_lp.dto.response.ProductResponse;
-import com.example.sell_lp.dto.response.ProductVariantResponse;
+import com.example.sell_lp.dto.response.product.ProductResponse;
+import com.example.sell_lp.dto.response.product.ProductVariantResponse;
 import com.example.sell_lp.entity.Cart;
 import com.example.sell_lp.service.cart.CartItemService;
 import com.example.sell_lp.service.cart.CartService;

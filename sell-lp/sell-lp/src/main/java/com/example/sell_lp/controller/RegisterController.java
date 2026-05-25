@@ -1,6 +1,6 @@
 package com.example.sell_lp.controller;
 
-import com.example.sell_lp.dto.request.UserCreationRequest;
+import com.example.sell_lp.dto.request.user.UserCreationRequest;
 import com.example.sell_lp.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

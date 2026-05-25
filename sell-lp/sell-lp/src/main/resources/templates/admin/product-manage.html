@@ -462,6 +462,7 @@
     function closeModal() {
         document.getElementById('editProductModal').style.display = 'none';
     }
+
     document.getElementById('modalFilePicker').onchange = async function(e) {
         const files = e.target.files;
         if (files.length === 0) return;

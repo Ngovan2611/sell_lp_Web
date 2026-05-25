@@ -74,68 +74,8 @@
                 </a>
             </li>
 
-            <li class="user-menu" th:if="${username != null}">
-                <a class="user-icon">
-                    <i class="fa-solid fa-user"></i>
-                </a>
-
-                <div class="user-popup">
-                    <p class="username">
-                        <i class="fa-solid fa-user"></i>
-                        Chào mừng: <span th:text="${username}"></span>
-                    </p>
-
-                    <a class="profile" href="/profile">
-                        <i class="fa-solid fa-id-card"></i> Thông tin cá nhân
-                    </a>
-
-                    <a class="password-change" href="/change-password">
-                        <i class="fa-solid fa-key"></i> Thay đổi mật khẩu
-                    </a>
-
-                    <a class="logout-btn" href="/logout">
-                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                    </a>
-                </div>
-            </li>
-            <li class="notification-menu" th:if="${username != null}">
-                <a href="javascript:void(0)" class="notification-icon">
-                    <i class="fa-solid fa-bell"></i>
-                    <!-- Gán ID cho badge để cập nhật số lượng -->
-                    <span id="global-notif-badge" class="notif-badge" th:if="${unreadCount > 0}"
-                          th:text="${unreadCount}">
-                    </span>
-                </a>
-
-                <div class="notif-popup">
-                    <p class="notif-title">Thông báo mới</p>
-                    <ul id="global-notif-list">
-                        <!-- Sử dụng th:if an toàn để tránh null mỗi phần tử -->
-                        <li th:each="notif : ${notifications}"
-                            th:if="${notif != null}"
-                            th:data-id="${notif.notificationId}"
-                            th:classappend="${notif.read} ? 'read' : 'unread'"
-                            class="notif-item">
-
-                            <div class="notif-content-wrapper">
-                                <!-- Fix lỗi: Nếu message dài quá nên dùng th:utext hoặc giới hạn độ dài -->
-                                <span class="notif-text" th:text="${notif.message}">Nội dung</span>
-                                <div class="notif-time"
-                                     th:text="${#temporals.format(notif.createdAt, 'HH:mm dd/MM/yyyy')}">
-                                    10:30 11/05/2026
-                                </div>
-                            </div>
-                        </li>
-
-                        <!-- Hiển thị khi không có thông báo -->
-                        <li th:if="${notifications == null || notifications.isEmpty()}"
-                            style="text-align: center; color: #999; padding: 10px;">
-                            Không có thông báo mới
-                        </li>
-                    </ul>
-                    <a href="/notifications" class="view-all-notif">Xem tất cả</a>
-                </div>
-            </li>
+            <div th:replace="~{fragments/user-menu :: li}"></div>
+            <div th:replace="~{fragments/notification :: li}"></div>
         </ul>
     </div>
     <div th:if="${success != null}" class="toast success"
@@ -143,26 +83,8 @@
         <i class="fa-solid fa-check"></i>
         <span th:text="${success}"></span>
     </div>
-    <div class="floating-contact" id="floatingContact">
-        <div class="contact-list">
-            <a href="https://zalo.me/0123456789" target="_blank" class="contact-item zalo" title="Zalo">
-                <img src="https://stc-zaloprofile.zdn.vn/pc/v1/images/zalo_sharelogo.png" alt="Zalo">
-            </a>
+    <div th:replace="~{fragments/contact-popup::div}"></div>
 
-            <a href="https://m.me/your_fb_id" target="_blank" class="contact-item messenger" title="Messenger">
-                <i class="fab fa-facebook-messenger"></i>
-            </a>
-
-            <a href="mailto:your-email@gmail.com" class="contact-item gmail" title="Gửi Email">
-                <i class="fas fa-envelope"></i>
-            </a>
-        </div>
-
-        <div class="contact-main" onclick="toggleContact()">
-            <i class="fas fa-comments" id="contactIcon"></i>
-            <span class="notification-badge">1</span>
-        </div>
-    </div>
 </header>
 
 

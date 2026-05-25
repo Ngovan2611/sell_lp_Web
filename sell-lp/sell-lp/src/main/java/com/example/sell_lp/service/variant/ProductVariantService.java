@@ -1,7 +1,7 @@
 package com.example.sell_lp.service.variant;
 
 
-import com.example.sell_lp.dto.response.ProductVariantResponse;
+import com.example.sell_lp.dto.response.product.ProductVariantResponse;
 import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.ProductVariantResponseMapper;
 import com.example.sell_lp.repository.product.ProductVariantRepository;

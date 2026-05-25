@@ -1,0 +1,20 @@
+<div th:fragment="contact-popup" class="floating-contact" id="floatingContact">
+    <div class="contact-list">
+        <a href="https://zalo.me/0123456789" target="_blank" class="contact-item zalo" title="Zalo">
+            <img src="https://stc-zaloprofile.zdn.vn/pc/v1/images/zalo_sharelogo.png" alt="Zalo">
+        </a>
+
+        <a href="https://m.me/your_fb_id" target="_blank" class="contact-item messenger" title="Messenger">
+            <i class="fab fa-facebook-messenger"></i>
+        </a>
+
+        <a href="mailto:your-email@gmail.com" class="contact-item gmail" title="Gửi Email">
+            <i class="fas fa-envelope"></i>
+        </a>
+    </div>
+
+    <div class="contact-main" onclick="toggleContact()">
+        <i class="fas fa-comments" id="contactIcon"></i>
+        <span class="notification-badge">1</span>
+    </div>
+</div>

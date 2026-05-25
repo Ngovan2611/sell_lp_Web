@@ -1,7 +1,7 @@
 package com.example.sell_lp.controller;
 
-import com.example.sell_lp.dto.request.OrderCreationRequest;
-import com.example.sell_lp.dto.request.PaymentRequest;
+import com.example.sell_lp.dto.request.order.OrderCreationRequest;
+import com.example.sell_lp.dto.request.payment.PaymentRequest;
 import com.example.sell_lp.entity.Payment; // SỬA: Đổi import từ Order sang Payment
 import com.example.sell_lp.enums.PaymentMethod;
 import com.example.sell_lp.service.payment.PaymentService;

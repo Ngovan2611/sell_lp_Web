@@ -1,8 +1,8 @@
 package com.example.sell_lp.controller;
 
 
-import com.example.sell_lp.dto.request.UserChangePasswordRequest;
-import com.example.sell_lp.dto.response.UserResponse;
+import com.example.sell_lp.dto.request.user.UserChangePasswordRequest;
+import com.example.sell_lp.dto.response.user.UserResponse;
 import com.example.sell_lp.service.user.AuthService;
 import com.example.sell_lp.service.user.UserService;
 import lombok.AccessLevel;

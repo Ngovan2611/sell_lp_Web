@@ -1,8 +1,8 @@
 package com.example.sell_lp.controller.admin;
 
-import com.example.sell_lp.dto.request.ProductRequest;
-import com.example.sell_lp.dto.request.ProductUpdateRequest;
-import com.example.sell_lp.dto.response.ProductResponse;
+import com.example.sell_lp.dto.request.product.ProductRequest;
+import com.example.sell_lp.dto.request.product.ProductUpdateRequest;
+import com.example.sell_lp.dto.response.product.ProductResponse;
 import com.example.sell_lp.service.product.AdminProductService;
 import com.example.sell_lp.service.category.CategoryService;
 import com.example.sell_lp.service.product.ProductService;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;

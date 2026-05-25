@@ -1,6 +1,6 @@
 package com.example.sell_lp.controller;
 
-import com.example.sell_lp.dto.response.UserResponse;
+import com.example.sell_lp.dto.response.user.UserResponse;
 import com.example.sell_lp.service.user.UserService;
 import com.example.sell_lp.service.otp.EmailService;
 import com.example.sell_lp.service.otp.OtpService;

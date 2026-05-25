@@ -1,8 +1,8 @@
 package com.example.sell_lp.service.cart;
 
 
-import com.example.sell_lp.dto.response.CartItemResponse;
-import com.example.sell_lp.dto.response.ProductVariantResponse;
+import com.example.sell_lp.dto.response.cart.CartItemResponse;
+import com.example.sell_lp.dto.response.product.ProductVariantResponse;
 import com.example.sell_lp.entity.CartItem;
 import com.example.sell_lp.entity.ProductVariant;
 import com.example.sell_lp.mapper.CartItemMapper;

@@ -1,7 +1,7 @@
 package com.example.sell_lp.service.order;
 
-import com.example.sell_lp.dto.response.OrderItemResponse;
-import com.example.sell_lp.dto.response.OrderResponse;
+import com.example.sell_lp.dto.response.order.OrderItemResponse;
+import com.example.sell_lp.dto.response.order.OrderResponse;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.Payment;
 import com.example.sell_lp.enums.NotificationType;

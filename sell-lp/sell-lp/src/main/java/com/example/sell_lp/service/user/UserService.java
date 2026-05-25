@@ -1,10 +1,9 @@
 package com.example.sell_lp.service.user;
 
 
-import com.example.sell_lp.dto.request.UserCreationRequest;
-import com.example.sell_lp.dto.request.UserUpdateRequest;
-import com.example.sell_lp.dto.response.UserResponse;
-import com.example.sell_lp.entity.Notifications;
+import com.example.sell_lp.dto.request.user.UserCreationRequest;
+import com.example.sell_lp.dto.request.user.UserUpdateRequest;
+import com.example.sell_lp.dto.response.user.UserResponse;
 import com.example.sell_lp.entity.Role;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.NotificationType;
@@ -17,6 +16,8 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -124,6 +125,23 @@ public class UserService {
 
     public Long countUser() {
         return userRepository.count();
+    }
+
+    public Page<UserResponse> getUsers(String keyword, Pageable pageable) {
+        Page<User> userPage;
+
+        Set<String> targetRoles = Set.of(com.example.sell_lp.enums.Role.USER.name());
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // Gọi hàm Repo mới tạo để tìm kiếm kèm lọc Role
+            userPage = userRepository.searchUsersByRoles(keyword.trim(), targetRoles, pageable);
+        } else {
+            // Gọi hàm Repo mới tạo để lấy tất cả kèm lọc Role
+            userPage = userRepository.findAllByRoles(targetRoles, pageable);
+        }
+
+        // Đổi từ Page<User> sang Page<UserResponse> một cách chuẩn chỉnh (giữ nguyên cấu trúc Page)
+        return userPage.map(userMapper::toUserResponse);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.sell_lp.controller.admin;
 
-import com.example.sell_lp.dto.request.NotificationCreateRequest;
+import com.example.sell_lp.dto.request.notification.NotificationCreateRequest;
 import com.example.sell_lp.service.notification.NotificationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

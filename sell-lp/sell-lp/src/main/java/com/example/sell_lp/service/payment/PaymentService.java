@@ -1,8 +1,8 @@
 package com.example.sell_lp.service.payment;
 
 import com.example.sell_lp.component.TransactionCodeGenerator;
-import com.example.sell_lp.dto.request.OrderCreationRequest;
-import com.example.sell_lp.dto.request.PaymentRequest;
+import com.example.sell_lp.dto.request.order.OrderCreationRequest;
+import com.example.sell_lp.dto.request.payment.PaymentRequest;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.Payment;
 import com.example.sell_lp.enums.OrderStatus;

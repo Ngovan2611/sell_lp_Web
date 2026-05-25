@@ -1,7 +1,7 @@
 package com.example.sell_lp.controller;
 
 
-import com.example.sell_lp.dto.request.AuthenticationRequest;
+import com.example.sell_lp.dto.request.auth.AuthenticationRequest;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.enums.Role;
 import com.example.sell_lp.service.authentication.AuthenticationService;

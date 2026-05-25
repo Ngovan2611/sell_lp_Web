@@ -1,9 +1,9 @@
 package com.example.sell_lp.mapper;
 
-import com.example.sell_lp.dto.request.NotificationCreateRequest;
-import com.example.sell_lp.dto.response.NotificationResponse;
-import com.example.sell_lp.dto.response.NotificationUserResponse;
-import com.example.sell_lp.dto.response.UserNotificationResponse;
+import com.example.sell_lp.dto.request.notification.NotificationCreateRequest;
+import com.example.sell_lp.dto.response.notification.NotificationResponse;
+import com.example.sell_lp.dto.response.notification.NotificationUserResponse;
+import com.example.sell_lp.dto.response.notification.UserNotificationResponse;
 import com.example.sell_lp.entity.NotificationDetail;
 import com.example.sell_lp.entity.Notifications;
 import org.mapstruct.*;

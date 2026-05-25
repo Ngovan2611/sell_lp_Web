@@ -1,6 +1,6 @@
 package com.example.sell_lp.controller;
 
-import com.example.sell_lp.dto.response.CartItemResponse;
+import com.example.sell_lp.dto.response.cart.CartItemResponse;
 import com.example.sell_lp.service.cart.CartItemService;
 import com.example.sell_lp.service.cart.CartService;
 import lombok.AccessLevel;

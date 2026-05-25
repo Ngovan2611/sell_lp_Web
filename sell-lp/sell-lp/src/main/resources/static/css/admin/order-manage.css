@@ -10,19 +10,28 @@
     --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-
+/* ==========================================================================
+   1. KHUNG BỌC CHÍNH (Đảm bảo nội dung nằm trọn bên phải Sidebar rộng ~260px)
+   ========================================================================== */
 .admin-main {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px;
+    margin: 0;
+    padding: 40px 30px 40px 280px; /* Cách lề trái 280px để né hoàn toàn Sidebar */
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--bg-body);
+    min-height: 100vh;
 }
 
+/* ==========================================================================
+   2. TABS DI CHUYỂN (Tự động co giãn theo khung phải)
+   ========================================================================== */
 .tabs {
     display: flex;
     align-items: center;
     padding: 10px 0;
     margin-bottom: 30px;
-    margin-left: 100px;
+    margin-left: 0;
+    width: 100%;
 }
 
 .tab-btn {
@@ -37,7 +46,10 @@
     transition: 0.3s;
 }
 
-.tab-btn:hover { background: var(--primary); color: white; }
+.tab-btn:hover {
+    background: var(--primary);
+    color: white;
+}
 
 .total-count {
     margin-left: auto;
@@ -45,16 +57,21 @@
     color: var(--text-sub);
 }
 
+/* ==========================================================================
+   3. CARD ĐƠN HÀNG CO GIÃN THÔNG MINH (Đã xóa bỏ width: 1000px trùng lặp)
+   ========================================================================== */
 .order-card {
     background: var(--card-bg);
     border-radius: 20px;
     padding: 25px;
     margin-bottom: 25px;
     box-shadow: var(--shadow-soft);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
     border: none;
-    margin-left: 100px;
-    width: 1000px;
+    margin-left: 0;
+    width: 100%;         /* Tự động fit khít màn hình khi thu nhỏ */
+    max-width: 1100px;   /* Khống chế độ rộng tối đa trên màn hình PC lớn */
+    box-sizing: border-box;
 }
 
 .order-card:hover {
@@ -68,9 +85,21 @@
     margin-bottom: 20px;
 }
 
-.order-id { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-.order-date { font-size: 0.85rem; color: var(--text-sub); margin-top: 4px; }
+.order-id {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--primary);
+}
 
+.order-date {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    margin-top: 4px;
+}
+
+/* ==========================================================================
+   4. THÔNG TIN KHÁCH HÀNG & TRẠNG THÁI
+   ========================================================================== */
 .status-badge {
     padding: 6px 16px;
     border-radius: 30px;
@@ -84,23 +113,35 @@
 .status-SUCCESS { background: #d1fae5; color: #065f46; }
 .status-FAILURE { background: #fee2e2; color: #991b1b; }
 
-.btn-shipping { background: #4361ee; color: white; }
-.btn-preparing { background: #fbbf24; color: white; }
-
 .customer-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 15px;
     background: #f8fafc;
     padding: 15px 20px;
     border-radius: 12px;
     margin-bottom: 20px;
 }
 
-.info-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-.info-item i { color: var(--primary); }
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    white-space: nowrap; /* Tránh text số điện thoại/địa chỉ bị ngắt dòng nửa chừng */
+}
 
-.product-list { margin-bottom: 20px; }
+.info-item i {
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   5. DANH SÁCH SẢN PHẨM TRONG ĐƠN
+   ========================================================================== */
+.product-list {
+    margin-bottom: 20px;
+}
+
 .product-item {
     display: flex;
     align-items: center;
@@ -108,11 +149,32 @@
     padding: 10px 0;
     border-bottom: 1px solid #f1f5f9;
 }
-.product-item:last-child { border: none; }
-.product-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
-.product-name { flex: 1; font-weight: 600; font-size: 0.95rem; }
-.product-price { font-weight: 700; color: var(--text-main); }
 
+.product-item:last-child {
+    border: none;
+}
+
+.product-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.product-name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.product-price {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   6. FOOTER CARD & NÚT HÀNH ĐỘNG
+   ========================================================================== */
 .order-footer {
     display: flex;
     justify-content: space-between;
@@ -122,9 +184,17 @@
     border-top: 2px dashed #f1f5f9;
 }
 
-.total-amount { font-size: 1.2rem; font-weight: 800; color: var(--danger); }
+.total-amount {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--danger);
+}
 
-.btn-group { display: flex; gap: 10px; }
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
 .btn {
     padding: 10px 20px;
     border-radius: 10px;
@@ -138,11 +208,18 @@
     text-decoration: none;
     font-size: 0.85rem;
 }
+
 .btn-info { background: #edf2f4; color: var(--text-main); }
 .btn-check { background: var(--success); color: white; }
 .btn-cancel { background: var(--danger); color: white; }
-.btn:hover { opacity: 0.85; transform: scale(1.03); }
+.btn:hover {
+    opacity: 0.85;
+    transform: scale(1.03);
+}
 
+/* ==========================================================================
+   7. PHÂN TRANG (PAGINATION)
+   ========================================================================== */
 .pagination {
     display: flex;
     justify-content: center;
@@ -199,7 +276,4 @@
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-e-link {
-    opacity: 0.5; cursor: not-allowed;
 }

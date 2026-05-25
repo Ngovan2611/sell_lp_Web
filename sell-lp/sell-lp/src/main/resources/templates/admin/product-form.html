@@ -5,7 +5,7 @@
     <title>Thêm sản phẩm mới | SellLP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/product-form.css}">
-
+    <link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -24,31 +24,39 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Danh mục</label>
-                <select th:field="*{categoryId}" class="form-input">
-                    <option th:each="c : ${categories}" th:value="${c.categoryId}" th:text="${c.categoryName}"></option>
+                <select th:field="*{categoryId}" class="form-input" id="categoryId">
+                    <option th:each="c : ${categories}"
+                            th:value="${c.categoryId}"
+                            th:text="${c.categoryName}"
+                            th:attr="data-has-specs=${c.hasSpecs}">
+                    </option>
                 </select>
             </div>
         </div>
 
-        <div class="form-group" style="margin-bottom: 25px;">
+        <div class="form-group">
             <label class="form-label">Hình ảnh chính của sản phẩm</label>
 
-            <div id="singlePreview" class="mb-2" style="display: none;">
-                <img id="previewImg" src="" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #eee;">
-                <p style="font-size: 0.75rem; color: #28a745;"><i class="fas fa-check-circle"></i> Đã chọn làm ảnh chính</p>
+            <div id="singlePreview" class="img-preview-box d-none">
+                <img id="previewImg" src="" alt="Preview">
+                <p class="img-preview-success"><i class="fas fa-check-circle"></i> Đã chọn làm ảnh chính</p>
             </div>
 
-            <input type="file" id="filePicker" class="form-input" accept="image/*">
+            <div class="upload-btn-wrapper">
+                <label for="filePicker" class="custom-upload-btn">
+                    <i class="fas fa-cloud-upload-alt"></i> Chọn hình ảnh sản phẩm...
+                </label>
+                <input type="file" id="filePicker" accept="image/*">
+            </div>
 
             <input type="hidden" th:field="*{imageUrl}" id="finalImageUrl">
-
-            <div id="uploadStatus" style="font-size: 0.8rem; color: #666; margin-top: 5px;"></div>
+            <div id="uploadStatus" class="upload-status-text"></div>
         </div>
 
         <div class="variant-section">
             <h3><i class="fas fa-th-list"></i> Cấu hình các biến thể</h3>
             <table class="variant-table">
-                <thead id="variant-header">
+                <thead>
                 <tr>
                     <th>Màu sắc</th>
                     <th class="spec-column">RAM</th>
@@ -67,7 +75,7 @@
             </button>
         </div>
 
-        <div style="margin-top: 40px; text-align: right; border-top: 1px solid var(--border-color); padding-top: 25px;">
+        <div class="form-actions-container">
             <button type="submit" class="btn-submit">Hoàn tất & Lưu</button>
         </div>
     </form>
@@ -81,11 +89,16 @@
 
     function addVariant() {
         const categorySelect = document.getElementById('categoryId');
-        const selectedCat = categorySelect.options[categorySelect.selectedIndex].text.toLowerCase();
 
-        const isTechProduct = selectedCat.includes('laptop') || selectedCat.includes('pc');
+        // 1. Lấy ra thẻ <option> đang được chọn hiện tại
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
 
-        const displayStyle = isTechProduct ? '' : 'display:none';
+        // 2. Đọc thuộc tính data-has-specs từ option đó (trả về chuỗi 'true' hoặc 'false')
+        // Ép kiểu về Boolean để kiểm tra dữ liệu chuẩn xác
+        const isTechProduct = selectedOption.dataset.hasSpecs === 'true';
+
+        // 3. Sử dụng class 'd-none' dựa trên tính chất động của danh mục
+        const displayClass = isTechProduct ? '' : 'd-none';
 
         const tbody = document.getElementById('variant-items');
         const row = document.createElement('tr');
@@ -96,19 +109,18 @@
                 ${colors.map(c => `<option value="${c.colorId}">${c.colorName}</option>`).join('')}
             </select>
         </td>
-        <td class="spec-column" style="${displayStyle}">
+        <td class="spec-column ${displayClass}">
             <select name="variants[${variantIdx}].ramId" class="form-input">
                 <option value="">N/A</option>
                 ${rams.map(r => `<option value="${r.ramId}">${r.ramSize}</option>`).join('')}
             </select>
         </td>
-        <td class="spec-column" style="${displayStyle}">
+        <td class="spec-column ${displayClass}">
             <select name="variants[${variantIdx}].romId" class="form-input">
                 <option value="">N/A</option>
                 ${roms.map(r => `<option value="${r.romId}">${r.romSize}</option>`).join('')}
             </select>
         </td>
-        // Thêm thuộc tính min="0" vào ô giá và ô kho trong file add.html của bạn:
         <td><input type="number" name="variants[${variantIdx}].price" min="0" class="form-input" placeholder="Giá" required></td>
         <td><input type="number" name="variants[${variantIdx}].stockQty" min="0" class="form-input" placeholder="Kho" required></td>
         <td>
@@ -119,20 +131,27 @@
     `;
         tbody.appendChild(row);
 
+        // 4. Đồng bộ ẩn/hiện các cột tiêu đề (Thẻ TH) trên Header của bảng biến thể
         const headerSpecs = document.querySelectorAll('thead .spec-column');
-        headerSpecs.forEach(col => col.style.display = displayStyle);
+        headerSpecs.forEach(col => {
+            if (isTechProduct) {
+                col.classList.remove('d-none');
+            } else {
+                col.classList.add('d-none');
+            }
+        });
 
         variantIdx++;
     }
-
+    // Lắng nghe sự kiện đổi danh mục để reset bảng
     document.getElementById('categoryId').addEventListener('change', function() {
         const tbody = document.getElementById('variant-items');
         tbody.innerHTML = '';
         variantIdx = 0;
         addVariant();
     });
-</script>
-<script>
+
+    // Lắng nghe xử lý tải hình ảnh lên Cloud/Server ẩn
     document.getElementById('filePicker').addEventListener('change', async function(e) {
         const files = e.target.files;
         if (files.length === 0) return;
@@ -146,7 +165,6 @@
         status.style.color = "#666";
 
         const formData = new FormData();
-        // Dù chỉ lấy 1 ảnh, ta vẫn gửi qua List 'files' để khớp với Controller /upload hiện tại
         formData.append('files', files[0]);
 
         try {
@@ -157,14 +175,13 @@
 
             if (res.ok) {
                 const urls = await res.json();
-                const uploadedUrl = urls[0]; // Lấy URL duy nhất
+                const uploadedUrl = urls[0];
 
-                // 1. Lưu vào input ẩn để gửi Form
                 finalInput.value = uploadedUrl;
-
-                // 2. Hiển thị ảnh xem trước
                 previewImg.src = uploadedUrl;
-                previewDiv.style.display = 'block';
+
+                // Hiển thị khung xem trước bằng cách gỡ bỏ class 'd-none'
+                previewDiv.classList.remove('d-none');
 
                 status.innerText = "Tải ảnh thành công!";
                 status.style.color = "green";
@@ -177,6 +194,11 @@
             status.innerText = "Lỗi kết nối server!";
             status.style.color = "red";
         }
+    });
+    // Thêm dòng này ở cuối cùng của thẻ script (nằm ngoài các hàm) để chạy ngay khi load trang
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tự động thêm một biến thể đầu tiên khớp với danh mục đang chọn mặc định
+        addVariant();
     });
 </script>
 </body>

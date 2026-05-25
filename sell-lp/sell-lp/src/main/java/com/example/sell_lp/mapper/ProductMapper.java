@@ -1,7 +1,7 @@
 package com.example.sell_lp.mapper;
 
-import com.example.sell_lp.dto.request.ProductRequest;
-import com.example.sell_lp.dto.response.ProductResponse;
+import com.example.sell_lp.dto.request.product.ProductRequest;
+import com.example.sell_lp.dto.response.product.ProductResponse;
 import com.example.sell_lp.entity.Product;
 import com.example.sell_lp.entity.ProductImage;
 import org.mapstruct.Mapper;
