@@ -1,10 +1,10 @@
 package com.example.sell_lp.service.product;
 
 
-import com.example.sell_lp.dto.request.ProductRequest;
-import com.example.sell_lp.dto.request.ProductUpdateRequest;
-import com.example.sell_lp.dto.request.ProductVariantUpdateRequest;
-import com.example.sell_lp.dto.response.ProductResponse;
+import com.example.sell_lp.dto.request.product.ProductRequest;
+import com.example.sell_lp.dto.request.product.ProductUpdateRequest;
+import com.example.sell_lp.dto.request.product.ProductVariantUpdateRequest;
+import com.example.sell_lp.dto.response.product.ProductResponse;
 import com.example.sell_lp.entity.Category;
 import com.example.sell_lp.entity.Product;
 import com.example.sell_lp.entity.ProductImage;

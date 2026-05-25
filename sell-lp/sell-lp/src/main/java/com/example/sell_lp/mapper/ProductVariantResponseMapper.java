@@ -1,8 +1,8 @@
 package com.example.sell_lp.mapper;
 
 
-import com.example.sell_lp.dto.request.ProductVariantRequest;
-import com.example.sell_lp.dto.response.ProductVariantResponse;
+import com.example.sell_lp.dto.request.product.ProductVariantRequest;
+import com.example.sell_lp.dto.response.product.ProductVariantResponse;
 import com.example.sell_lp.entity.ProductVariant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

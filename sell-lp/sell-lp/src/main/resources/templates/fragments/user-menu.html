@@ -1,0 +1,24 @@
+<li th:fragment="user-menu" class="user-menu" th:if="${username != null}">
+    <a class="user-icon">
+        <i class="fa-solid fa-user"></i>
+    </a>
+
+    <div class="user-popup">
+        <p class="username">
+            <i class="fa-solid fa-user"></i>
+            Chào mừng: <span th:text="${username}"></span>
+        </p>
+
+        <a class="profile" href="/profile">
+            <i class="fa-solid fa-id-card"></i> Thông tin cá nhân
+        </a>
+
+        <a class="password-change" href="/change-password">
+            <i class="fa-solid fa-key"></i> Thay đổi mật khẩu
+        </a>
+
+        <a class="logout-btn" href="/logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+        </a>
+    </div>
+</li>

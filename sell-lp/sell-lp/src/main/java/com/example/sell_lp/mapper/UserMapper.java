@@ -1,8 +1,8 @@
 package com.example.sell_lp.mapper;
 
-import com.example.sell_lp.dto.request.UserCreationRequest;
-import com.example.sell_lp.dto.request.UserUpdateRequest;
-import com.example.sell_lp.dto.response.UserResponse;
+import com.example.sell_lp.dto.request.user.UserCreationRequest;
+import com.example.sell_lp.dto.request.user.UserUpdateRequest;
+import com.example.sell_lp.dto.response.user.UserResponse;
 import com.example.sell_lp.entity.Role;
 import com.example.sell_lp.entity.User;
 import org.mapstruct.Mapper;

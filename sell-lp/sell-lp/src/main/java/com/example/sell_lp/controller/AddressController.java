@@ -1,9 +1,9 @@
 package com.example.sell_lp.controller;
 
 
-import com.example.sell_lp.dto.request.AddressCreationRequest;
-import com.example.sell_lp.dto.request.AddressUpdateRequest;
-import com.example.sell_lp.dto.response.AddressResponse;
+import com.example.sell_lp.dto.request.address.AddressCreationRequest;
+import com.example.sell_lp.dto.request.address.AddressUpdateRequest;
+import com.example.sell_lp.dto.response.address.AddressResponse;
 import com.example.sell_lp.service.address.AddressService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.sell_lp.config;
 
-import com.example.sell_lp.dto.response.UserNotificationResponse;
+import com.example.sell_lp.dto.response.notification.UserNotificationResponse;
 import com.example.sell_lp.entity.User;
 import com.example.sell_lp.service.category.CategoryService;
 import com.example.sell_lp.service.notification.NotificationService;
@@ -11,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
@@ -35,7 +33,7 @@ public class GlobalModelAttribute {
     public void addGlobalAttributes(HttpServletRequest request, Model model) {
 
         if (!request.getRequestURI().startsWith("/admin")) {
-            model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("categories", categoryService.getDisplayedCategoriesForUser());
         }
     }
 

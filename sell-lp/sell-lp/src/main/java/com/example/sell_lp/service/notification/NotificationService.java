@@ -1,7 +1,7 @@
 package com.example.sell_lp.service.notification;
 
-import com.example.sell_lp.dto.request.NotificationCreateRequest;
-import com.example.sell_lp.dto.response.UserNotificationResponse;
+import com.example.sell_lp.dto.request.notification.NotificationCreateRequest;
+import com.example.sell_lp.dto.response.notification.UserNotificationResponse;
 import com.example.sell_lp.entity.NotificationDetail;
 import com.example.sell_lp.entity.Notifications;
 import com.example.sell_lp.enums.NotificationType;

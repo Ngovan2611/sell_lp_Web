@@ -1,6 +1,6 @@
 package com.example.sell_lp.controller;
 
-import com.example.sell_lp.dto.response.ProductResponse;
+import com.example.sell_lp.dto.response.product.ProductResponse;
 import com.example.sell_lp.service.product.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.sell_lp.mapper;
 
-import com.example.sell_lp.dto.response.CartItemResponse;
+import com.example.sell_lp.dto.response.cart.CartItemResponse;
 import com.example.sell_lp.entity.Cart;
 import com.example.sell_lp.entity.CartItem;
 

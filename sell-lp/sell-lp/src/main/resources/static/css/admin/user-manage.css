@@ -1,167 +1,197 @@
+:root {
+    --bg-body: #f0f2f5;
+    --card-bg: #ffffff;
+    --primary: #4361ee;
+    --success: #2ec4b6;
+    --warning: #ff9f1c;
+    --danger: #e71d36;
+    --text-main: #2b2d42;
+    --text-sub: #8d99ae;
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* 1. KHUNG BỌC CHÍNH */
+.main-content {
+    margin: 0;
+    padding: 40px 30px;
+    padding-left: 280px; /* Bắt buộc để né hoàn toàn Sidebar cố định bên trái */
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--bg-body);
+    min-height: 100vh;
+    overflow-x: hidden; /* Triệt tiêu thanh cuộn ngang gây vỡ màn hình */
+}
+
+.container-fluid {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0;
+    padding: 0;
+}
+
+/* 2. TIÊU ĐỀ TRANG VÀ Ô TÌM KIẾM ĐỒNG BỘ */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+.page-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin: 0;
 }
 
-.admin-table th {
-    background-color: #343a40;
-    color: white;
-    padding: 15px;
-    text-align: left;
-    font-size: 0.9rem;
-}
-
-.admin-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    vertical-align: middle;
-}
-
-.status-active { color: #28a745; font-weight: 600; }
-.status-locked { color: #dc3545; font-weight: 600; }
-
-
-.actions {
+.search-box form {
     display: flex;
-    gap: 10px;
+    align-items: center;
+    margin: 0;
 }
-
-.btn-toggle {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: 0.2s;
-}
-
-
-.btn-toggle { color: #6c757d; }
-.btn-toggle:hover { color: #343a40; }
 
 .search-box input {
     padding: 8px 15px;
     border: 1px solid #ddd;
     border-radius: 20px 0 0 20px;
     outline: none;
+    width: 200px;
+    transition: width 0.3s ease, border-color 0.3s;
+    font-family: inherit;
 }
+
+.search-box input:focus {
+    width: 260px;
+    border-color: var(--primary);
+}
+
 .search-box button {
-    padding: 8px 15px;
-    background: #007bff;
+    padding: 8px 18px;
+    background: var(--primary);
     color: white;
     border: none;
     border-radius: 0 20px 20px 0;
     cursor: pointer;
-}
-/* =========================
-   NOTIFY MODAL
-========================= */
-
-.notify-modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.5);
-
-    display:none;
-    align-items:center;
-    justify-content:center;
-
-    z-index:9999;
+    transition: background 0.2s;
 }
 
-.notify-modal.active{
-    display:flex;
+.search-box button:hover {
+    background: #314ecc;
 }
 
-.notify-box{
-    width:100%;
-    max-width:500px;
-
-    background:white;
-
-    border-radius:12px;
-
-    overflow:hidden;
-
-    animation:showModal .3s ease;
+/* 3. CẤU TRÚC BẢNG DỮ LIỆU ĐỘNG CHỐNG TRÀN */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    box-shadow: var(--shadow-soft);
+    border-radius: 12px;
+    background: var(--card-bg);
 }
 
-@keyframes showModal{
-    from{
-        opacity:0;
-        transform:translateY(20px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.notify-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:18px 20px;
-
-    background:#c42f2f;
-    color:white;
+.admin-table th {
+    background-color: #2b2d42;
+    color: white;
+    padding: 16px 18px;
+    text-align: left;
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
 
-.notify-header button{
-    border:none;
-    background:none;
-    color:white;
-    font-size:18px;
-    cursor:pointer;
+.admin-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    color: #4a5568;
 }
 
-.notify-body{
-    padding:20px;
+/* Định dạng nhãn Trạng thái */
+.status-active {
+    color: #2b9348; font-weight: 600; background: #e8f5e9; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;
+}
+.status-locked {
+    color: var(--danger); font-weight: 600; background: #ffebee; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;
 }
 
-.form-group{
-    margin-bottom:16px;
+.actions { display: flex; gap: 8px; }
+
+.btn-toggle, .btn-notify {
+    border: none; background: #f1f5f9; cursor: pointer; width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.btn-toggle { color: #6c757d; }
+.btn-toggle:hover { background: #e2e8f0; color: var(--text-main); transform: translateY(-2px); }
+.btn-notify { color: var(--warning); }
+.btn-notify:hover { background: #fff3e0; transform: translateY(-2px); }
+
+/* 4. THANH PHÂN TRANG (PAGINATION) */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0 20px 0;
+    width: 100%;
 }
 
-.form-group label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:600;
+.pagination ul {
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-.form-group input,
-.form-group textarea{
-    width:100%;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:8px;
-    outline:none;
+.page-link {
+    display: flex; align-items: center; justify-content: center;
+    min-width: 40px; height: 40px; padding: 0 14px;
+    background: var(--card-bg); border-radius: 10px;
+    text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem;
+    box-shadow: var(--shadow-soft); border: 1px solid #e2e8f0; transition: all 0.25s ease;
 }
 
-.send-btn{
-    width:100%;
-    padding:12px;
-
-    border:none;
-    border-radius:8px;
-
-    background:#c42f2f;
-    color:white;
-
-    cursor:pointer;
+.page-link:hover {
+    background: var(--primary); color: white !important; border-color: var(--primary);
+    transform: translateY(-2px); box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
 }
 
-.send-btn:hover{
-    background:#a52424;
+.page-item.active .page-link {
+    background: var(--primary); color: white !important; border-color: var(--primary);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4); pointer-events: none;
 }
+
+.page-item.disabled .page-link {
+    opacity: 0.4; background: #e2e8f0; color: #94a3b8 !important;
+    cursor: not-allowed; pointer-events: none; box-shadow: none;
+}
+
+.page-link-nav { font-size: 0.85rem; gap: 6px; }
+
+/* 5. POP-UP THÔNG BÁO GIỮ NGUYÊN ĐỂ KHÔNG LỖI MODAL */
+.notify-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; box-sizing: border-box;
+}
+.notify-modal.active { display: flex; }
+.notify-box {
+    width: 100%; max-width: 480px; background: var(--card-bg); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15); animation: showModal .3s ease;
+}
+@keyframes showModal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.notify-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; background: var(--danger); color: white; }
+.notify-header h3 { margin: 0; font-size: 1.15rem; }
+.notify-header button { border: none; background: none; color: white; font-size: 20px; cursor: pointer; }
+.notify-body { padding: 24px; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+.form-group input, .form-group textarea { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; box-sizing: border-box; font-family: inherit; }
+.form-group input:focus, .form-group textarea:focus { border-color: var(--danger); }
+.form-group input:disabled { background: #f8fafc; color: var(--text-sub); border-color: #e2e8f0; cursor: not-allowed; }
+.send-btn { width: 100%; padding: 13px; border: none; border-radius: 8px; background: var(--danger); color: white; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.send-btn:hover { background: #b52020; }

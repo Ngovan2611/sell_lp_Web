@@ -1,5 +1,6 @@
 package com.example.sell_lp.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
@@ -20,4 +21,7 @@ public class Category {
     int categoryId;
     String categoryName;
     String icon;
+    Boolean isDisplayed = false;
+    @Column(name = "has_specs")
+    private Boolean hasSpecs = false;;
 }

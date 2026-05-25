@@ -1,6 +1,6 @@
 package com.example.sell_lp.mapper;
 
-import com.example.sell_lp.dto.request.OrderItemCreationRequest;
+import com.example.sell_lp.dto.request.order.OrderItemCreationRequest;
 import com.example.sell_lp.entity.OrderItem;
 import com.example.sell_lp.entity.ProductVariant;
 import org.mapstruct.Mapper;

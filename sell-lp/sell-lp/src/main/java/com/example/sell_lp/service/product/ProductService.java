@@ -1,6 +1,6 @@
 package com.example.sell_lp.service.product;
 
-import com.example.sell_lp.dto.response.ProductResponse;
+import com.example.sell_lp.dto.response.product.ProductResponse;
 import com.example.sell_lp.entity.Category;
 import com.example.sell_lp.entity.Product;
 import com.example.sell_lp.mapper.ProductMapper;

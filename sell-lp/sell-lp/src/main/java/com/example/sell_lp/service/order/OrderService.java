@@ -1,9 +1,9 @@
 package com.example.sell_lp.service.order;
 
-import com.example.sell_lp.dto.request.OrderCreationRequest;
-import com.example.sell_lp.dto.request.OrderItemCreationRequest;
-import com.example.sell_lp.dto.response.OrderItemResponse;
-import com.example.sell_lp.dto.response.OrderResponse;
+import com.example.sell_lp.dto.request.order.OrderCreationRequest;
+import com.example.sell_lp.dto.request.order.OrderItemCreationRequest;
+import com.example.sell_lp.dto.response.order.OrderItemResponse;
+import com.example.sell_lp.dto.response.order.OrderResponse;
 import com.example.sell_lp.entity.CartItem;
 import com.example.sell_lp.entity.Order;
 import com.example.sell_lp.entity.OrderItem;
