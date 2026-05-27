@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -7,6 +6,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/admin-common.css}">
     <link rel="stylesheet" th:href="@{/css/admin/admin-product.css}">
+
+    <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+
 </head>
 <body>
 <div th:replace="~{fragments/admin-header :: div}"></div>
@@ -34,9 +37,7 @@
         <div class="product-card">
             <div class="toolbar">
 
-                <form th:action="@{/admin/products}"
-                      method="get"
-                      class="admin-filter-form">
+                <form th:action="@{/admin/products}" method="get" class="admin-filter-form">
 
                     <input type="text"
                            name="keyword"
@@ -44,113 +45,52 @@
                            placeholder="Tìm sản phẩm..."
                            class="form-input search-input">
 
-                    <!-- CATEGORY -->
-
-                    <select name="category"
-                            class="form-select">
-
-                        <option value="">
-                            Tất cả danh mục
-                        </option>
-
+                    <select name="category" class="form-select">
+                        <option value="">Tất cả danh mục</option>
                         <option th:each="cat : ${categories}"
                                 th:value="${cat.categoryId}"
                                 th:text="${cat.categoryName}"
                                 th:selected="${selectedCategory == cat.categoryId}">
                         </option>
-
                     </select>
 
-                    <!-- STOCK -->
-
-                    <select name="stock"
-                            class="form-select">
-
-                        <option value="">
-                            Tất cả kho
+                    <select name="tag" class="form-select">
+                        <option value="">Tất cả nhãn Tag</option>
+                        <option th:each="t : ${tags}"
+                                th:value="${t.slug}"
+                                th:text="${t.name}"
+                                th:selected="${selectedTag == t.slug}">
                         </option>
-
-                        <option value="in"
-                                th:selected="${stock == 'in'}">
-                            Còn hàng
-                        </option>
-
-                        <option value="low"
-                                th:selected="${stock == 'low'}">
-                            Sắp hết
-                        </option>
-
-                        <option value="out"
-                                th:selected="${stock == 'out'}">
-                            Hết hàng
-                        </option>
-
                     </select>
 
-                    <!-- STATUS -->
-
-                    <select name="active"
-                            class="form-select">
-
-                        <option value="">
-                            Tất cả trạng thái
-                        </option>
-
-                        <option value="true"
-                                th:selected="${active == true}">
-                            Đang bán
-                        </option>
-
-                        <option value="false"
-                                th:selected="${active == false}">
-                            Ngừng bán
-                        </option>
-
+                    <select name="stock" class="form-select">
+                        <option value="">Tất cả kho</option>
+                        <option value="in" th:selected="${stock == 'in'}">Còn hàng</option>
+                        <option value="low" th:selected="${stock == 'low'}">Sắp hết</option>
+                        <option value="out" th:selected="${stock == 'out'}">Hết hàng</option>
                     </select>
 
-                    <!-- SORT -->
-
-                    <select name="sort"
-                            class="form-select">
-
-                        <option value="newest"
-                                th:selected="${sort == 'newest'}">
-                            Mới nhất
-                        </option>
-
-                        <option value="price_asc"
-                                th:selected="${sort == 'price_asc'}">
-                            Giá tăng dần
-                        </option>
-
-                        <option value="price_desc"
-                                th:selected="${sort == 'price_desc'}">
-                            Giá giảm dần
-                        </option>
-
-                        <option value="name_asc"
-                                th:selected="${sort == 'name_asc'}">
-                            A-Z
-                        </option>
-
+                    <select name="active" class="form-select">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="true" th:selected="${active == true}">Đang bán</option>
+                        <option value="false" th:selected="${active == false}">Ngừng bán</option>
                     </select>
 
-                    <button type="submit"
-                            class="btn-filter">
+                    <select name="sort" class="form-select">
+                        <option value="newest" th:selected="${sort == 'newest'}">Mới nhất</option>
+                        <option value="price_asc" th:selected="${sort == 'price_asc'}">Giá tăng dần</option>
+                        <option value="price_desc" th:selected="${sort == 'price_desc'}">Giá giảm dần</option>
+                        <option value="name_asc" th:selected="${sort == 'name_asc'}">A-Z</option>
+                    </select>
 
-                        <i class="fas fa-filter"></i>
-                        Lọc
-
+                    <button type="submit" class="btn-filter">
+                        <i class="fas fa-filter"></i> Lọc
                     </button>
 
                 </form>
 
-                <a th:href="@{/admin/products/add}"
-                   class="btn-add">
-
-                    <i class="fas fa-plus-circle"></i>
-                    THÊM MỚI
-
+                <a th:href="@{/admin/products/add}" class="btn-add">
+                    <i class="fas fa-plus-circle"></i> THÊM MỚI
                 </a>
 
             </div>
@@ -231,112 +171,44 @@
             </table>
 
             <div class="pagination-container" th:if="${totalPages > 1}">
-
-                <!-- PREV -->
-
                 <a class="page-link"
                    th:classappend="${currentPage <= 1} ? 'disabled' : ''"
-
-                   th:href="@{/admin/products(
-            page=${currentPage - 1},
-            keyword=${keyword},
-            category=${selectedCategory},
-            stock=${stock},
-            active=${active},
-            sort=${sort}
-       )}">
-
+                   th:href="@{/admin/products(page=${currentPage - 1}, keyword=${keyword}, category=${selectedCategory}, tag=${selectedTag}, stock=${stock}, active=${active}, sort=${sort})}">
                     <i class="fas fa-chevron-left"></i>
-
                 </a>
-
-                <!-- FIRST PAGE -->
 
                 <a class="page-link"
                    th:classappend="${1 == currentPage} ? 'active' : ''"
-
-                   th:href="@{/admin/products(
-            page=1,
-            keyword=${keyword},
-            category=${selectedCategory},
-            stock=${stock},
-            active=${active},
-            sort=${sort}
-       )}">
-
+                   th:href="@{/admin/products(page=1, keyword=${keyword}, category=${selectedCategory}, tag=${selectedTag}, stock=${stock}, active=${active}, sort=${sort})}">
                     1
-
                 </a>
 
-                <span class="page-link disabled"
-                      th:if="${currentPage > 3}">
-        ...
-    </span>
-
-                <!-- MIDDLE PAGES -->
+                <span class="page-link disabled" th:if="${currentPage > 3}">...</span>
 
                 <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
-
                     <a class="page-link"
-
                        th:if="${i > 1 && i < totalPages && i >= currentPage - 1 && i <= currentPage + 1}"
-
                        th:classappend="${i == currentPage} ? 'active' : ''"
-
-                       th:href="@{/admin/products(
-                page=${i},
-                keyword=${keyword},
-                category=${selectedCategory},
-                stock=${stock},
-                active=${active},
-                sort=${sort}
-           )}"
-
+                       th:href="@{/admin/products(page=${i}, keyword=${keyword}, category=${selectedCategory}, tag=${selectedTag}, stock=${stock}, active=${active}, sort=${sort})}"
                        th:text="${i}">
                     </a>
-
                 </th:block>
 
-                <span class="page-link disabled"
-                      th:if="${currentPage < totalPages - 2}">
-        ...
-    </span>
-
+                <span class="page-link disabled" th:if="${currentPage < totalPages - 2}">...</span>
 
                 <a class="page-link"
                    th:classappend="${totalPages == currentPage} ? 'active' : ''"
-
-                   th:href="@{/admin/products(
-            page=${totalPages},
-            keyword=${keyword},
-            category=${selectedCategory},
-            stock=${stock},
-            active=${active},
-            sort=${sort}
-       )}"
-
+                   th:href="@{/admin/products(page=${totalPages}, keyword=${keyword}, category=${selectedCategory}, tag=${selectedTag}, stock=${stock}, active=${active}, sort=${sort})}"
                    th:text="${totalPages}">
                 </a>
 
-                <!-- NEXT -->
-
                 <a class="page-link"
                    th:classappend="${currentPage >= totalPages} ? 'disabled' : ''"
-
-                   th:href="@{/admin/products(
-            page=${currentPage + 1},
-            keyword=${keyword},
-            category=${selectedCategory},
-            stock=${stock},
-            active=${active},
-            sort=${sort}
-       )}">
-
+                   th:href="@{/admin/products(page=${currentPage + 1}, keyword=${keyword}, category=${selectedCategory}, tag=${selectedTag}, stock=${stock}, active=${active}, sort=${sort})}">
                     <i class="fas fa-chevron-right"></i>
-
                 </a>
-
             </div>
+
             <div th:if="${totalItems == 0}" class="empty-state">
                 <i class="fas fa-folder-open"></i>
                 <p>Hiện tại chưa có sản phẩm nào trong hệ thống.</p>
@@ -371,11 +243,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Mô tả sản phẩm</label>
-
-                    <textarea id="editDescription"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Nhập mô tả sản phẩm..."></textarea>
+                    <textarea id="editDescription" class="form-control" rows="5" placeholder="Nhập mô tả sản phẩm..."></textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Danh mục</label>
@@ -384,6 +252,13 @@
                                 th:value="${cat.categoryId}"
                                 th:text="${cat.categoryName}"></option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nhãn sản phẩm (Tags)</label>
+                    <div class="tagify-modal-container">
+                        <input id="modalTagifyInput" class="form-control" placeholder="Tìm kiếm hoặc thêm nhãn tag...">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -404,8 +279,7 @@
 
                 <div class="variant-edit-section">
                     <p class="form-label variant-section-label">Biến thể sản phẩm</p>
-                    <div id="variantEditContainer">
-                    </div>
+                    <div id="variantEditContainer"></div>
                 </div>
             </div>
 
@@ -416,174 +290,12 @@
         </form>
     </div>
 </div>
-<script>
-    function toggleVariant(id) {
-        const row = document.getElementById('variant-' + id);
-        const icon = document.getElementById('icon-' + id);
-
-        // Kiểm tra trạng thái hiện tại
-        if (row.style.display === 'none' || row.style.display === '') {
-            row.style.display = 'table-row';
-            icon.style.transform = 'rotate(90deg)';
-            icon.style.transition = '0.3s';
-        } else {
-            row.style.display = 'none';
-            icon.style.transform = 'rotate(0deg)';
-        }
-    }
-
-    function openEditModal(id) {
-        fetch(`/admin/products/${id}`)
-            .then(res => res.json())
-            .then(product => {
-                document.getElementById('editProductId').value = product.productId;
-                document.getElementById('editName').value = product.name;
-                document.getElementById('editActive').value = product.active.toString();
-                document.getElementById('editDescription').value =
-                    product.description || '';
-                if (product.category) document.getElementById('editCategoryId').value = product.category.categoryId;
-                document.getElementById('editImages').value = product.images ? product.images.join('\n') : '';
-                renderPreviews();
-                const container = document.getElementById('variantEditContainer');
-                container.innerHTML = product.variants.map(v => `
-                    <div class="variant-edit-row">
-                        <input type="hidden" class="v-id" value="${v.variantId}">
-                        <div class="v-label">
-                            ${v.colorName || 'Mặc định'} ${v.ramSize ? '/ ' + v.ramSize : ''} ${v.romSize ? '/ ' + v.romSize : ''}
-                        </div>
-                        <input type="number" class="v-price form-control" value="${v.price}">
-                        <input type="number" class="v-stock form-control" value="${v.stockQty}">
-                    </div>
-                `).join('');
-                document.getElementById('editProductModal').style.display = 'block';
-            });
-    }
-
-    function closeModal() {
-        document.getElementById('editProductModal').style.display = 'none';
-    }
-
-    document.getElementById('modalFilePicker').onchange = async function(e) {
-        const files = e.target.files;
-        if (files.length === 0) return;
-
-        const btn = e.target.nextElementSibling;
-        const originalText = btn.innerHTML;
-
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải...';
-        btn.disabled = true;
-
-        const formData = new FormData();
-        for (let file of files) {
-            formData.append('files', file);
-        }
-
-        try {
-            const res = await fetch('/admin/products/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (res.ok) {
-                const urls = await res.json();
-                const textarea = document.getElementById('editImages');
-                const existingUrls = textarea.value.trim();
-
-                textarea.value = (existingUrls ? existingUrls + '\n' : '') + urls.join('\n');
-
-                renderPreviews();
-            } else {
-                alert("Lỗi khi upload ảnh lên Cloudinary!");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Không thể kết nối đến server!");
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            e.target.value = ''; // Reset input để có thể chọn lại file cũ
-        }
-    };
-    document.getElementById('editProductForm').onsubmit = function(e) {
-        e.preventDefault();
-        const productId = parseInt(document.getElementById('editProductId').value);
-        const variants = Array.from(document.querySelectorAll('.variant-edit-row')).map(row => ({
-            variantId: parseInt(row.querySelector('.v-id').value),
-            price: parseFloat(row.querySelector('.v-price').value),
-            stockQty: parseInt(row.querySelector('.v-stock').value)
-        }));
-
-        const data = {
-            productId: productId,
-            name: document.getElementById('editName').value,
-            active: document.getElementById('editActive').value === 'true',
-            categoryId: parseInt(document.getElementById('editCategoryId').value) || null,
-            description: document.getElementById('editDescription').value,
-            imageUrls: document.getElementById('editImages').value.split('\n').map(u => u.trim()).filter(u => u),
-            variants: variants
-        };
-
-        fetch(`/admin/products/${productId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        }).then(res => {
-            if (res.ok) {
-                alert('Thành công!');
-                location.reload();
-            } else {
-                alert('Lỗi dữ liệu!');
-            }
-        });
-    };
-    function renderPreviews() {
-        const textarea = document.getElementById('editImages');
-        const container = document.getElementById('imagePreviewContainer');
-        const urls = textarea.value.split('\n').map(u => u.trim()).filter(u => u !== "");
-
-        container.innerHTML = ""; // Xóa cũ
-
-        if (urls.length === 0) {
-            container.innerHTML = '<span class="text-muted" style="font-size: 0.8rem;">Chưa có ảnh nào...</span>';
-            return;
-        }
-
-        urls.forEach((url, index) => {
-            const wrapper = document.createElement('div');
-            // Thiết lập kích thước cố định cho mỗi khung ảnh
-            wrapper.style.cssText = `
-            position: relative;
-            min-width: 80px;
-            width: 80px;
-            height: 80px;
-            flex-shrink: 0;
-        `;
-
-            wrapper.innerHTML = `
-            <img src="${url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-            <button type="button" onclick="removeImage(${index})"
-                style="position: absolute; top: -8px; right: -8px; background: #ff4757; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                <i class="fas fa-times"></i>
-            </button>
-            ${index === 0 ? '<span style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,123,255,0.8); color:white; font-size:9px; text-align:center; border-radius:0 0 4px 4px;">Ảnh chính</span>' : ''}
-        `;
-            container.appendChild(wrapper);
-        });
-    }
-
-    // Hàm xóa ảnh khi nhấn nút X
-    function removeImage(index) {
-        const textarea = document.getElementById('editImages');
-        let urls = textarea.value.split('\n').map(u => u.trim()).filter(u => u !== "");
-        urls.splice(index, 1); // Xóa URL tại vị trí index
-        textarea.value = urls.join('\n');
-        renderPreviews(); // Vẽ lại giao diện
-    }
-
-    // Lắng nghe sự kiện thay đổi trong textarea
-    document.getElementById('editImages').addEventListener('input', renderPreviews);
+<script th:inline="javascript">
+    window.allTagsFromDb = /*[[${tags}]]*/ [];
 </script>
-<script th:src="@{/js/admin-common.js}"></script>
+
+<script th:src="@{/js/admin/product-manage.js}"></script>
+<script th:src="@{/js/admin/admin-common.js}"></script>
 
 </body>
 </html>

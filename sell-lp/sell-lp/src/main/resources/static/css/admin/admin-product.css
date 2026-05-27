@@ -8,11 +8,44 @@
     --bg-card: #ffffff;
     width: 100%;
 }
-
-
-
-
-
+/* Tùy biến giao diện ô nhập Tagify đồng bộ với cấu trúc form-control của Modal */
+.tagify-modal-container {
+    margin-top: 5px;
+}
+.tagify {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #fff;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+.tagify:hover {
+    border-color: #94a3b8;
+}
+.tagify--focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+.tagify__tag {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-radius: 4px;
+    font-weight: 500;
+}
+.tagify__tag__removeBtn {
+    color: #0369a1;
+}
+.tagify__tag__removeBtn:hover {
+    background: #bae6fd;
+    color: #b91c1c;
+}
+.tags-look .tagify__dropdown__wrapper{
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    border-radius: 6px;
+}
 /* RESPONSIVE CHO MOBILE */
 @media (max-width: 768px) {
     .toolbar {

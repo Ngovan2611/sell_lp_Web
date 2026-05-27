@@ -5,30 +5,41 @@
     <title>Quản trị Đơn hàng - Hệ thống Admin</title>
     <link rel="stylesheet" th:href="@{/css/admin/admin-common.css}">
     <link rel="stylesheet" th:href="@{/css/admin/order-manage.css}">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* CSS bổ sung tạo hiệu ứng trực quan khi rê chuột vào card đơn hàng */
-        .order-card {
-            cursor: pointer;
-            transition: box-shadow 0.2s ease;
-        }
-        .order-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        /* Giữ nguyên con trỏ chuột mặc định khi rê vào cụm nút bấm điều hướng hành động */
-        .btn-group {
-            cursor: default;
-        }
-    </style>
 </head>
 <body>
 <div th:replace="~{fragments/admin-header :: div}"></div>
 
 <div class="admin-main">
-    <div class="tabs">
-        <button class="tab-btn">Đơn hàng mới</button>
-        <span class="total-count">Toàn bộ: <span th:text="${totalItems}">0</span> đơn</span>
+
+    <div class="filter-toolbar">
+        <form th:action="@{/admin/orders}" method="get" class="filter-form">
+
+            <div class="search-box">
+                <input type="text" name="orderId" th:value="${orderId}" placeholder="Mã đơn hàng...">
+            </div>
+
+            <div class="search-box">
+                <input type="text" name="customerName" th:value="${customerName}" placeholder="Tên khách hàng...">
+            </div>
+
+            <div class="search-box">
+                <input type="text" name="phone" th:value="${phone}" placeholder="Số điện thoại...">
+                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+
+            <div class="select-group">
+                <select name="status" onchange="this.form.submit()" class="fa-select">
+                    <option value="" th:selected="${selectedStatus == null || selectedStatus == ''}" style="color: var(--text-main);">Tất cả trạng thái</option>
+                    <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}" style="color: #d97706;">&#xf017; Chờ duyệt</option>
+                    <option value="PREPARING" th:selected="${selectedStatus == 'PREPARING'}" style="color: #0284c7;">&#xf466; Đang chuẩn bị</option>
+                    <option value="SHIPPING" th:selected="${selectedStatus == 'SHIPPING'}" style="color: #9333ea;">&#xf0d1; Đang giao hàng</option>
+                    <option value="SUCCESS" th:selected="${selectedStatus == 'SUCCESS'}" style="color: #059669;">&#xf058; Thành công</option>
+                    <option value="FAILURE" th:selected="${selectedStatus == 'FAILURE'}" style="color: #dc2626;">&#xf057; Đã hủy</option>
+                </select>
+            </div>
+        </form>
+        <span class="total-count">Tìm thấy: <b th:text="${totalItems}">0</b> đơn hàng</span>
     </div>
 
     <div th:each="order : ${orders}" class="order-card" th:data-id="${order.orderId}">
@@ -39,11 +50,11 @@
             </div>
             <div class="status-badge" th:classappend="'status-' + ${order.status}">
                 <span th:switch="${order.status}">
-                    <span th:case="'PENDING'">Chờ duyệt</span>
-                    <span th:case="'PREPARING'">Đang chuẩn bị</span>
-                    <span th:case="'SHIPPING'">Đang giao hàng</span>
-                    <span th:case="'SUCCESS'">Thành công</span>
-                    <span th:case="'FAILURE'">Đã hủy</span>
+                    <span th:case="'PENDING'"><i class="fa-regular fa-clock"></i> Chờ duyệt</span>
+                    <span th:case="'PREPARING'"><i class="fa-solid fa-box"></i> Đang chuẩn bị</span>
+                    <span th:case="'SHIPPING'"><i class="fa-solid fa-truck"></i> Đang giao</span>
+                    <span th:case="'SUCCESS'"><i class="fa-solid fa-circle-check"></i> Thành công</span>
+                    <span th:case="'FAILURE'"><i class="fa-solid fa-circle-xmark"></i> Đã hủy</span>
                 </span>
             </div>
         </div>
@@ -51,7 +62,7 @@
         <div class="customer-bar">
             <div class="info-item"><i class="fa-solid fa-user"></i> <b th:text="${order.recipientName}"></b></div>
             <div class="info-item"><i class="fa-solid fa-phone"></i> <span th:text="${order.phone}"></span></div>
-            <div class="info-item" style="width: 100%;"><i class="fa-solid fa-location-dot"></i> <span th:text="${order.fullAddress}"></span></div>
+            <div class="info-item address-item"><i class="fa-solid fa-location-dot"></i> <span th:text="${order.fullAddress}"></span></div>
         </div>
 
         <div class="product-list">
@@ -63,110 +74,69 @@
         </div>
 
         <div class="order-footer">
-            <div class="total-amount" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
+            <div class="total-amount-wrapper">
+                <span class="label">Tổng tiền đơn hàng:</span>
+                <div class="total-amount" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
+            </div>
 
             <div class="btn-group">
                 <a th:href="@{/admin/orders/detail/{id}(id=${order.orderId})}" class="btn btn-info">
-                    <i class="fa-solid fa-eye"></i> Chi tiết
+                    <i class="fa-solid fa-circle-info"></i> Chi tiết
                 </a>
 
                 <th:block th:if="${order.status == 'PENDING'}">
-                    <button class="btn" style="background-color: var(--success); color: white;"
-                            th:onclick="'updateStatus(' + ${order.orderId} + ', \'PREPARING\')'">
+                    <button class="btn btn-success" th:onclick="'updateStatus(' + ${order.orderId} + ', \'PREPARING\')'">
                         <i class="fa-solid fa-box"></i> Duyệt đơn
                     </button>
                 </th:block>
 
                 <th:block th:if="${order.status == 'PREPARING'}">
-                    <button class="btn btn-shipping"
-                            th:onclick="'updateStatus(' + ${order.orderId} + ', \'SHIPPING\')'">
+                    <button class="btn btn-shipping" th:onclick="'updateStatus(' + ${order.orderId} + ', \'SHIPPING\')'">
                         <i class="fa-solid fa-truck"></i> Giao hàng
                     </button>
                 </th:block>
 
                 <th:block th:if="${order.status == 'SHIPPING'}">
-                    <button class="btn" style="background-color: var(--success); color: white;"
-                            th:onclick="'updateStatus(' + ${order.orderId} + ', \'SUCCESS\')'">
-                        <i class="fa-solid fa-circle-check"></i> Hoàn thành
+                    <button class="btn btn-success" th:onclick="'updateStatus(' + ${order.orderId} + ', \'SUCCESS\')'">
+                        <i class="fa-solid fa-square-check"></i> Hoàn thành
                     </button>
                 </th:block>
 
                 <th:block th:if="${order.status != 'SUCCESS' && order.status != 'FAILURE'}">
                     <button class="btn btn-cancel" th:onclick="'confirmCancel(' + ${order.orderId} + ')'">
-                        <i class="fa-solid fa-xmark"></i> Hủy
+                        <i class="fa-solid fa-trash-can"></i> Hủy đơn
                     </button>
                 </th:block>
             </div>
         </div>
     </div>
 
+    <div th:if="${#lists.isEmpty(orders)}" class="empty-orders">
+        <i class="fa-solid fa-inbox"></i>
+        <p>Không tìm thấy đơn hàng nào phù hợp với bộ lọc.</p>
+    </div>
+
     <div class="pagination" th:if="${totalPages > 1}">
         <div class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-            <a class="page-link page-link-nav" th:href="@{/admin/orders(page=${currentPage - 1})}">
-                <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem; margin-right: 5px;"></i> Trước
+            <a class="page-link" th:href="@{/admin/orders(page=${currentPage - 1}, keyword=${keyword}, status=${selectedStatus})}">
+                <i class="fa-solid fa-chevron-left"></i> Trước
             </a>
         </div>
 
-        <div class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-             th:classappend="${currentPage == i} ? 'active'">
-            <a class="page-link" th:href="@{/admin/orders(page=${i})}" th:text="${i + 1}"></a>
+        <div class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+            <a class="page-link" th:href="@{/admin/orders(page=${i}, keyword=${keyword}, status=${selectedStatus})}" th:text="${i + 1}"></a>
         </div>
 
         <div class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-            <a class="page-link page-link-nav" th:href="@{/admin/orders(page=${currentPage + 1})}">
-                Sau <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; margin-left: 5px;"></i>
+            <a class="page-link" th:href="@{/admin/orders(page=${currentPage + 1}, keyword=${keyword}, status=${selectedStatus})}">
+                Sau <i class="fa-solid fa-chevron-right"></i>
             </a>
         </div>
     </div>
 </div>
-<script>
-    // XỬ LÝ SỰ KIỆN CLICK TOÀN BỘ CARD ĐƠN HÀNG
-    document.querySelectorAll('.order-card').forEach(card => {
-        card.addEventListener('click', function (e) {
-            // Ngăn chuyển trang nếu admin click trúng các thành phần nằm trong ô .btn-group (Duyệt, Hủy, Chi tiết)
-            if (e.target.closest('.btn-group')) {
-                return;
-            }
 
-            // Lấy ID ẩn từ data-id và thực hiện chuyển trang
-            const orderId = this.dataset.id;
-            if (orderId) {
-                location.href = `/admin/orders/detail/${orderId}`;
-            }
-        });
-    });
+<script th:src="@{/js/admin/order-manage.js}"></script>
 
-    function updateStatus(orderId, status) {
-        if(!confirm("Xác nhận thay đổi trạng thái đơn hàng?")) return;
-
-        fetch(`/admin/orders/update-status/${orderId}?status=${status}`, {
-            method: 'POST'
-        }).then(res => {
-            if(res.ok) {
-                alert("Cập nhật thành công");
-                location.reload();
-            } else {
-                alert("Lỗi khi cập nhật");
-            }
-        });
-    }
-
-    function confirmCancel(orderId) {
-        if(!confirm("Bạn có chắc chắn muốn HỦY đơn hàng này? Hệ thống sẽ tự động cộng lại số lượng vào kho sản phẩm.")) return;
-
-        fetch(`/admin/orders/cancel/${orderId}`, {
-            method: 'POST'
-        }).then(res => {
-            if(res.ok) {
-                alert("Đã hủy đơn và hoàn lại kho hàng.");
-                location.reload();
-            } else {
-                alert("Lỗi: Không thể hủy đơn hàng này.");
-            }
-        });
-    }
-</script>
+<script th:src="@{/js/admin/admin-common.js}"></script>
 </body>
-<script th:src="@{/js/admin-common.js}"></script>
-
 </html>

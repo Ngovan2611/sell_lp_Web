@@ -41,8 +41,7 @@
         </a>
 
     </div>
-    <div class="charts-container">
-
+    <div class="charts-container" style="margin-top: 30px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
         <div class="stat-card" style="display: block;">
             <h3 style="margin-bottom: 20px; color: #7f8c8d;">Xu hướng doanh thu</h3>
             <div class="chart-container-wrapper">
@@ -54,7 +53,6 @@
             <h3 style="margin-bottom: 20px; color: #7f8c8d;">Trạng thái đơn hàng</h3>
             <canvas id="statusChart"></canvas>
         </div>
-
     </div>
 </div>
 
@@ -62,91 +60,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script th:inline="javascript">
-    const revenueData = [[${revenueData}]];
-    const dayLabels = [[${dayLabels}]];
-    const statusData = [[${statusData}]];
-
-    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctxRevenue, {
-        type: 'line',
-        data: {
-            labels: dayLabels,
-            datasets: [{
-                label: 'Doanh thu',
-                data: revenueData,
-                borderColor: '#4361ee',
-                backgroundColor: 'rgba(67, 97, 238, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointRadius: 6,
-                pointBackgroundColor: '#4361ee'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: { top: 20 }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 180000000,
-                    ticks: {
-                        stepSize: 2000000,
-                        callback: function(value) {
-                            const milestones = [10000000, 50000000, 100000000];
-                            if (milestones.includes(value)) return (value / 1000000) + ' Tr';
-                            if (value === 0) return '0';
-                            return null;
-                        }
-                    },
-                    grid: {
-                        drawBorder: false,
-                        color: function(context) {
-                            const val = context.tick.value;
-                            if ([10000000, 50000000, 100000000].includes(val)) return 'rgba(0, 0, 0, 0.1)';
-                            return 'transparent';
-                        }
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#94a3b8' }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: function(context) {
-                            return ' ' + context.parsed.y.toLocaleString('vi-VN') + ' VND';
-                        }
-                    }
-                }
-            }
-        }
-    });
-    const ctxStatus = document.getElementById('statusChart').getContext('2d');
-    new Chart(ctxStatus, {
-        type: 'doughnut',
-        data: {
-            labels: ['Thành công', 'Chờ xử lý', 'Đã hủy'],
-            datasets: [{
-                data: statusData,
-                backgroundColor: ['#2ecc71', '#ff9f1c', '#e71d36']
-            }]
-        },
-        options: {
-            cutout: '70%',
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
+    window.dashboardRevenueData = /*[[${revenueData}]]*/ [];
+    window.dashboardDayLabels = /*[[${dayLabels}]]*/ [];
+    window.dashboardStatusData = /*[[${statusData}]]*/ [];
 </script>
-<script th:src="@{/js/admin-common.js}"></script>
+
+<script th:src="@{/js/admin/main.js}"></script>
+<script th:src="@{/js/admin/admin-common.js}"></script>
 
 </body>
 </html>

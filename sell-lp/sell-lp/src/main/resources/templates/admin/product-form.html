@@ -6,13 +6,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin/product-form.css}">
     <link rel="icon" href="data:,">
+
+    <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+
+    <style>
+        /* Tùy biến giao diện ô nhập Tagify đồng bộ với form hệ thống */
+        .tagify-container {
+            margin-top: 5px;
+        }
+        .tagify {
+            width: 100%;
+            max-width: 100%;
+            padding: 4px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+        .tagify:hover {
+            border-color: #94a3b8;
+        }
+        .tagify--focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        /* Thay đổi màu sắc tag được chọn sang tone màu sáng sủa */
+        .tagify__tag {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .tagify__tag__removeBtn {
+            color: #0369a1;
+        }
+        .tagify__tag__removeBtn:hover {
+            background: #bae6fd;
+            color: #b91c1c;
+        }
+        /* Đè chiều cao dropdown gợi ý để không bị che */
+        .tags-look .tagify__dropdown__wrapper{
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            border-radius: 6px;
+        }
+        .hidden-tags-inputs {
+            display: none;
+        }
+        /* Style bổ trợ ẩn cột mượt mà */
+        .d-none {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
 
 <div class="admin-product-manager">
     <h2><i class="fas fa-plus-circle"></i> Thêm sản phẩm mới</h2>
 
-    <form th:action="@{/admin/products/add}" th:object="${productRequest}" method="post">
+    <form th:action="@{/admin/products/add}" th:object="${productRequest}" method="post" onsubmit="return validateVariants()">
         <div class="form-grid">
             <div class="form-group">
                 <label class="form-label">Tên sản phẩm</label>
@@ -31,6 +85,15 @@
                             th:attr="data-has-specs=${c.hasSpecs}">
                     </option>
                 </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label"><i class="fas fa-tags"></i> Gắn nhãn sản phẩm (Tags)</label>
+            <div class="tagify-container">
+                <input id="tagifyInput" class="form-input" placeholder="Nhấp chọn hoặc gõ tìm kiếm nhãn tag...">
+
+                <div id="hiddenTagsContainer" class="hidden-tags-inputs"></div>
             </div>
         </div>
 
@@ -63,7 +126,7 @@
                     <th class="spec-column">ROM</th>
                     <th>Giá bán (đ)</th>
                     <th>Kho</th>
-                    <th></th>
+                    <th>Thao tác</th>
                 </tr>
                 </thead>
                 <tbody id="variant-items">
@@ -82,124 +145,12 @@
 </div>
 
 <script th:inline="javascript">
-    let variantIdx = 0;
-    const colors = [[${colors}]];
-    const rams = [[${rams}]];
-    const roms = [[${roms}]];
-
-    function addVariant() {
-        const categorySelect = document.getElementById('categoryId');
-
-        // 1. Lấy ra thẻ <option> đang được chọn hiện tại
-        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
-
-        // 2. Đọc thuộc tính data-has-specs từ option đó (trả về chuỗi 'true' hoặc 'false')
-        // Ép kiểu về Boolean để kiểm tra dữ liệu chuẩn xác
-        const isTechProduct = selectedOption.dataset.hasSpecs === 'true';
-
-        // 3. Sử dụng class 'd-none' dựa trên tính chất động của danh mục
-        const displayClass = isTechProduct ? '' : 'd-none';
-
-        const tbody = document.getElementById('variant-items');
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
-        <td>
-            <select name="variants[${variantIdx}].colorId" class="form-input">
-                ${colors.map(c => `<option value="${c.colorId}">${c.colorName}</option>`).join('')}
-            </select>
-        </td>
-        <td class="spec-column ${displayClass}">
-            <select name="variants[${variantIdx}].ramId" class="form-input">
-                <option value="">N/A</option>
-                ${rams.map(r => `<option value="${r.ramId}">${r.ramSize}</option>`).join('')}
-            </select>
-        </td>
-        <td class="spec-column ${displayClass}">
-            <select name="variants[${variantIdx}].romId" class="form-input">
-                <option value="">N/A</option>
-                ${roms.map(r => `<option value="${r.romId}">${r.romSize}</option>`).join('')}
-            </select>
-        </td>
-        <td><input type="number" name="variants[${variantIdx}].price" min="0" class="form-input" placeholder="Giá" required></td>
-        <td><input type="number" name="variants[${variantIdx}].stockQty" min="0" class="form-input" placeholder="Kho" required></td>
-        <td>
-            <button type="button" class="btn-remove" onclick="this.closest('tr').remove()">
-                <i class="fas fa-trash"></i>
-            </button>
-        </td>
-    `;
-        tbody.appendChild(row);
-
-        // 4. Đồng bộ ẩn/hiện các cột tiêu đề (Thẻ TH) trên Header của bảng biến thể
-        const headerSpecs = document.querySelectorAll('thead .spec-column');
-        headerSpecs.forEach(col => {
-            if (isTechProduct) {
-                col.classList.remove('d-none');
-            } else {
-                col.classList.add('d-none');
-            }
-        });
-
-        variantIdx++;
-    }
-    // Lắng nghe sự kiện đổi danh mục để reset bảng
-    document.getElementById('categoryId').addEventListener('change', function() {
-        const tbody = document.getElementById('variant-items');
-        tbody.innerHTML = '';
-        variantIdx = 0;
-        addVariant();
-    });
-
-    // Lắng nghe xử lý tải hình ảnh lên Cloud/Server ẩn
-    document.getElementById('filePicker').addEventListener('change', async function(e) {
-        const files = e.target.files;
-        if (files.length === 0) return;
-
-        const status = document.getElementById('uploadStatus');
-        const previewDiv = document.getElementById('singlePreview');
-        const previewImg = document.getElementById('previewImg');
-        const finalInput = document.getElementById('finalImageUrl');
-
-        status.innerText = "Đang xử lý ảnh...";
-        status.style.color = "#666";
-
-        const formData = new FormData();
-        formData.append('files', files[0]);
-
-        try {
-            const res = await fetch('/admin/products/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (res.ok) {
-                const urls = await res.json();
-                const uploadedUrl = urls[0];
-
-                finalInput.value = uploadedUrl;
-                previewImg.src = uploadedUrl;
-
-                // Hiển thị khung xem trước bằng cách gỡ bỏ class 'd-none'
-                previewDiv.classList.remove('d-none');
-
-                status.innerText = "Tải ảnh thành công!";
-                status.style.color = "green";
-            } else {
-                status.innerText = "Lỗi khi tải ảnh lên server!";
-                status.style.color = "red";
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            status.innerText = "Lỗi kết nối server!";
-            status.style.color = "red";
-        }
-    });
-    // Thêm dòng này ở cuối cùng của thẻ script (nằm ngoài các hàm) để chạy ngay khi load trang
-    document.addEventListener("DOMContentLoaded", function() {
-        // Tự động thêm một biến thể đầu tiên khớp với danh mục đang chọn mặc định
-        addVariant();
-    });
+    window.productColors = /*[[${colors}]]*/ [];
+    window.productRams = /*[[${rams}]]*/ [];
+    window.productRoms = /*[[${roms}]]*/ [];
+    window.allTagsFromDb = /*[[${tags}]]*/ [];
 </script>
+
+<script th:src="@{/js/admin/product-add-form.js}"></script>
 </body>
 </html>

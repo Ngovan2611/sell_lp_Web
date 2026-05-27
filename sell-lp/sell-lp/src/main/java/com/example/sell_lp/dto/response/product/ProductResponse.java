@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,5 +46,6 @@ public class ProductResponse {
                 .mapToInt(ProductVariantResponse::getStockQty)
                 .sum();
     }
+    Set<TagResponse> tags;
 }
 

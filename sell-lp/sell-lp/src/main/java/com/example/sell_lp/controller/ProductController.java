@@ -20,35 +20,21 @@ import java.security.Principal;
 @PreAuthorize("isAuthenticated()")
 public class ProductController {
 
-
     ProductService productService;
 
     @GetMapping("/products")
     public String showProducts(
-
-            @RequestParam(required = false)
-            Integer categoryId,
-
-            @RequestParam(required = false)
-            String keyword,
-
-            @RequestParam(required = false)
-            String price,
-
-            @RequestParam(defaultValue = "newest")
-            String sort,
-
-            @RequestParam(defaultValue = "0")
-            int page,
-
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String price,
+            @RequestParam(required = false) String tag,
+            @RequestParam(defaultValue = "newest") String sort,
+            @RequestParam(defaultValue = "0") int page,
             Model model,
             Principal principal
     ) {
 
-        String username =
-                principal != null
-                        ? principal.getName()
-                        : null;
+        String username = principal != null ? principal.getName() : null;
 
         PageRequest pageable = PageRequest.of(page, 10);
 
@@ -57,24 +43,21 @@ public class ProductController {
                         categoryId,
                         keyword,
                         price,
+                        tag,
                         sort,
                         pageable
                 );
 
         model.addAttribute("products", productPage.getContent());
-
         model.addAttribute("keyword", keyword);
-
         model.addAttribute("price", price);
-
         model.addAttribute("sort", sort);
-
         model.addAttribute("categoryId", categoryId);
 
+        model.addAttribute("currentTag", tag);
+
         model.addAttribute("username", username);
-
         model.addAttribute("currentPage", page);
-
         model.addAttribute("totalPages", productPage.getTotalPages());
 
         return "products";
