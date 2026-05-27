@@ -4,8 +4,8 @@
 
     <meta charset="UTF-8">
     <title>SellLP - Shop Laptop & PC</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/user/main.css}">
+    <link rel="stylesheet" th:href="@{/css/user/common.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
@@ -56,7 +56,9 @@
         <h2 style="margin-bottom:20px;">Sản phẩm Laptop thịnh hành</h2>
         <div class="products-wrapper">
             <div class="products">
-                <div class="product" th:each="p : ${laps}">
+                <div class="product"
+                     th:each="p : ${laps}"
+                     th:data-id="${p.productId}">
                     <img th:src="@{{img}(img=${p.imageUrl})}">
 
                     <h3 th:text="${p.name}"></h3>
@@ -93,7 +95,9 @@
 
         <div class="products">
 
-                <div class="product" th:each="p : ${desks}">
+            <div class="product"
+                 th:each="p : ${desks}"
+                 th:data-id="${p.productId}">
                     <img th:src="@{{img}(img=${p.imageUrl})}">
                     <h3 th:text="${p.name}"></h3>
                     <p th:text="${p.description}"></p>
@@ -105,7 +109,8 @@
         </div>
 
         <div class="view-more">
-            <a th:href="@{/products(categoryId=2)}">                <button class="view-btn">
+            <a th:href="@{/products(categoryId=2)}">
+                <button class="view-btn">
                     <i class="fa-solid fa-arrow-right"></i>
                     Xem tất cả sản phẩm
                 </button>
@@ -205,7 +210,7 @@
 
 
 </body>
-<script th:src="@{/js/main.js}"></script>
-<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/user/main.js}"></script>
+<script th:src="@{/js/user/common.js}"></script>
 
 </html>

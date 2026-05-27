@@ -205,3 +205,23 @@
         }
 
     });
+    /* =========================================
+       CLICK PRODUCT CARD
+    ========================================= */
+
+    document.querySelectorAll(".product").forEach(card => {
+
+        card.addEventListener("click", (e) => {
+
+            // không redirect khi bấm nút
+            if (e.target.closest("button")) return;
+
+            const id = card.dataset.id;
+
+            if (id) {
+                window.location.href = `/product/${id}`;
+            }
+
+        });
+
+    });

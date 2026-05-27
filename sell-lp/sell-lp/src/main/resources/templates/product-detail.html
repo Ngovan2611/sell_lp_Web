@@ -4,18 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Chi tiết sản phẩm</title>
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/css/products.css}">
-
-    <link rel="stylesheet" th:href="@{/css/product-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/user/common.css}">
+    <link rel="stylesheet" th:href="@{/css/user/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/user/products.css}">
+    <link rel="stylesheet" th:href="@{/css/user/product-detail.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-
-
+    <style>
+        /* CSS hỗ trợ hiển thị danh sách Tag đính kèm */
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 15px 0;
+        }
+        .tag-item-link {
+            text-decoration: none;
+        }
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #f1f5f9;
+            color: #475569;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .tag-badge:hover {
+            background-color: #3b82f6;
+            color: #ffffff;
+            border-color: #3b82f6;
+        }
+        .tag-badge i {
+            font-size: 0.7rem;
+        }
+    </style>
 </head>
 
-
+<body>
 <div th:replace="~{fragments/header :: header}"></div>
 <div class="breadcrumb">
     <a th:href="@{/home}">Trang chủ</a>  >
@@ -24,14 +54,13 @@
 </div>
 <div id="overlay"></div>
 <div th:replace="~{fragments/sidebar :: aside}"></div>
-<body>
 
 <div class="product-detail-container" th:attr="data-active=${product.active}">
 
-
     <div class="gallery">
-        <div class="main-img" style="position: relative;"> <img id="mainImg" th:src="@{${product.imageUrl}}"
-                                                                th:style="${!product.active} ? 'filter: grayscale(1) opacity(0.5);' : ''">
+        <div class="main-img" style="position: relative;">
+            <img id="mainImg" th:src="@{${product.imageUrl}}"
+                 th:style="${!product.active} ? 'filter: grayscale(1) opacity(0.5);' : ''">
 
             <div th:if="${!product.active}" class="product-inactive-overlay">
                 <span>Sản phẩm hiện đã ẩn</span>
@@ -49,9 +78,20 @@
             <i class="fa-regular fa-star"></i>
         </button>
         <h2 th:text="${product.name}"></h2>
+
+        <div class="product-tags" th:if="${product.tags != null and !#lists.isEmpty(product.tags)}">
+            <a th:each="t : ${product.tags}"
+               th:href="@{/products(tag=${t.slug})}"
+               class="tag-item-link">
+                <span class="tag-badge">
+                    <i class="fas fa-tag"></i>
+                    <span th:text="${t.name}"></span>
+                </span>
+            </a>
+        </div>
+
         <div class="price" id="price">Chọn phiên bản</div>
         <p th:text="${product.description}"></p>
-
 
         <div class="variant-group">
             <b>Màu sắc:</b><br>
@@ -111,11 +151,13 @@
 
     <button id="loadMoreBtn" th:if="${relatedProducts.size() > 5}">Xem thêm</button>
 </div>
+
 <form id="addToCartForm" th:action="@{/cart/add}" method="post">
     <input type="hidden" name="cartId" th:value="${cartId}">
     <input type="hidden" name="variantId" id="variantIdForm">
     <input type="hidden" name="quantity" value="1">
 </form>
+
 <div id="success-box" class="error-box" style="display:none;">
     <p style="background:#2e7d32;border:none;">
         <i class="fa-solid fa-check"></i>
@@ -124,8 +166,8 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-<script th:src="@{/js/common.js}"></script>
-<script th:src="@{/js/product-detail.js}"></script>
+<script th:src="@{/js/user/common.js}"></script>
+<script th:src="@{/js/user/product-detail.js}"></script>
 </body>
 
 </html>

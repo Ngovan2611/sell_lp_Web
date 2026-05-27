@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_DATABASE: SellLP
+      MYSQL_ROOT_PASSWORD: 20042005
+    ports:
+      - "3307:3306"
+    # Đã bỏ phần volumes init-sql để nhường quyền chèn dữ liệu mẫu cho Spring Boot quản lý
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p20042005"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s # Cho MySQL 15 giây để khởi tạo ban đầu trước khi kiểm tra trạng thái
+
+  selllp-app:
+    build: .
+    container_name: selllp-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy # Ép ứng dụng đợi đến khi MySQL hoạt động hoàn toàn mới khởi chạy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/SellLP?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 20042005
+      SPRING_APPLICATION_NAME: sell-lp
+
+      # 1. Ép Hibernate tự động tạo cấu trúc bảng từ các class @Entity trong code của bạn
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # 2. Bắt Spring Boot HOÃN thực thi file import.sql/data.sql cho đến khi Hibernate tạo xong hết các bảng
+      SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION: "true"
+
+      # 3. Chỉ định rõ ràng chế độ chạy script khởi tạo dữ liệu (luôn luôn thực hiện khi start app)
+      SPRING_SQL_INIT_MODE: always

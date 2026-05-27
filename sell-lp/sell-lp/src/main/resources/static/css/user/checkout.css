@@ -1,0 +1,496 @@
+/* =========================================================================
+   GENERAL & LAYOUT
+   ========================================================================= */
+body {
+    background: #fdfaf9; /* Nền xám trắng pha ánh hồng nhẹ đồng bộ giỏ hàng */
+    font-family: Arial, sans-serif; /* Giữ nguyên hệ font gốc */
+    margin: 0;
+    padding: 0;
+    color: #334155;
+}
+
+.container {
+    width: 75%; /* Giữ nguyên tỉ lệ gốc */
+    margin: 30px auto;
+}
+
+.box {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 6px -1px rgba(202, 16, 16, 0.01), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hiệu ứng hover nổi khối nhẹ nhàng cho các vùng nội dung */
+.box:hover {
+    border-color: rgba(202, 16, 16, 0.15);
+    box-shadow: 0 10px 15px -3px rgba(202, 16, 16, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}
+
+/* ===== TIÊU ĐỀ (GIỮ NGUYÊN CỠ CHỮ) ===== */
+h2 {
+    font-size: 28px; /* Kích thước h2 mặc định hoặc từ gốc */
+    margin-bottom: 25px;
+    color: #0f172a;
+}
+
+h3 {
+    margin-bottom: 15px;
+    font-size: 18px; /* Giữ nguyên cỡ chữ gốc */
+    border-left: 4px solid #ca1010; /* Thay đổi sang Đỏ SellLP */
+    padding-left: 10px;
+    color: #0f172a;
+    font-weight: bold;
+}
+
+/* ===== ĐỊA CHỈ & LIÊN KẾT ===== */
+.address-empty {
+    color: #ca1010;
+    font-weight: 500;
+}
+
+/* Thao tác đổi địa chỉ */
+.box a, .link-change-address {
+    color: #ca1010;
+    text-decoration: none;
+    font-size: 14px; /* Giữ nguyên cỡ chữ gốc */
+    font-weight: 500;
+    display: inline-block;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.link-change-address::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: #ca1010;
+    transition: width 0.2s ease;
+}
+
+.link-change-address:hover::after {
+    width: 100%;
+}
+
+/* Nút thêm địa chỉ cách điệu sạch sẽ hơn */
+.btn-add-address {
+    background: #fff;
+    color: #ca1010;
+    border: 1px solid #ca1010;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px; /* Giữ nguyên cỡ chữ gốc */
+    margin-top: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-add-address:hover {
+    background: #fff5f5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(202, 16, 16, 0.1);
+}
+
+.address-box p {
+    margin: 4px 0;
+}
+
+.address-box b {
+    font-size: 15px; /* Giữ nguyên cỡ chữ gốc */
+    color: #0f172a;
+}
+
+/* ===== DANH SÁCH SẢN PHẨM PHÂN CỘT THẲNG HÀNG ===== */
+.item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 15px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.item h4 {
+    margin: 0;
+    font-size: 15px; /* Giữ nguyên cỡ chữ gốc */
+    color: #1e293b;
+}
+
+/* Tag mini bọc thông số cấu hình sản phẩm */
+.item .text-muted {
+    font-size: 13px; /* Giữ nguyên cỡ chữ gốc */
+    color: #ca1010;
+    background: #fff5f5;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 5px;
+    border: 1px solid #ffe3e3;
+}
+
+.item p {
+    margin: 5px 0 0;
+    font-size: 13px; /* Giữ nguyên cỡ chữ gốc */
+    color: #64748b;
+}
+
+.item span {
+    font-weight: bold;
+    color: #ca1010; /* Đỏ thương hiệu */
+    font-size: 15px; /* Giữ nguyên cỡ chữ gốc */
+}
+
+/* ===== PHƯƠNG THỨC THANH TOÁN (CUSTOM RADIO BOX) ===== */
+.payment-method label {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.payment-method label:hover {
+    border-color: #ca1010;
+    background: #fff5f5;
+}
+
+/* Đổi màu chấm tròn radio khi chọn */
+.payment-method input[type="radio"] {
+    margin-right: 12px;
+    accent-color: #ca1010;
+    transform: scale(1.1);
+}
+
+/* ===== KHỐI TỔNG KẾT THANH TOÁN STICKY ===== */
+.summary {
+    background: #fff;
+    border: 1px solid #ca1010; /* Chuyển thành viền mảnh cao cấp, không thô */
+    box-shadow: 0 10px 25px -5px rgba(202, 16, 16, 0.1);
+    position: sticky;
+    bottom: 15px;
+    z-index: 10;
+}
+
+.summary p {
+    margin: 10px 0;
+    font-size: 15px; /* Giữ nguyên cỡ chữ gốc */
+    display: flex;
+    justify-content: space-between;
+    color: #475569;
+}
+
+.summary h3 {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px; /* Giữ nguyên cỡ chữ gốc */
+    color: #ca1010;
+    border: none;
+    margin-top: 15px;
+    padding-left: 0;
+}
+
+/* Nút đặt hàng dải màu gradient mượt mà */
+.btn {
+    width: 100%;
+    background: linear-gradient(135deg, #ca1010, #ff4757, #ca1010);
+    background-size: 200% auto;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px; /* Giữ nguyên cỡ chữ gốc */
+    font-weight: bold;
+    margin-top: 15px;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 15px rgba(202, 16, 16, 0.3);
+}
+
+.btn:hover {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(202, 16, 16, 0.4);
+}
+
+/* =========================================================================
+   POPUPS SYSTEM (THÊM / SỬA / CHỌN ĐỊA CHỈ)
+   ========================================================================= */
+.addressPopup, .popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Căn giữa màn hình tuyệt đối */
+    width: 500px; /* Tăng chiều rộng lên chút cho thông thoáng */
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+/* Popup chọn địa chỉ (Rộng hơn để chứa bảng danh sách) */
+.popup {
+    width: 650px;
+}
+
+.addressPopup h3, .popup h3 {
+    border-left: none;
+    padding-left: 0;
+    font-size: 20px;
+    margin-top: 0;
+    color: #0f172a;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+}
+
+.addressPopup input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.addressPopup input:focus {
+    border-color: #ca1010;
+}
+
+.addressPopup button {
+    width: 100%;
+    padding: 12px;
+    background: #ca1010;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.addressPopup button:hover {
+    background: #b00d0d;
+}
+
+/* Container danh sách địa chỉ có thanh cuộn mượt */
+.address-list-container {
+    max-height: 350px;
+    overflow-y: auto;
+    margin-top: 15px;
+    padding-right: 8px;
+}
+
+.address-item {
+    border-bottom: 1px solid #f1f5f9;
+    padding: 15px 0;
+}
+
+.address-item:last-child {
+    border-bottom: none;
+}
+
+.address-item p {
+    margin: 4px 0;
+}
+
+/* Nút chức năng trong danh sách địa chỉ */
+.address-item button {
+    background: #ca1010;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.address-item button:hover {
+    background: #b00d0d;
+}
+
+/* Nút Sửa (Màu xám tối giản để phân biệt với nút Chọn đỏ) */
+.address-item button[onclick*="openEditAddressPopup"] {
+    background: #64748b;
+}
+
+.address-item button[onclick*="openEditAddressPopup"]:hover {
+    background: #475569;
+}
+
+/* ===== THANH CUỘN CUSTOM MẢNH KHẢNH CRUISE ===== */
+.address-list-container::-webkit-scrollbar {
+    width: 5px;
+}
+.address-list-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.address-list-container::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+
+/* ===== NÚT ĐÓNG POPUP (×) ===== */
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #ca1010;
+}
+
+/* LỚP PHỦ NỀN ĐEN MỜ */
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.4); /* Đổi sang màu slate mờ sâu rộng */
+    z-index: 999;
+}
+
+/* ===== TOAST THÔNG BÁO THÀNH CÔNG ===== */
+#successMessage {
+    display: none;
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: #00a86b; /* Xanh lá mint thành công */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 168, 107, 0.25);
+    z-index: 2000;
+    font-size: 14px; /* Giữ nguyên cỡ chữ gốc */
+}
+
+/* ===== SUCCESS POPUP ĐẶT HÀNG (GIỮ NGUYÊN HOÀN TOÀN BLUR GỐC CỦA BẠN) ===== */
+.success-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.success-content {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transform: scale(0.9);
+    opacity: 0;
+    animation: popupFade 0.3s ease forwards, shake 0.4s ease 0.3s;
+}
+
+.checkmark-svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+.circle {
+    stroke: #00a86b;
+    stroke-width: 3;
+    stroke-dasharray: 157;
+    stroke-dashoffset: 157;
+    animation: drawCircle 0.6s ease-out forwards;
+}
+
+.check {
+    stroke: #00a86b;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: drawCheck 0.4s ease-out 0.6s forwards;
+}
+
+@keyframes drawCircle { to { stroke-dashoffset: 0; } }
+@keyframes drawCheck { to { stroke-dashoffset: 0; } }
+@keyframes popupFade { to { transform: scale(1); opacity: 1; } }
+@keyframes shake {
+    0% { transform: scale(1) translateX(0); }
+    25% { transform: scale(1) translateX(-2px); }
+    50% { transform: scale(1) translateX(2px); }
+    75% { transform: scale(1) translateX(-1px); }
+    100% { transform: scale(1) translateX(0); }
+}
+
+/* =========================================================================
+   RESPONSIVE DESIGN (TỐI ƯU CHO ĐIỆN THOẠI)
+   ========================================================================= */
+@media (max-width: 768px) {
+    .container {
+        width: 92%;
+        margin: 15px auto;
+    }
+
+    .item {
+        grid-template-columns: 70px 1fr;
+        gap: 12px;
+    }
+
+    .item div:last-child {
+        grid-column: 2;
+        text-align: left;
+        margin-top: 5px;
+    }
+
+    .summary {
+        position: static;
+        border-width: 1px;
+    }
+
+    .addressPopup, .popup {
+        width: 90%;
+        padding: 20px;
+    }
+}

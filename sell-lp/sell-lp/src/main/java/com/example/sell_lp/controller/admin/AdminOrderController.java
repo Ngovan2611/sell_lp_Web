@@ -19,25 +19,37 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @PreAuthorize("hasRole('ADMIN')")
-
 public class AdminOrderController {
 
     AdminOrderService orderService;
 
     @GetMapping
     public String getAllOrders(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(value = "orderId", required = false) String orderId,
+            @RequestParam(value = "customerName", required = false) String customerName,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
             Model model) {
 
+        // Sắp xếp đơn hàng theo ngày tạo mới nhất (createdAt)
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        Page<OrderResponse> orderPage = orderService.getAllOrders(pageable);
+        // Gọi đúng hàm tìm kiếm nâng cao từ Service
+        Page<OrderResponse> orderPage = orderService.searchOrdersAdmin(orderId, customerName, phone, status, pageable);
 
+        // Đẩy dữ liệu danh sách và phân trang ra Thymeleaf
         model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", orderPage.getTotalPages());
         model.addAttribute("totalItems", orderPage.getTotalElements());
+
+        // Gửi ngược lại các giá trị tìm kiếm để giữ trạng thái trên các ô Input/Select của HTML
+        model.addAttribute("orderId", orderId);
+        model.addAttribute("customerName", customerName);
+        model.addAttribute("phone", phone);
+        model.addAttribute("selectedStatus", status);
 
         return "admin/order-manage";
     }

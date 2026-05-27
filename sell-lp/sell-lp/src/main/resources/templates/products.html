@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>Danh sách sản phẩm</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-    <link rel="stylesheet" th:href="@{/css/products.css}">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/user/common.css}">
+    <link rel="stylesheet" th:href="@{/css/user/products.css}">
+    <link rel="stylesheet" th:href="@{/css/user/sidebar.css}">
 </head>
 
 <body>
@@ -26,12 +26,10 @@
 
     <form th:action="@{/products}" method="get" class="filter-form">
 
-        <!-- CATEGORY -->
-        <input type="hidden"
-               name="categoryId"
-               th:value="${categoryId}">
+        <input type="hidden" name="categoryId" th:value="${categoryId}">
 
-        <!-- SEARCH -->
+        <input type="hidden" name="tag" th:value="${currentTag}">
+
         <div class="search-box">
             <input type="text"
                    name="keyword"
@@ -43,58 +41,22 @@
             </button>
         </div>
 
-        <!-- PRICE -->
         <select name="price" class="filter-select">
-
-            <option value="">
-                Mọi mức giá
-            </option>
-
-            <option value="1"
-                    th:selected="${price == '1'}">
-                Dưới 10 triệu
-            </option>
-
-            <option value="2"
-                    th:selected="${price == '2'}">
-                10 - 20 triệu
-            </option>
-
-            <option value="3"
-                    th:selected="${price == '3'}">
-                Trên 20 triệu
-            </option>
-
+            <option value="">Mọi mức giá</option>
+            <option value="1" th:selected="${price == '1'}">Dưới 10 triệu</option>
+            <option value="2" th:selected="${price == '2'}">10 - 20 triệu</option>
+            <option value="3" th:selected="${price == '3'}">Trên 20 triệu</option>
         </select>
 
-        <!-- SORT -->
         <select name="sort" class="filter-select">
-
-            <option value="newest"
-                    th:selected="${sort == 'newest'}">
-                Mới nhất
-            </option>
-
-            <option value="price_asc"
-                    th:selected="${sort == 'price_asc'}">
-                Giá thấp đến cao
-            </option>
-
-            <option value="price_desc"
-                    th:selected="${sort == 'price_desc'}">
-                Giá cao đến thấp
-            </option>
-
-            <option value="name_asc"
-                    th:selected="${sort == 'name_asc'}">
-                Tên A-Z
-            </option>
-
+            <option value="newest" th:selected="${sort == 'newest'}">Mới nhất</option>
+            <option value="price_asc" th:selected="${sort == 'price_asc'}">Giá thấp đến cao</option>
+            <option value="price_desc" th:selected="${sort == 'price_desc'}">Giá cao đến thấp</option>
+            <option value="name_asc" th:selected="${sort == 'name_asc'}">Tên A-Z</option>
         </select>
 
         <button class="apply-filter-btn" type="submit">
-            <i class="fa-solid fa-filter"></i>
-            Lọc
+            <i class="fa-solid fa-filter"></i> Lọc
         </button>
 
     </form>
@@ -126,34 +88,34 @@
 
 <div class="pagination" th:if="${totalPages > 1}">
     <a th:if="${currentPage > 0}"
-       th:href="@{/products(categoryId=${categoryId}, page=${currentPage-1}, sort=${sort})}">
+       th:href="@{/products(categoryId=${categoryId}, keyword=${keyword}, price=${price}, tag=${currentTag}, sort=${sort}, page=${currentPage-1})}">
         <i class="fa-solid fa-chevron-left"></i>
     </a>
 
-    <a th:href="@{/products(categoryId=${categoryId}, page=0, sort=${sort})}"
+    <a th:href="@{/products(categoryId=${categoryId}, keyword=${keyword}, price=${price}, tag=${currentTag}, sort=${sort}, page=0)}"
        th:classappend="${currentPage == 0} ? 'active' : ''">1</a>
 
     <span th:if="${currentPage > 2}">...</span>
 
     <span th:each="i : ${#numbers.sequence(currentPage > 0 ? currentPage-1 : 0, currentPage+1 < totalPages ? currentPage+1 : totalPages-1)}"
           th:if="${i > 0 and i < totalPages-1}">
-        <a th:href="@{/products(categoryId=${categoryId}, page=${i}, sort=${sort})}"
+        <a th:href="@{/products(categoryId=${categoryId}, keyword=${keyword}, price=${price}, tag=${currentTag}, sort=${sort}, page=${i})}"
            th:text="${i + 1}"
            th:classappend="${i == currentPage} ? 'active' : ''"></a>
     </span>
 
     <span th:if="${currentPage < totalPages - 3}">...</span>
 
-    <a th:href="@{/products(categoryId=${categoryId}, page=${totalPages-1}, sort=${sort})}"
+    <a th:href="@{/products(categoryId=${categoryId}, keyword=${keyword}, price=${price}, tag=${currentTag}, sort=${sort}, page=${totalPages-1})}"
        th:text="${totalPages}"
        th:classappend="${currentPage == totalPages-1} ? 'active' : ''"></a>
 
     <a th:if="${currentPage < totalPages - 1}"
-       th:href="@{/products(categoryId=${categoryId}, page=${currentPage+1}, sort=${sort})}">
+       th:href="@{/products(categoryId=${categoryId}, keyword=${keyword}, price=${price}, tag=${currentTag}, sort=${sort}, page=${currentPage+1})}">
         <i class="fa-solid fa-chevron-right"></i>
     </a>
-
 </div>
+
 <div class="no-results" th:if="${#lists.isEmpty(products)}">
     <div class="no-results-inner">
         <div class="icon-box">
@@ -172,7 +134,7 @@
     </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
-<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/user/common.js}"></script>
 
 </body>
 </html>

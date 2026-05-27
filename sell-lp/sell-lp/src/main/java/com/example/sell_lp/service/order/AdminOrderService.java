@@ -54,18 +54,47 @@ public class AdminOrderService {
                 "đơn hàng: #" + String.valueOf(order.getOrderId()),
                 order.getUser().getUserId());
     }
-    public Page<OrderResponse> getAllOrders(Pageable pageable) {
-        Page<Order> orderPage = orderRepository.findAll(pageable);
+    public Page<OrderResponse> searchOrdersAdmin(
+            String orderIdStr,
+            String customerName,
+            String phone,
+            String status,
+            Pageable pageable) {
 
+        Long orderId = null;
+
+        // 1. Kiểm tra và ép kiểu an toàn từ String sang Long cho orderId
+        if (orderIdStr != null && !orderIdStr.trim().isEmpty()) {
+            try {
+                orderId = Long.parseLong(orderIdStr.trim());
+            } catch (NumberFormatException e) {
+                // Nếu admin vô tình gõ chữ vào ô mã đơn, trả về trang trống luôn thay vì bị crash lỗi 500
+                return Page.empty();
+            }
+        }
+
+        // 2. Làm sạch dữ liệu chuỗi (Tránh khoảng trắng thừa)
+        String cleanedName = (customerName != null && !customerName.trim().isEmpty()) ? customerName.trim() : null;
+        String cleanedPhone = (phone != null && !phone.trim().isEmpty()) ? phone.trim() : null;
+        String cleanedStatus = (status != null && !status.trim().isEmpty()) ? status.trim() : null;
+
+        // 3. Gọi Repository để lấy danh sách Entity phân trang theo bộ lọc
+        Page<Order> orderPage = orderRepository.searchOrdersAdmin(orderId, cleanedName, cleanedPhone, cleanedStatus, pageable);
+
+        // 4. Giữ nguyên logic Map dữ liệu sang OrderResponse của bạn
         return orderPage.map(order -> {
             OrderResponse res = orderMapper.toOrderResponse(order);
 
+            // Map danh sách items con
             res.setItems(order.getOrderItems().stream()
-                    .map(orderMapper::toOrderItemResponse).toList());
+                    .map(orderMapper::toOrderItemResponse)
+                    .toList());
 
+            // Map danh sách lịch sử thanh toán nếu có
             if (order.getPayments() != null) {
                 res.setPayments(order.getPayments().stream()
-                        .map(paymentMapper::toResponse).toList());
+                        .map(paymentMapper::toResponse)
+                        .toList());
             }
             return res;
         });

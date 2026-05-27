@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <title>Thông tin cá nhân</title>
 
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-    <link rel="stylesheet" th:href="@{/css/profile.css}">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/user/common.css}">
+    <link rel="stylesheet" th:href="@{/css/user/profile.css}">
+    <link rel="stylesheet" th:href="@{/css/user/sidebar.css}">
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -98,7 +98,7 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/user/common.js}"></script>
 <script>
     function sendOtp() {
         const email = document.getElementById("emailInput").value;

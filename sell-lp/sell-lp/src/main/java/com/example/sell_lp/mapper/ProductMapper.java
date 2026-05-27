@@ -2,8 +2,10 @@ package com.example.sell_lp.mapper;
 
 import com.example.sell_lp.dto.request.product.ProductRequest;
 import com.example.sell_lp.dto.response.product.ProductResponse;
+import com.example.sell_lp.dto.response.product.TagResponse;
 import com.example.sell_lp.entity.Product;
 import com.example.sell_lp.entity.ProductImage;
+import com.example.sell_lp.entity.Tag;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -35,5 +37,5 @@ public interface ProductMapper {
                 .map(ProductImage::getUrl)
                 .toList();
     }
-
+    TagResponse toTagResponse(Tag tag);
 }

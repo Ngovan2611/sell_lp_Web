@@ -24,7 +24,7 @@ public class ProductService {
     ProductRepository productRepository;
     ProductMapper productMapper;
     CategoryService categoryService;
-
+    ProductPageService productPageService;
     public List<ProductResponse> getAllProductsByCategoryDemo(Integer categoryId) {
         List<Product> products = productRepository.findByCategoryCategoryIdDemo(categoryId);
 
@@ -35,71 +35,23 @@ public class ProductService {
 
     }
     public Page<ProductResponse> getProductsForUser(
-            Integer categoryId,
-            String keyword,
-            String price,
-            String sort,
-            Pageable pageable
+            Integer categoryId, String keyword, String price,
+            String tagSlug, String sort, Pageable pageable
     ) {
+        String cleanKeyword = productPageService.cleanString(keyword);
+        String cleanPrice = productPageService.cleanString(price);
+        String cleanTag = productPageService.cleanString(tagSlug);
+        String currentSort = (sort != null) ? sort : "default";
 
-        Page<Product> productPage;
-
-        switch (sort) {
-
-            case "price_asc":
-
-                productPage =
-                        productRepository
-                                .searchProductsPriceAsc(
-                                        keyword,
-                                        categoryId,
-                                        price,
-                                        pageable
-                                );
-
-                break;
-
-            case "price_desc":
-
-                productPage =
-                        productRepository
-                                .searchProductsPriceDesc(
-                                        keyword,
-                                        categoryId,
-                                        price,
-                                        pageable
-                                );
-
-                break;
-
-            case "name_asc":
-
-                productPage =
-                        productRepository
-                                .searchProductsNameAsc(
-                                        keyword,
-                                        categoryId,
-                                        price,
-                                        pageable
-                                );
-
-                break;
-
-            default:
-
-                productPage =
-                        productRepository
-                                .searchProductsNewest(
-                                        keyword,
-                                        categoryId,
-                                        price,
-                                        pageable
-                                );
-        }
+        Page<Product> productPage = switch (currentSort) {
+            case "price_asc" -> productRepository.searchProductsPriceAsc(cleanKeyword, categoryId, cleanPrice, cleanTag, pageable);
+            case "price_desc" -> productRepository.searchProductsPriceDesc(cleanKeyword, categoryId, cleanPrice, cleanTag, pageable);
+            case "name_asc" -> productRepository.searchProductsNameAsc(cleanKeyword, categoryId, cleanPrice, cleanTag, pageable);
+            default -> productRepository.searchProductsNewest(cleanKeyword, categoryId, cleanPrice, cleanTag, pageable);
+        };
 
         return productPage.map(productMapper::productToProductResponse);
     }
-
 
     public ProductResponse getProductById(Long productId) {
         Product product = productRepository.findByProductId(productId);

@@ -36,7 +36,6 @@
     width: 100%;
 }
 
-/* Sửa lỗi: Thẻ <a> bọc ngoài .stat-card phải chiếm trọn không gian ô lưới */
 .header-stats a {
     display: flex;
     width: 100%;

@@ -329,7 +329,6 @@ button:disabled {
 .favorite-btn i::after{
     content: "\f005";
 
-    font-family: "Font Awesome 6 Free";
     font-weight: 900;
 
     position: absolute;
@@ -439,4 +438,50 @@ button:disabled {
 /* Nếu tất cả button bên trong đều ẩn, ẩn luôn cả nhóm (Dùng cho trình duyệt hiện đại) */
 .variant-group:has(button:empty:only-of-type) {
     display: none;
+}
+
+/* Nút Xem thêm */
+#loadMoreBtn {
+    display: block;
+    margin: 30px auto;
+    padding: 12px 28px;
+
+    background: #000;
+    color: #fff;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+/* Hover */
+#loadMoreBtn:hover {
+    background: #f50606;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+/* Khi click */
+#loadMoreBtn:active {
+    transform: scale(0.98);
+}
+
+/* Disabled */
+#loadMoreBtn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Căn giữa khu vực */
+.related-products-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

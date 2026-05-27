@@ -1,4 +1,5 @@
-package com.example.sell_lp.dto.request.product;
+package com.example.sell_lp.dto.response.product;
+
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -6,21 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
-
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
-@Data
-public class ProductRequest {
+public class TagResponse {
+    Long tagId;
     String name;
-    Integer categoryId;
-    String description;
-    String imageUrl;
-
-    List<ProductVariantRequest> variants;
-    List<TagRequest> tagIds;
+    String slug;
 }
-

@@ -14,13 +14,14 @@ import java.util.List;
 
 @Data
 public class ProductUpdateRequest {
-    private Integer productId;
-    private String name;
-    private String description;
-    private Integer categoryId;
-    private boolean active;
+    Integer productId;
+    String name;
+    String description;
+    Integer categoryId;
+    boolean active;
 
-    private List<String> imageUrls;
+    List<String> imageUrls;
 
-    private List<ProductVariantUpdateRequest> variants;
+    List<ProductVariantUpdateRequest> variants;
+    List<TagRequest> tagIds;
 }

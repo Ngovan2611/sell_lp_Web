@@ -6,6 +6,7 @@ import com.example.sell_lp.dto.response.product.ProductResponse;
 import com.example.sell_lp.service.product.AdminProductService;
 import com.example.sell_lp.service.category.CategoryService;
 import com.example.sell_lp.service.product.ProductService;
+import com.example.sell_lp.service.product.TagService;
 import com.example.sell_lp.service.variant.ColorService;
 import com.example.sell_lp.service.variant.ImageUploadService;
 import com.example.sell_lp.service.variant.RamService;
@@ -20,15 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -43,47 +36,37 @@ import java.util.List;
 public class AdminProductController {
 
     ColorService colorService;
-
     RamService ramService;
-
     RomService romService;
-
     AdminProductService adminProductService;
-
     ProductService productService;
     CategoryService categoryService;
     ImageUploadService imageUploadService;
+    TagService tagService;
 
     @GetMapping
     public String getAllProducts(
             Model model,
-
             @RequestParam(required = false) String keyword,
-
             @RequestParam(required = false) Integer category,
-
             @RequestParam(required = false) String stock,
-
             @RequestParam(required = false) Boolean active,
-
-            @RequestParam(required = false, defaultValue = "newest")
-            String sort,
-
-            @RequestParam(defaultValue = "1")
-            int page,
-
-            @RequestParam(defaultValue = "10")
-            int size
+            @RequestParam(required = false) String tag, // 2. Nhận thêm tham số tag lọc từ thanh URL bộ lọc Admin
+            @RequestParam(required = false, defaultValue = "newest") String sort,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
 
         PageRequest pageable = PageRequest.of(page - 1, size);
 
+        // 3. Truyền biến 'tag' (tagSlug) vào phương thức getAdminProducts của Service mà bạn đã nâng cấp
         Page<ProductResponse> productPage =
                 adminProductService.getAdminProducts(
                         keyword,
                         category,
                         stock,
                         active,
+                        tag, // Gắn tag vào đây
                         sort,
                         pageable
                 );
@@ -99,10 +82,13 @@ public class AdminProductController {
         model.addAttribute("stock", stock);
         model.addAttribute("active", active);
         model.addAttribute("sort", sort);
-        model.addAttribute("lowStockCount",
-                adminProductService.countLowStockProducts());
-        model.addAttribute("categories",
-                categoryService.findAll());
+
+        // 4. Giữ lại giá trị tag vừa chọn và nạp danh sách tag để render ra thẻ <select> trên bộ lọc
+        model.addAttribute("selectedTag", tag);
+        model.addAttribute("tags", tagService.getAllTags());
+
+        model.addAttribute("lowStockCount", adminProductService.countLowStockProducts());
+        model.addAttribute("categories", categoryService.findAll());
 
         return "admin/product-manage";
     }
@@ -114,8 +100,12 @@ public class AdminProductController {
         model.addAttribute("colors", colorService.getAllColors());
         model.addAttribute("rams", ramService.getAllRam());
         model.addAttribute("roms", romService.getAllRom());
+
+        // 5. Nạp danh sách các tag ra ngoài form để admin tích chọn (ví dụ qua thẻ checkbox)
+        model.addAttribute("tags", tagService.getAllTags());
         return "admin/product-form";
     }
+
     @PostMapping("/add")
     public String createProduct(@Valid @ModelAttribute("productRequest") ProductRequest request) {
         adminProductService.createProduct(request);
@@ -130,17 +120,19 @@ public class AdminProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(@PathVariable Integer id, @RequestBody ProductUpdateRequest request) {
+        // Bản thân cấu trúc hàm updateProduct trong AdminProductService đã được nâng cấp xử lý tagIds trước đó,
+        // Dữ liệu từ JSON gửi lên dính kèm trường tagIds sẽ tự động được map và lưu tại đây.
         ProductResponse response = adminProductService.updateProduct(id, request);
         return ResponseEntity.ok(response);
     }
-    // Thêm ImageUploadService vào constructor
+
     @PostMapping("/upload")
     @ResponseBody
     public ResponseEntity<List<String>> uploadImages(@RequestParam("files") MultipartFile[] files) {
         List<String> urls = new ArrayList<>();
         try {
             for (MultipartFile file : files) {
-                String url = imageUploadService.uploadImage(file); // Service đã viết ở bước trước
+                String url = imageUploadService.uploadImage(file);
                 urls.add(url);
             }
             return ResponseEntity.ok(urls);
