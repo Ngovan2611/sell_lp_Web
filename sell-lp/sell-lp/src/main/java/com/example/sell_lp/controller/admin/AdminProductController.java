@@ -132,7 +132,7 @@ public class AdminProductController {
         List<String> urls = new ArrayList<>();
         try {
             for (MultipartFile file : files) {
-                String url = imageUploadService.uploadImage(file);
+                String url = imageUploadService.uploadImage(file, "products");
                 urls.add(url);
             }
             return ResponseEntity.ok(urls);
