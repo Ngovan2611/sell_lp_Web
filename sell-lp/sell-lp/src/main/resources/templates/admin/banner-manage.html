@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Quản Lý Banner - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin/admin-common.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/banner.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-header :: div}"></div>
+
+<div class="main-content">
+    <div class="page-header">
+        <h2 class="page-title">Quản Lý Banner Giao Diện</h2>
+        <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Thêm Banner Mới</button>
+    </div>
+
+    <div class="stat-card data-table-container">
+        <table class="management-table">
+            <thead>
+            <tr>
+                <th>STT</th>
+                <th>Hình ảnh</th>
+                <th>Tiêu đề Banner</th>
+                <th>Liên kết (Link URL)</th>
+                <th>Trạng thái</th>
+                <th class="col-actions">Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="banner, iter : ${banners}">
+                <td data-label="STT" th:text="${iter.index + 1}">1</td>
+                <td data-label="Hình ảnh">
+                    <img th:src="${banner.imageUrl}" class="banner-preview" alt="Banner">
+                </td>
+                <td data-label="Tiêu đề Banner" class="col-title" th:text="${banner.title}">Mùa Hè Rực Rỡ</td>
+                <td data-label="Liên kết (Link URL)" class="col-link" th:text="${banner.linkUrl}">/products?category=summer</td>
+                <td data-label="Trạng thái">
+                    <span th:if="${banner.active}" class="badge badge-success">Đang hiển thị</span>
+                    <span th:unless="${banner.active}" class="badge badge-danger">Đang ẩn</span>
+                </td>
+                <td data-label="Hành động" class="col-actions">
+                    <button type="button" class="btn btn-edit"
+                            th:data-id="${banner.id}"
+                            th:data-title="${banner.title}"
+                            th:data-link="${banner.linkUrl}"
+                            th:data-image="${banner.imageUrl}"
+                            th:data-active="${banner.active}"
+                            onclick="openEditModal(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            th:class="${banner.active} ? 'btn btn-toggle btn-toggle-on' : 'btn btn-primary btn-toggle'"
+                            th:onclick="'toggleBannerStatus(' + ${banner.id} + ')'">
+                        <i th:class="${banner.active} ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                    <button type="button" class="btn btn-delete"
+                            th:onclick="'deleteBanner(' + ${banner.id} + ')'">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(banners)}">
+                <td colspan="6" class="empty-row">Chưa có banner nào được tạo.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="addBannerModal" class="custom-modal">
+    <div class="modal-content">
+        <h3 class="modal-title">Thêm Mới Banner</h3>
+        <form id="addForm" th:action="@{/admin/banners/save}" method="POST" th:object="${bannerRequest}">
+            <input type="hidden" id="addUploadedUrl" th:field="*{imageUrl}" required>
+
+            <div class="form-group">
+                <label>Tiêu đề Banner</label>
+                <input type="text" th:field="*{title}" class="form-control" placeholder="Nhập tiêu đề..." required>
+            </div>
+            <div class="form-group">
+                <label>Đường dẫn liên kết (URL)</label>
+                <input type="text" th:field="*{linkUrl}" class="form-control" placeholder="Ví dụ: /products, /sale...">
+            </div>
+            <div class="form-group">
+                <label>Chọn tập tin ảnh</label>
+                <input type="file" id="addFileControl" class="form-control" accept="image/*" required onchange="uploadAndPreview(this, 'addPreview', 'addPreviewBox', 'addUploadedUrl', 'addSubmitBtn', 'addStatus')">
+            </div>
+            <div class="form-group preview-box" id="addPreviewBox">
+                <span class="status-text" id="addStatus" style="color: #2563eb;"></span>
+                <img id="addPreview" src="" class="img-current-edit" alt="Add Preview">
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addBannerModal')">Hủy</button>
+                <button type="submit" id="addSubmitBtn" class="btn btn-primary">Lưu Thay Đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="editBannerModal" class="custom-modal">
+    <div class="modal-content">
+        <h3 class="modal-title">Chỉnh Sửa Banner</h3>
+        <form id="editForm" method="POST">
+            <input type="hidden" id="editUploadedUrl" name="imageUrl">
+
+            <div class="form-group">
+                <label>Tiêu đề Banner</label>
+                <input type="text" id="editTitle" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Đường dẫn liên kết (URL)</label>
+                <input type="text" id="editLinkUrl" name="linkUrl" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Ảnh hiện tại trên hệ thống</label>
+                <img id="editPreview" src="" class="img-current-edit" alt="Current Preview">
+            </div>
+            <div class="form-group">
+                <label>Thay đổi ảnh mới (Để trống nếu giữ nguyên ảnh cũ)</label>
+                <input type="file" id="editFileForm" class="form-control" accept="image/*" onchange="uploadAndPreview(this, 'editNewPreview', 'editPreviewBox', 'editUploadedUrl', 'editSubmitBtn', 'editStatus')">
+            </div>
+            <div class="form-group preview-box" id="editPreviewBox">
+                <span class="status-text" id="editStatus" style="color: #10b981;"></span>
+                <img id="editNewPreview" src="" class="img-current-edit" alt="New Edit Preview">
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="editActive" name="active" value="true" class="checkbox-control">
+                <label for="editActive" class="checkbox-label">Hiển thị công khai</label>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editBannerModal')">Hủy</button>
+                <button type="submit" id="editSubmitBtn" class="btn btn-primary">Cập Nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/admin/admin-common.js}"></script>
+<script th:src="@{/js/admin/banner.js}"></script>
+
+</body>
+</html>

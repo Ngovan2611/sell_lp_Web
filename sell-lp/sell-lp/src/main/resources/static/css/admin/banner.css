@@ -1,0 +1,390 @@
+    /* --- LAYOUT & UTILITIES --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 15px;
+}
+.page-title {
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+.data-table-container {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* --- TABLE STYLES (DESKTOP) --- */
+.management-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.management-table thead {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+.management-table th {
+    padding: 16px 20px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.management-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+}
+.management-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+.management-table td {
+    padding: 16px 20px;
+    color: #334155;
+}
+.col-title {
+    font-weight: 600;
+    color: #1e293b;
+}
+.col-link {
+    color: #64748b;
+    font-family: monospace;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+.col-actions {
+    text-align: center;
+    white-space: nowrap;
+}
+.empty-row {
+    padding: 40px;
+    text-align: center;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* --- BUTTONS & BADGES --- */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+.btn-primary {
+    background: #4361ee;
+    color: white;
+    box-shadow: 0 4px 10px rgba(67, 97, 238, 0.2);
+}
+.btn-primary:hover {
+    background: #304fd0;
+    transform: translateY(-1px);
+}
+.btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+}
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+.btn-edit {
+    padding: 8px 12px;
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+.btn-edit:hover { background: #dcfce7; }
+
+.btn-toggle {
+    padding: 8px 12px;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+.btn-toggle-on {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+.btn-delete {
+    padding: 8px 12px;
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fee2e2;
+}
+.btn-delete:hover { background: #fee2e2; }
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-danger { background: #fee2e2; color: #991b1b; }
+
+/* --- IMAGES & PREVIEWS --- */
+.banner-preview {
+    width: 140px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.img-current-edit {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 5px;
+    border: 1px dashed #cbd5e1;
+    background: #f8fafc;
+}
+.preview-box {
+    display: none;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
+    margin-top: 12px;
+}
+.status-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* --- MODAL DIALOGS --- */
+.custom-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    justify-content: center; align-items: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 480px;
+    max-width: 100%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-title {
+    margin-top: 0;
+    color: #0f172a;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.form-group {
+    margin-bottom: 18px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #344054;
+    font-size: 0.9rem;
+}
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    color: #101828;
+    background: white;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+    transition: all 0.2s;
+}
+.form-control:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.12);
+}
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+.checkbox-control {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #d0d5dd;
+    cursor: pointer;
+}
+.checkbox-label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+    color: #344054;
+    font-size: 0.9rem;
+}
+.btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* ==========================================================================
+   --- 📱 SIÊU TỐI ƯU RESPONSIVE TRÊN THIẾT BỊ DI ĐỘNG (MOBILE) ---
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    /* Giải phóng không gian: Đẩy nội dung chính chiếm full màn hình, tạm ẩn đè sidebar */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 16px !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Nếu admin-header của bạn chứa sidebar dạng cố định, ẩn nó đi hoặc tùy biến luồng */
+    div[th\:replace*="admin-header"] ~ .sidebar,
+    .sidebar {
+        display: none !important;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 20px;
+        gap: 12px;
+    }
+    .page-title {
+        font-size: 1.35rem;
+        text-align: center;
+    }
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    /* Tái cấu trúc bảng dữ liệu thành các Card bo góc sang xịn */
+    .data-table-container {
+        background: transparent;
+        box-shadow: none;
+    }
+    .management-table,
+    .management-table thead,
+    .management-table tbody,
+    .management-table th,
+    .management-table td,
+    .management-table tr {
+        display: block;
+    }
+    .management-table thead {
+        display: none; /* Ẩn thanh header cột của máy tính */
+    }
+    .management-table tbody tr {
+        background: white;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Cấu trúc dòng thông tin trong Card */
+    .management-table td {
+        padding: 10px 0;
+        border-bottom: 1px dashed #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #1e293b;
+    }
+    .management-table td:last-of-type {
+        border-bottom: none;
+    }
+
+    /* Ép nhãn dữ liệu nằm bên trái, bôi đậm thanh thoát */
+    .management-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #64748b;
+        font-size: 0.85rem;
+    }
+
+    /* Xử lý riêng phần hiển thị hình ảnh Banner */
+    .management-table td[data-label="Hình ảnh"] {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding-bottom: 12px;
+    }
+    .management-table td[data-label="Hình ảnh"]::before {
+        align-self: flex-start;
+    }
+    .banner-preview {
+        width: 100%;
+        height: 140px;
+        border-radius: 10px;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+    }
+
+    /* Đồng bộ ô liên kết URL không bị vỡ dòng tràn */
+    .col-link {
+        max-width: 60%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Khu vực nút bấm Hành động ở cuối Card */
+    .col-actions {
+        justify-content: flex-end !important;
+        gap: 10px;
+        padding-top: 14px !important;
+        margin-top: 4px;
+    }
+    .btn-edit, .btn-toggle, .btn-delete {
+        flex: 1; /* Chia đều độ rộng các nút hành động nằm ngang */
+        padding: 11px;
+        font-size: 0.95rem;
+        border-radius: 8px;
+    }
+
+    /* Tối ưu nút bấm trong Modal kéo dài hết cỡ */
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-group .btn {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
